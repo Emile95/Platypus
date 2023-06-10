@@ -7,7 +7,7 @@ namespace Application.Action
 {
     public class ApplicationAction
     {
-        private readonly Func<ApplicationActionEnvironmentBase, object> _action;
+        private readonly Func<ApplicationActionEnvironmentBase, ApplicationActionResult> _action;
 
         public string Name { get; private set; }
         public Type EnvironmentParameterType { get; private set; }
@@ -36,6 +36,7 @@ namespace Application.Action
                     {
                         Status = ApplicationActionResultStatus.Success,
                         Message = "Application run successfully",
+                        ResultObject = objectResult
                     }; ;
                 }
                 catch (TargetInvocationException ex)
@@ -71,13 +72,7 @@ namespace Application.Action
                 else ResolveActionParameter(env, runActionParameter.ActionParameters);
             }
 
-            object resultObject = _action.Invoke(env);
-
-            return new ApplicationActionResult()
-            {
-                ResultObject = resultObject,
-                Status = ApplicationActionResultStatus.Success
-            };
+            return _action.Invoke(env);
         }
 
         private void ResolveActionParameter(ApplicationActionEnvironmentBase env, Dictionary<string, object> parameters)

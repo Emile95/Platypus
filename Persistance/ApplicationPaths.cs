@@ -8,6 +8,7 @@
         public static string APPLICATIONSDIRECTORYPATHS { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications");
         public static string APPLICATIONDLLFILENAME { get; private set; } = "application.dll";
         public static string ACTIONSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "actions");
+        public static string ACTIONRESULTSDIRECTORYPATH { get; private set; } = Path.Combine(ACTIONSDIRECTORYPATH, "results");
 
         public static string GetApplicationDllFilePath(string applicationGuid)
         {
