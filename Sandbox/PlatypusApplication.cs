@@ -1,5 +1,5 @@
 ﻿using PlatypusApplicationFramework;
-using PlatypusApplicationFramework.Action;
+using PlatypusApplicationFramework.ApplicationAction;
 using Sandbox.ActionParameter;
 
 namespace Sandbox
@@ -10,8 +10,19 @@ namespace Sandbox
             Name = "Some action")]
         public object SomeAction(ApplicationActionEnvironment<SomeActionParameter> env)
         {
-            env.AssertFailed("FAIIIIIIIIIIILEEEEEEEEEEEDDD");
-            Task.Delay(50000).Wait();
+            Console.WriteLine("phase 1");
+            Task.Delay(5000).Wait();
+            env.AssertCanceled("phase 2 canceled", () => {
+                Console.WriteLine("phase 2 has ben canceled");
+            });
+            Console.WriteLine("phase 2");
+
+            Task.Delay(5000).Wait();
+            env.AssertCanceled("phase 3 canceled", () => {
+                Console.WriteLine("phase 3 has ben canceled");
+            });
+            Console.WriteLine("phase 3");
+            Task.Delay(5000).Wait();
             Console.WriteLine(env.Parameter.Text + " : " + env.Parameter.Number + " : " + env.Parameter.Double + " : " + env.Parameter.Boolean + " chibougamo gonzo");
             return "Some action success you fool";
         }

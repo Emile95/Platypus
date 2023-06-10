@@ -1,6 +1,7 @@
-﻿using Application.Action;
+﻿using Application.ApplicationAction;
+using Application.ApplicationAction.Run;
 using Persistance;
-using PlatypusApplicationFramework.Action;
+using PlatypusApplicationFramework.ApplicationAction;
 
 namespace Application
 {
@@ -54,9 +55,9 @@ namespace Application
             _applicationActionsHandler.CancelRunningAction(guid);
         }
 
-        public IEnumerable<RunningApplicationAction> GetRunningApplicationActions()
+        public IEnumerable<RunningApplicationActionInfo> GetRunningApplicationActions()
         {
-            return _applicationActionsHandler.GetRunningApplicationActions();
+            return _applicationActionsHandler.GetRunningApplicationActionInfos();
         }
     }
 }

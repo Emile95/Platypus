@@ -1,5 +1,5 @@
 using Application;
-using Application.Action;
+using Application.ApplicationAction.Run;
 using Microsoft.AspNetCore.Mvc;
 using Utils.Json;
 using Web.Model;
@@ -29,9 +29,9 @@ app.MapPost(@"/action", ([FromBody]RunActionParameter runActionParameter) =>
     return applicationInstance.RunAction(runActionParameter);
 });
 
-app.MapPost(@"/action/cancel", (string guid) =>
+app.MapPost(@"/action/cancel", ([FromBody] CancelRunningActionBody body) =>
 {
-    applicationInstance.CancelRunningApplicationAction(guid);
+    applicationInstance.CancelRunningApplicationAction(body.Guid);
 });
 
 app.MapGet(@"/action/runnings", () =>
@@ -39,14 +39,9 @@ app.MapGet(@"/action/runnings", () =>
     return applicationInstance.GetRunningApplicationActions();
 });
 
-app.MapGet(@"/action/runnings", () =>
+app.MapPost(@"/application/install", ([FromBody] InstallApplicationBody body) =>
 {
-    return applicationInstance.GetRunningApplicationActions();
-});
-
-app.MapPost(@"/application/install", ([FromBody] InstallApplicationBody installApplication) =>
-{
-    applicationInstance.InstallApplication(installApplication.DllFilePath);
+    applicationInstance.InstallApplication(body.DllFilePath);
 });
 
 app.UseHttpsRedirection();
