@@ -37,6 +37,7 @@ namespace Application.ApplicationAction.Run
             return new RunningApplicationActionInfo()
             {
                 Guid = this.Guid,
+                Status = this.Status
             };
         }
 

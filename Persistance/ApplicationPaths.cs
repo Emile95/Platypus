@@ -8,21 +8,52 @@
         public static string APPLICATIONSDIRECTORYPATHS { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications");
         public static string APPLICATIONDLLFILENAME { get; private set; } = "application.dll";
         public static string ACTIONSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "actions");
-        public static string ACTIONRESULTSDIRECTORYPATH { get; private set; } = Path.Combine(ACTIONSDIRECTORYPATH, "results");
+        public static string ACTIONRUNSDIRECTORYNAME { get; private set; } = "runs";
+        public static string ACTIONRUNNUMBERFILENIME { get; private set; } = "buildNumber";
 
         public static string GetApplicationDllFilePath(string applicationGuid)
         {
             return Path.Combine(APPLICATIONSDIRECTORYPATHS, applicationGuid, APPLICATIONDLLFILENAME);
         }
 
-        public static string GetActionDirectoryPath(string actionName)
+        public static string GetActionDirectoryPath(string actionGuid)
         {
-            return Path.Combine(ACTIONSDIRECTORYPATH, actionName);
+            return Path.Combine(ACTIONSDIRECTORYPATH, actionGuid);
         }
 
-        public static string GetActionResultDirectoryPath(string actionName)
+        public static string GetActionDirectoryPathByBasePath(string basePath, string actionGuid)
         {
-            return Path.Combine(GetActionDirectoryPath(actionName), "results");
+            return Path.Combine(basePath, actionGuid);
+        }
+
+        public static string GetActionRunsDirectoryPath(string actionGuid)
+        {
+            return Path.Combine(GetActionDirectoryPath(actionGuid), ACTIONRUNSDIRECTORYNAME);
+        }
+
+        public static string GetActionRunsDirectoryPathByBasePath(string basePath)
+        {
+            return Path.Combine(basePath, ACTIONRUNSDIRECTORYNAME);
+        }
+
+        public static string GetActionRunDirectoryPath(string actionGuid, int buildNumber)
+        {
+            return Path.Combine(GetActionRunsDirectoryPath(actionGuid), buildNumber.ToString());
+        }
+
+        public static string GetActionRunDirectoryPathByBasePath(string basePath, string actionGuid, int buildNumber)
+        {
+            return Path.Combine(basePath, actionGuid, buildNumber.ToString());
+        }
+
+        public static string GetActionRunNumberFilePath(string actionGuid)
+        {
+            return Path.Combine(GetActionRunsDirectoryPath(actionGuid), ACTIONRUNNUMBERFILENIME);
+        }
+
+        public static string GetActionRunNumberFilePathByBasePath(string basePath)
+        {
+            return Path.Combine(basePath, ACTIONRUNNUMBERFILENIME);
         }
     }
 }
