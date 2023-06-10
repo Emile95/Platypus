@@ -2,6 +2,7 @@
 using Application.Exceptions;
 using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.ApplicationAction;
+using PlatypusApplicationFramework.ApplicationAction.Configuration;
 using System.Reflection;
 
 namespace Application.ApplicationAction
@@ -57,7 +58,6 @@ namespace Application.ApplicationAction
                         callback();
                         throw new ApplicationActionCanceledException(cancelMessage);
                     }
-                    
                 };
 
                 object objectResult = methodInfo.Invoke(application, new object[] { env });

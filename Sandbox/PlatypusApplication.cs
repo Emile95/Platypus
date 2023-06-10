@@ -1,5 +1,6 @@
 ﻿using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.ApplicationAction;
+using PlatypusApplicationFramework.ApplicationAction.Configuration;
 using Sandbox.ActionParameter;
 
 namespace Sandbox

@@ -3,12 +3,12 @@
     public static class ApplicationPaths
     {
         public static string CONFIGFILEPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
-        public static string PLUGINSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
         public static string APPLICATIONSDIRECTORYPATHS { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications");
         public static string APPLICATIONDLLFILENAME { get; private set; } = "application.dll";
         public static string ACTIONSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "actions");
         public static string ACTIONRUNSDIRECTORYNAME { get; private set; } = "runs";
         public static string ACTIONLASTRUNNUMBERFILENIME { get; private set; } = "lastRunNumber";
+        public static string ACTIONLOGFILENAME { get; private set; } = "action.log";
 
         public static string GetApplicationDllFilePath(string applicationGuid)
         {

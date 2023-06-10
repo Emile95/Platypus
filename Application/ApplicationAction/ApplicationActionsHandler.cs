@@ -2,6 +2,7 @@
 using Persistance;
 using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.ApplicationAction;
+using PlatypusApplicationFramework.ApplicationAction.Configuration;
 using System.Reflection;
 using Utils.GuidGeneratorHelper;
 

@@ -1,4 +1,4 @@
-﻿using PlatypusApplicationFramework.ApplicationAction;
+﻿using PlatypusApplicationFramework.ApplicationAction.Configuration;
 
 namespace Sandbox.ActionParameter
 {

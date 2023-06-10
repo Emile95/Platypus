@@ -1,5 +1,6 @@
 ﻿using Persistance;
 using PlatypusApplicationFramework.ApplicationAction;
+using PlatypusApplicationFramework.ApplicationAction.Logger;
 
 namespace Application.ApplicationAction.Run
 {
@@ -7,6 +8,7 @@ namespace Application.ApplicationAction.Run
     {
         private readonly ApplicationActionRepository _applicationActionRepository;
         private readonly Dictionary<string, RunningApplicationAction> _runningApplicationActions;
+        private readonly ApplicationActionRunLoggers _loggers;
 
         public string Guid { get; set; }
         public int RunNumber { get; set; }
@@ -31,6 +33,12 @@ namespace Application.ApplicationAction.Run
             Status = RunningApplicationActionStatus.Running;
             _runningApplicationActions = runningApplicationActions;
             Env = env;
+
+            _loggers = new ApplicationActionRunLoggers(Guid);
+            _loggers.AddLogger<ApplicationActionRunFileLogger>();
+
+            Env.ActionLoggers = _loggers;
+
             Task = new Task(() => RunAction(() => action.RunAction(env, runActionParameter)));
             Task.Start();
         }

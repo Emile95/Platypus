@@ -33,6 +33,8 @@ namespace Persistance
         {
             string actionRunDirectoryPath = Path.Combine(basePath, runNumber.ToString());
             Directory.CreateDirectory(actionRunDirectoryPath);
+            FileStream stream = File.Create(Path.Combine(actionRunDirectoryPath, ApplicationPaths.ACTIONLOGFILENAME));
+            stream.Close();
         }
 
         public int GetAndIncrementActionRunNumber(string actionGuid)
