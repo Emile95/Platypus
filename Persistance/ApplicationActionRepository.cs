@@ -11,9 +11,9 @@ namespace Persistance
 
         public void SaveAction(string actionGuid)
         {
-            string actionDirectory = ApplicationPaths.GetActionDirectoryPath(actionGuid);
+            /*string actionDirectory = ApplicationPaths.GetActionDirectoryPath(actionGuid);
             if (Directory.Exists(actionDirectory)) return;
-            Directory.CreateDirectory(actionDirectory);
+            Directory.CreateDirectory(actionDirectory);*/
         }
     }
 }

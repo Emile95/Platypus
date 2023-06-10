@@ -40,7 +40,10 @@ namespace Application
         public ApplicationActionResult RunAction(RunActionParameter runActionParameter)
         {
             if (_applicationActionsHandler.ApplicationActions.ContainsKey(runActionParameter.Guid) == false)
-                throw new ApplicationActionInexistantException(runActionParameter.Guid);
+                return new ApplicationActionResult() { 
+                    Message = $"action with guid {runActionParameter.Guid} non existant",
+                    Status = ApplicationActionResultStatus.Failed,
+                };
 
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
 
