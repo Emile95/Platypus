@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Application
 {
-    internal class ApplicationResolver
+    public class ApplicationResolver
     {
         private readonly ApplicationActionsHandler _applicationActionsHandler;
 

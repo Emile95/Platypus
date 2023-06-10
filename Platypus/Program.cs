@@ -6,8 +6,7 @@ using Web.Model;
 
 ApplicationInstance applicationInstance = new ApplicationInstance();
 applicationInstance.LoadConfiguration();
-int nbApplications = applicationInstance.LoadApplications();
-Console.WriteLine($"{nbApplications} applications loaded");
+applicationInstance.LoadApplications();
 
 var builder = WebApplication.CreateBuilder(args);
 

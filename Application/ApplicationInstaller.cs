@@ -1,34 +1,32 @@
-﻿using Application.Action;
-using Persistance;
+﻿using Persistance;
 using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.Action;
 using System.Reflection;
-using Utils.GuidGeneratorHelper;
+using Utils;
 
 namespace Application
 {
     internal class ApplicationInstaller
     {
         private readonly ApplicationRepository _applicationRepository;
-        private readonly ApplicationsHandler _applicationsHandler;
         private readonly ApplicationActionRepository _applicationActionRepository;
+        private readonly ApplicationResolver _applicationResolver;
 
         public ApplicationInstaller(
             ApplicationRepository applicationRepository,
             ApplicationActionRepository applicationActionRepository,
-            ApplicationsHandler applicationsHandler
+            ApplicationResolver applicationResolver
         )
         {
             _applicationRepository = applicationRepository;
             _applicationActionRepository = applicationActionRepository;
-            _applicationsHandler = applicationsHandler;
+            _applicationResolver = applicationResolver;
         }
 
-        public List<string> InstallPlatypusApplication(PlatypusApplicationBase platypusApplication, string dllFilePath)
+        public void InstallApplication(string newGuid, string dllFilePath)
         {
-            List<string> newPaths = new List<string>();
-            string newGuid = GuidGenerator.GenerateFromEnumerable(_applicationsHandler.Applications.Keys);
-            string newDllFilePath = _applicationRepository.SaveApplication(platypusApplication, newGuid, dllFilePath);
+            PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(dllFilePath);
+            _applicationRepository.SaveApplication(newGuid, dllFilePath);
 
             Type type = platypusApplication.GetType();
             MethodInfo[] methods = type.GetMethods();
@@ -36,9 +34,7 @@ namespace Application
             foreach (MethodInfo method in methods)
                 InstallActions(newGuid, method);
 
-            newPaths.Add(newGuid);
-            newPaths.Add(newDllFilePath);
-            return newPaths;
+            _applicationResolver.ResolvePlatypusApplication(platypusApplication, newGuid);
         }
 
         private void InstallActions(string applicationGuid, MethodInfo methodInfo)
