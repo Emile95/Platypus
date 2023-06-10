@@ -1,4 +1,5 @@
-﻿using PlatypusApplicationFramework;
+﻿using Application.Action;
+using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.Action;
 using System.Reflection;
 
@@ -6,33 +7,33 @@ namespace Application
 {
     internal class ApplicationResolver
     {
-        private readonly ApplicationInstance _applicationInstance;
+        private readonly ApplicationActionsHandler _applicationActionsHandler;
 
-        public ApplicationResolver(ApplicationInstance applicationInstance)
+        public ApplicationResolver(ApplicationActionsHandler applicationActionsHandler)
         {
-            _applicationInstance = applicationInstance;
+            _applicationActionsHandler = applicationActionsHandler;
         }
 
-        public void ResolvePlatypusApplication(PlatypusApplicationBase platypusApplication)
+        public void ResolvePlatypusApplication(PlatypusApplicationBase platypusApplication, string applicationGuid)
         {
             Type type = platypusApplication.GetType();
             MethodInfo[] methods = type.GetMethods();
 
             foreach(MethodInfo method in methods)
-                ResolvePlatypusApplicationMethod(platypusApplication, method);
+                ResolvePlatypusApplicationMethod(platypusApplication, applicationGuid, method);
         }
 
-        private void ResolvePlatypusApplicationMethod(PlatypusApplicationBase platypusApplication, MethodInfo methodInfo)
+        private void ResolvePlatypusApplicationMethod(PlatypusApplicationBase platypusApplication, string applicationGuid, MethodInfo methodInfo)
         {
-            ResolveActionDefinition(platypusApplication, methodInfo);
+            ResolveActionDefinition(platypusApplication, applicationGuid, methodInfo);
         }
 
-        private void ResolveActionDefinition(PlatypusApplicationBase platypusApplication, MethodInfo methodInfo)
+        private void ResolveActionDefinition(PlatypusApplicationBase platypusApplication, string applicationGuid, MethodInfo methodInfo)
         {
             ActionDefinitionAttribute actionDefinition = methodInfo.GetCustomAttribute<ActionDefinitionAttribute>();
             if (actionDefinition == null) return;
 
-            _applicationInstance.AddAction(platypusApplication, actionDefinition, methodInfo);
+            _applicationActionsHandler.AddAction(platypusApplication, applicationGuid, actionDefinition, methodInfo);
         }
     }
 }

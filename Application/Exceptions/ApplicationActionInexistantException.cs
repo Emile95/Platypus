@@ -2,8 +2,8 @@
 {
     public class ApplicationActionInexistantException : Exception
     {
-        public ApplicationActionInexistantException(string actionName)
-            : base($"there is no action named '{actionName}'")
+        public ApplicationActionInexistantException(string actionGuid)
+            : base($"there is no action with guid '{actionGuid}'")
         {}
     }
 }

@@ -2,6 +2,7 @@ using Application;
 using Application.Action;
 using Microsoft.AspNetCore.Mvc;
 using Utils.Json;
+using Web.Model;
 
 ApplicationInstance applicationInstance = new ApplicationInstance();
 applicationInstance.LoadConfiguration();
@@ -37,6 +38,16 @@ app.MapPost(@"/action/cancel", (string guid) =>
 app.MapGet(@"/action/runnings", () =>
 {
     return applicationInstance.GetRunningApplicationActions();
+});
+
+app.MapGet(@"/action/runnings", () =>
+{
+    return applicationInstance.GetRunningApplicationActions();
+});
+
+app.MapPost(@"/application/install", ([FromBody] InstallApplicationBody installApplication) =>
+{
+    applicationInstance.InstallApplication(installApplication.DllFilePath);
 });
 
 app.UseHttpsRedirection();

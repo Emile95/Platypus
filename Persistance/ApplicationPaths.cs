@@ -1,6 +1,6 @@
-﻿namespace Application
+﻿namespace Persistance
 {
-    internal static class ApplicationPaths
+    public static class ApplicationPaths
     {
         public static string CONFIGFILEPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
 

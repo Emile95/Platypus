@@ -1,6 +1,6 @@
 ﻿using PlatypusApplicationFramework.Action;
 
-namespace Application.Action
+namespace Persistance
 {
     public class ApplicationActionRepository
     {
@@ -9,9 +9,9 @@ namespace Application.Action
 
         }
 
-        public void CreateActionRepository(string actionName)
+        public void SaveAction(string actionGuid)
         {
-            string actionDirectory = ApplicationPaths.GetActionDirectoryPath(actionName);
+            string actionDirectory = ApplicationPaths.GetActionDirectoryPath(actionGuid);
             if (Directory.Exists(actionDirectory)) return;
             Directory.CreateDirectory(actionDirectory);
         }

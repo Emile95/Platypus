@@ -1,4 +1,5 @@
-﻿using PlatypusApplicationFramework;
+﻿using Persistance;
+using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.Action;
 using System.Reflection;
 using Utils.GuidGeneratorHelper;
@@ -11,25 +12,29 @@ namespace Application.Action
         public Dictionary<string, RunningApplicationAction> RunningApplicationActions { get; private set; }
 
         private readonly ApplicationActionRepository _applicationActionRepository;
-        
 
-        public ApplicationActionsHandler()
+
+
+        public ApplicationActionsHandler(
+            ApplicationActionRepository applicationActionRepository
+        )
         {
             ApplicationActions = new Dictionary<string, ApplicationAction>();
-            _applicationActionRepository = new ApplicationActionRepository();
+            _applicationActionRepository = applicationActionRepository;
             RunningApplicationActions = new Dictionary<string, RunningApplicationAction>();
         }
 
-        public void AddAction(PlatypusApplicationBase application, ActionDefinitionAttribute actionDefinition, MethodInfo methodInfo)
+        public void AddAction(PlatypusApplicationBase application, string applicationGuid, ActionDefinitionAttribute actionDefinition, MethodInfo methodInfo)
         {
-            if (ApplicationActions.ContainsKey(actionDefinition.Name)) return;
+            string actionGuid = actionDefinition.Name+applicationGuid;
+            if (ApplicationActions.ContainsKey(actionGuid)) return;
             ApplicationAction applicationAction = new ApplicationAction(application,actionDefinition,methodInfo);
-            ApplicationActions.Add(actionDefinition.Name, applicationAction);
+            ApplicationActions.Add(actionGuid, applicationAction);
         }
 
         public ApplicationActionResult RunAction(RunActionParameter runActionParameter, ApplicationActionEnvironmentBase env)
         {
-            ApplicationAction action = ApplicationActions[runActionParameter.Name];
+            ApplicationAction action = ApplicationActions[runActionParameter.Guid];
 
             string runningActionGUID = GuidGenerator.GenerateFromEnumerable(RunningApplicationActions.Keys);
 
@@ -42,7 +47,7 @@ namespace Application.Action
 
             if(runActionParameter.Async)
                 return new ApplicationActionResult() { 
-                    Message = $"new action of type '{runActionParameter.Name}' has been started",
+                    Message = $"new action has been started",
                     Status = ApplicationActionResultStatus.Started 
                 };
 

@@ -1,8 +1,8 @@
 ﻿using Application.Action;
 using Application.Exceptions;
+using Persistance;
 using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.Action;
-using System.Reflection;
 using Utils;
 
 namespace Application
@@ -11,15 +11,25 @@ namespace Application
     {
         private readonly ApplicationInstaller _applicationInstaller;
         private readonly ApplicationResolver _applicationResolver;
-        private readonly List<PlatypusApplicationBase> _applications;
+        
+        private readonly ApplicationsHandler _applicationsHandler;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
+
 
         public ApplicationInstance()
         {
-            _applicationInstaller = new ApplicationInstaller();
-            _applicationResolver = new ApplicationResolver(this);
-            _applications = new List<PlatypusApplicationBase>();
-            _applicationActionsHandler = new ApplicationActionsHandler();
+            ApplicationRepository applicationRepository = new ApplicationRepository();
+            ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
+
+            _applicationsHandler = new ApplicationsHandler();
+            _applicationActionsHandler = new ApplicationActionsHandler(applicationActionRepository);
+
+            _applicationInstaller = new ApplicationInstaller(
+                applicationRepository,
+                applicationActionRepository,
+                _applicationsHandler
+            );
+            _applicationResolver = new ApplicationResolver(_applicationActionsHandler);
         }
 
         public void LoadConfiguration()
@@ -29,7 +39,8 @@ namespace Application
 
         public void InstallApplication(string dllFilePath)
         {
-
+            List<string> newPaths = InstallApplicationPluginFromDll(dllFilePath);
+            LoadApplicationPluginFromDll(newPaths[0], newPaths[1]);
         }
 
         public void InstallApplication(byte[] dll)
@@ -46,27 +57,33 @@ namespace Application
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(applicationDirectoryPath);
                 string dllFilePath = ApplicationPaths.GetApplicationDllFilePath(directoryInfo.Name);
-                LoadPluginsFromDll(dllFilePath);
+                LoadApplicationPluginFromDll(directoryInfo.Name, dllFilePath);
             }
                 
-            return _applications.Count;
+            return _applicationsHandler.Applications.Count;
         }
 
-        private void LoadPluginsFromDll(string dllFilePath)
+        private void LoadApplicationPluginFromDll(string directoryPath, string dllFilePath)
         {
             PlatypusApplicationBase applicationFromDll = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(dllFilePath);
-            _applications.Add(applicationFromDll);
-            _applicationResolver.ResolvePlatypusApplication(applicationFromDll);
+            _applicationsHandler.AddApplication(directoryPath, applicationFromDll);
+            _applicationResolver.ResolvePlatypusApplication(applicationFromDll, directoryPath);
+        }
+
+        private List<string> InstallApplicationPluginFromDll(string dllFilePath)
+        {
+            PlatypusApplicationBase applicationFromDll = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(dllFilePath);
+            return _applicationInstaller.InstallPlatypusApplication(applicationFromDll, dllFilePath);
         }
 
         public ApplicationActionResult RunAction(RunActionParameter runActionParameter)
         {
-            if (_applicationActionsHandler.ApplicationActions.ContainsKey(runActionParameter.Name) == false)
-                throw new ApplicationActionInexistantException(runActionParameter.Name);
+            if (_applicationActionsHandler.ApplicationActions.ContainsKey(runActionParameter.Guid) == false)
+                throw new ApplicationActionInexistantException(runActionParameter.Guid);
 
-            ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Name);
+            ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
 
-            return _applicationActionsHandler.RunAction(runActionParameter, env); ;
+            return _applicationActionsHandler.RunAction(runActionParameter, env);
         }
 
         public void CancelRunningApplicationAction(string guid)
@@ -77,11 +94,6 @@ namespace Application
         public IEnumerable<RunningApplicationAction> GetRunningApplicationActions()
         {
             return _applicationActionsHandler.GetRunningApplicationActions();
-        }
-
-        public void AddAction(PlatypusApplicationBase platypusApplication, ActionDefinitionAttribute actionDefinition, MethodInfo methodInfo)
-        {
-            _applicationActionsHandler.AddAction(platypusApplication, actionDefinition, methodInfo);
         }
     }
 }
