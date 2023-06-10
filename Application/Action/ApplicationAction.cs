@@ -26,7 +26,37 @@ namespace Application.Action
 
             ParameterRequired = actionDefinitionAttribute.ParameterRequired;
 
-            _action = (env) => methodInfo.Invoke(application, new object[] { env });
+            _action = (env) =>
+            {
+                try
+                {
+                    env.AssertFailed = (failedMessage) => throw new ApplicationActionRunFailedException(failedMessage);
+                    object objectResult = methodInfo.Invoke(application, new object[] { env });
+                    return new ApplicationActionResult()
+                    {
+                        Status = ApplicationActionResultStatus.Success,
+                        Message = "Application run successfully",
+                    }; ;
+                }
+                catch (TargetInvocationException ex)
+                {
+                    string failedMessage = "";
+                    if(ex.InnerException is ApplicationActionRunFailedException)
+                    {
+                        ApplicationActionRunFailedException exception = (ApplicationActionRunFailedException)ex.InnerException;
+                        failedMessage = exception.FailedMessage;
+                    }
+                    else
+                    {
+                        failedMessage = ex.InnerException.Message;
+                    }
+                    return new ApplicationActionResult()
+                    {
+                        Status = ApplicationActionResultStatus.Failed,
+                        Message = failedMessage
+                    };
+                }
+            };
         }
 
         public ApplicationActionResult RunAction(ApplicationActionEnvironmentBase env, RunActionParameter runActionParameter)

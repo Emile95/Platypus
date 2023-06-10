@@ -4,6 +4,7 @@
     {
         Success,
         Failed,
-        Started
+        Started,
+        Canceled
     }
 }

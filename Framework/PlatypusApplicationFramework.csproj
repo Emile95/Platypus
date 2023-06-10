@@ -10,4 +10,8 @@
     <ProjectReference Include="..\API\PlatypusAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+
 </Project>

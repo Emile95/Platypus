@@ -4,7 +4,6 @@
     {
         Running,
         Finish,
-        Aborted,
-        Cancelled
+        Aborted
     }
 }

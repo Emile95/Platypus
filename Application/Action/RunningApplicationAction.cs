@@ -34,28 +34,22 @@ namespace Application.Action
 
         public void Cancel()
         {
-            Status = RunningApplicationActionStatus.Cancelled;
             Env.ActionCancelled = true;
         }
 
         private void RunAction(Func<ApplicationActionResult> action)
         {
-            try
+            Result = action();
+            switch(Result.Status)
             {
-                Result = action();
-                if(Status != RunningApplicationActionStatus.Cancelled)
+                case ApplicationActionResultStatus.Success:
                     Status = RunningApplicationActionStatus.Finish;
+                    break;
+                case ApplicationActionResultStatus.Failed:
+                case ApplicationActionResultStatus.Canceled:
+                    Status = RunningApplicationActionStatus.Aborted;
+                    break;
             }
-            catch (Exception ex)
-            {
-                Result = new ApplicationActionResult()
-                {
-                    Status = ApplicationActionResultStatus.Failed,
-                    Message = ex.Message
-                };
-                Status = RunningApplicationActionStatus.Aborted;
-            }
-
             _applicationActionRepository.SaveActionResult(Result);
             _runningApplicationActions.Remove(Guid);
         }
