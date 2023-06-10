@@ -1,6 +1,5 @@
 ﻿using Persistance;
 using PlatypusApplicationFramework;
-using Utils.GuidGeneratorHelper;
 
 namespace Application
 {
