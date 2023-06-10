@@ -33,11 +33,15 @@ namespace Application.ApplicationAction
 
         public ApplicationActionResult RunAction(RunActionParameter runActionParameter, ApplicationActionEnvironmentBase env)
         {
+            string actionRunsFilePath = ApplicationPaths.GetActionRunsDirectoryPath(runActionParameter.Guid);
+            int runNumber = _applicationActionRepository.GetAndIncrementActionRunNumberByBasePath(actionRunsFilePath);
+            _applicationActionRepository.SaveActionRunByBasePath(actionRunsFilePath, runNumber);
+
             ApplicationAction action = ApplicationActions[runActionParameter.Guid];
 
             string runningActionGUID = GuidGenerator.GenerateFromEnumerable(RunningApplicationActions.Keys);
 
-            RunningApplicationAction runningApplicationAction = new RunningApplicationAction(runningActionGUID, _applicationActionRepository, action, runActionParameter, env, RunningApplicationActions);
+            RunningApplicationAction runningApplicationAction = new RunningApplicationAction(runningActionGUID, runNumber, _applicationActionRepository, action, runActionParameter, env, RunningApplicationActions);
 
             RunningApplicationActions.Add(
                 runningActionGUID,
@@ -72,7 +76,6 @@ namespace Application.ApplicationAction
         {
             return ApplicationActions[actionName].CreateStartActionEnvironment();
         }
-
         
     }
 }

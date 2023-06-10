@@ -3,13 +3,12 @@
     public static class ApplicationPaths
     {
         public static string CONFIGFILEPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
-
         public static string PLUGINSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
         public static string APPLICATIONSDIRECTORYPATHS { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications");
         public static string APPLICATIONDLLFILENAME { get; private set; } = "application.dll";
         public static string ACTIONSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "actions");
         public static string ACTIONRUNSDIRECTORYNAME { get; private set; } = "runs";
-        public static string ACTIONRUNNUMBERFILENIME { get; private set; } = "buildNumber";
+        public static string ACTIONLASTRUNNUMBERFILENIME { get; private set; } = "lastRunNumber";
 
         public static string GetApplicationDllFilePath(string applicationGuid)
         {
@@ -46,14 +45,14 @@
             return Path.Combine(basePath, actionGuid, buildNumber.ToString());
         }
 
-        public static string GetActionRunNumberFilePath(string actionGuid)
+        public static string GetActionLastRunNumberFilePath(string actionGuid)
         {
-            return Path.Combine(GetActionRunsDirectoryPath(actionGuid), ACTIONRUNNUMBERFILENIME);
+            return Path.Combine(GetActionRunsDirectoryPath(actionGuid), ACTIONLASTRUNNUMBERFILENIME);
         }
 
-        public static string GetActionRunNumberFilePathByBasePath(string basePath)
+        public static string GetActionLastRunNumberFilePathByBasePath(string basePath)
         {
-            return Path.Combine(basePath, ACTIONRUNNUMBERFILENIME);
+            return Path.Combine(basePath, ACTIONLASTRUNNUMBERFILENIME);
         }
     }
 }

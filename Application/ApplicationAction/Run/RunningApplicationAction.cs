@@ -9,6 +9,7 @@ namespace Application.ApplicationAction.Run
         private readonly Dictionary<string, RunningApplicationAction> _runningApplicationActions;
 
         public string Guid { get; set; }
+        public int RunNumber { get; set; }
         public Task Task { get; private set; }
         public ApplicationActionEnvironmentBase Env { get; set; }
         public RunningApplicationActionStatus Status { get; private set; }
@@ -16,6 +17,7 @@ namespace Application.ApplicationAction.Run
 
         public RunningApplicationAction(
             string guid,
+            int runNumber,
             ApplicationActionRepository applicationActionRepository, 
             ApplicationAction action,
             RunActionParameter runActionParameter, 
@@ -24,6 +26,7 @@ namespace Application.ApplicationAction.Run
         )
         {
             Guid = guid;
+            RunNumber = runNumber;
             _applicationActionRepository = applicationActionRepository;
             Status = RunningApplicationActionStatus.Running;
             _runningApplicationActions = runningApplicationActions;
@@ -37,7 +40,8 @@ namespace Application.ApplicationAction.Run
             return new RunningApplicationActionInfo()
             {
                 Guid = this.Guid,
-                Status = this.Status
+                Status = this.Status,
+                RunNumber = this.RunNumber,
             };
         }
 
