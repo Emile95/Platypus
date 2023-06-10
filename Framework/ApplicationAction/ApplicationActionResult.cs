@@ -1,4 +1,4 @@
-﻿namespace PlatypusApplicationFramework.Action
+﻿namespace PlatypusApplicationFramework.ApplicationAction
 {
     public class ApplicationActionResult
     {
