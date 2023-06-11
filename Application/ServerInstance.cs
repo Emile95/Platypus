@@ -1,18 +1,19 @@
-﻿using Application.ApplicationAction;
-using Application.ApplicationAction.Run;
+﻿using Core.Application;
+using Core.ApplicationAction;
+using Core.ApplicationAction.Run;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.ApplicationAction;
 
-namespace Application
+namespace Core
 {
-    public class ApplicationInstance
+    public class ServerInstance
     {
         private readonly ApplicationsHandler _applicationsHandler;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
 
-        public ApplicationInstance()
+        public ServerInstance()
         {
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
 

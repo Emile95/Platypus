@@ -5,7 +5,7 @@ using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.ApplicationAction;
 using PlatypusApplicationFramework.ApplicationAction.Logger;
 
-namespace Application.ApplicationAction.Run
+namespace Core.ApplicationAction.Run
 {
     public class RunningApplicationAction
     {

@@ -29,5 +29,17 @@ namespace Persistance
 
             return applicationEntities;
         }
+
+        public void SaveApplicationConfiguration(string applicationGuid, string configuration)
+        {
+            string configFilePath = ApplicationPaths.GetApplicationConfigFilePath(applicationGuid);
+            File.WriteAllText(configFilePath, configuration); 
+        }
+
+        public string GetConfigurationJsonObject(string applicationGuid)
+        {
+            string configFilePath = ApplicationPaths.GetApplicationConfigFilePath(applicationGuid);
+            return File.ReadAllText(configFilePath);
+        }
     }
 }

@@ -4,15 +4,26 @@
     {
         public static string CONFIGFILEPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
         public static string APPLICATIONSDIRECTORYPATHS { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications");
+        public static string APPLICATIONCONFIGFILENAME { get; private set; } = "config.json";
         public static string APPLICATIONDLLFILENAME { get; private set; } = "application.dll";
         public static string ACTIONSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "actions");
         public static string ACTIONRUNSDIRECTORYNAME { get; private set; } = "runs";
         public static string ACTIONLASTRUNNUMBERFILENIME { get; private set; } = "lastRunNumber";
         public static string ACTIONLOGFILENAME { get; private set; } = "action.log";
 
+        public static string GetApplicationDirectoryPath(string applicationGuid)
+        {
+            return Path.Combine(APPLICATIONSDIRECTORYPATHS, applicationGuid);
+        }
+
         public static string GetApplicationDllFilePath(string applicationGuid)
         {
-            return Path.Combine(APPLICATIONSDIRECTORYPATHS, applicationGuid, APPLICATIONDLLFILENAME);
+            return Path.Combine(GetApplicationDirectoryPath(applicationGuid), APPLICATIONDLLFILENAME);
+        }
+
+        public static string GetApplicationConfigFilePath(string applicationGuid)
+        {
+            return Path.Combine(GetApplicationDirectoryPath(applicationGuid), APPLICATIONCONFIGFILENAME);
         }
 
         public static string GetActionDirectoryPath(string actionGuid)

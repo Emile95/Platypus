@@ -1,4 +1,4 @@
-﻿using Application.ApplicationAction.Run;
+﻿using Core.ApplicationAction.Run;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
@@ -8,7 +8,7 @@ using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Utils.GuidGeneratorHelper;
 
-namespace Application.ApplicationAction
+namespace Core.ApplicationAction
 {
     public class ApplicationActionsHandler
     {

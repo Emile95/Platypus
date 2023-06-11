@@ -1,12 +1,12 @@
-using Application;
-using Application.ApplicationAction.Run;
+using Core;
+using Core.ApplicationAction.Run;
 using Microsoft.AspNetCore.Mvc;
 using Utils.Json;
 using Web.Model;
 
-ApplicationInstance applicationInstance = new ApplicationInstance();
-applicationInstance.LoadConfiguration();
-applicationInstance.LoadApplications();
+ServerInstance serverInstance = new ServerInstance();
+serverInstance.LoadConfiguration();
+serverInstance.LoadApplications();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,22 +26,22 @@ if (!app.Environment.IsDevelopment())
 app.MapPost(@"/action", ([FromBody]RunActionParameter runActionParameter) => 
 {
     runActionParameter.ActionParameters = JsonHelper.GetDictObjectFromJsonElementsDict(runActionParameter.ActionParameters);
-    return applicationInstance.RunAction(runActionParameter);
+    return serverInstance.RunAction(runActionParameter);
 });
 
 app.MapPost(@"/action/cancel", ([FromBody] CancelRunningActionBody body) =>
 {
-    applicationInstance.CancelRunningApplicationAction(body.Guid);
+    serverInstance.CancelRunningApplicationAction(body.Guid);
 });
 
 app.MapGet(@"/action/runnings", () =>
 {
-    return applicationInstance.GetRunningApplicationActions();
+    return serverInstance.GetRunningApplicationActions();
 });
 
 app.MapPost(@"/application/install", ([FromBody] InstallApplicationBody body) =>
 {
-    applicationInstance.InstallApplication(body.DllFilePath);
+    serverInstance.InstallApplication(body.DllFilePath);
 });
 
 app.UseHttpsRedirection();

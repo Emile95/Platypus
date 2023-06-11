@@ -29,6 +29,7 @@ namespace Sandbox
             Console.WriteLine("phase 3");
             Task.Delay(5000).Wait();
             Console.WriteLine(env.Parameter.Text + " : " + env.Parameter.Number + " : " + env.Parameter.Double + " : " + env.Parameter.Boolean + " chibougamo gonzo");
+            Console.WriteLine(Configuration.Text);
             return "Some action success you fool";
         }
 

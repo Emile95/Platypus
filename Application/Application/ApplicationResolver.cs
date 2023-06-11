@@ -1,17 +1,24 @@
-﻿using Application.ApplicationAction;
+﻿using Common.Application;
+using Core.ApplicationAction;
+using Persistance;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 
-namespace Application
+namespace Core.Application
 {
     public class ApplicationResolver
     {
         private readonly ApplicationActionsHandler _applicationActionsHandler;
+        private readonly ApplicationRepository _applicationRepository;
 
-        public ApplicationResolver(ApplicationActionsHandler applicationActionsHandler)
+        public ApplicationResolver(
+            ApplicationActionsHandler applicationActionsHandler,
+            ApplicationRepository applicationRepository
+        )
         {
             _applicationActionsHandler = applicationActionsHandler;
+            _applicationRepository = applicationRepository;
         }
 
         public void ResolvePlatypusApplication(PlatypusApplicationBase platypusApplication, string applicationGuid)
@@ -21,6 +28,12 @@ namespace Application
 
             foreach(MethodInfo method in methods)
                 ResolvePlatypusApplicationMethod(platypusApplication, applicationGuid, method);
+
+            ApplicationInitializeEnvironment env = new ApplicationInitializeEnvironment();
+            env.ApplicationRepository = _applicationRepository;
+            env.ApplicationGuid = applicationGuid;
+
+            platypusApplication.Initialize(env);
         }
 
         private void ResolvePlatypusApplicationMethod(PlatypusApplicationBase platypusApplication, string applicationGuid, MethodInfo methodInfo)

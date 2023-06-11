@@ -1,11 +1,11 @@
-﻿using Application.ApplicationAction;
+﻿using Core.ApplicationAction;
 using Persistance;
 using Persistance.Entity;
 using PlatypusApplicationFramework.Configuration.Application;
 using Utils;
 using Utils.GuidGeneratorHelper;
 
-namespace Application
+namespace Core.Application
 {
     public class ApplicationsHandler
     {
@@ -20,7 +20,10 @@ namespace Application
         )
         {
             _applicationRepository = new ApplicationRepository();
-            _applicationResolver = new ApplicationResolver(applicationActionsHandler);
+            _applicationResolver = new ApplicationResolver(
+                applicationActionsHandler,
+                _applicationRepository
+            );
             _applicationInstaller = new ApplicationInstaller(
                 _applicationRepository,
                 applicationActionRepository,

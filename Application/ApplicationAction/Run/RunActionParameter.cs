@@ -1,4 +1,4 @@
-﻿namespace Application.ApplicationAction.Run
+﻿namespace Core.ApplicationAction.Run
 {
     public class RunActionParameter
     {

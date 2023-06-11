@@ -1,11 +1,12 @@
-﻿using Persistance;
+﻿using Common.Application;
+using Persistance;
 using Persistance.Entity;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Utils;
 
-namespace Application
+namespace Core.Application
 {
     internal class ApplicationInstaller
     {
@@ -38,6 +39,12 @@ namespace Application
 
             foreach (MethodInfo method in methods)
                 InstallActions(newGuid, method);
+
+            ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
+            env.ApplicationRepository = _applicationRepository;
+            env.ApplicationGuid = newGuid;
+
+            platypusApplication.Install(env);
 
             _applicationResolver.ResolvePlatypusApplication(platypusApplication, newGuid);
         }

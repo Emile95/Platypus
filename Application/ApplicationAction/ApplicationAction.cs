@@ -1,5 +1,5 @@
-﻿using Application.ApplicationAction.Run;
-using Application.Exceptions;
+﻿using Core.ApplicationAction.Run;
+using Core.Exceptions;
 using PlatypusAPI.ApplicationAction;
 using PlatypusApplicationFramework.ApplicationAction;
 using PlatypusApplicationFramework.Configuration;
@@ -7,7 +7,7 @@ using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 
-namespace Application.ApplicationAction
+namespace Core.ApplicationAction
 {
     public class ApplicationAction
     {
