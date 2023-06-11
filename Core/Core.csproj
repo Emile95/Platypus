@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\API\PlatypusAPI.csproj" />
-    <ProjectReference Include="..\Framework\PlatypusApplicationFramework.csproj" />
     <ProjectReference Include="..\Persistance\Persistance.csproj" />
+    <ProjectReference Include="..\PlatypusAPI\PlatypusAPI.csproj" />
+    <ProjectReference Include="..\PlatypusApplicationFramework\PlatypusApplicationFramework.csproj" />
     <ProjectReference Include="..\Utils\Utils.csproj" />
   </ItemGroup>
 
