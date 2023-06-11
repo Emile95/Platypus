@@ -45,6 +45,7 @@ namespace Core.Application
         public void LoadApplication(PlatypusApplicationBase application, string applicationGuid)
         {
             _applicationResolver.ResolvePlatypusApplication(application, applicationGuid);
+            application.ApplicationDirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(applicationGuid);
             _applications.Add(applicationGuid, application);
         }
 

@@ -37,12 +37,24 @@ namespace Core.ApplicationAction
         {
             if (ParameterType != null)
             {
-                if(runActionParameter.ActionParameters == null)
+                if (runActionParameter.ActionParameters == null)
                 {
                     if (ParameterRequired)
                         throw new ApplicationActionParameterRequiredException(Name);
                 }
-                else ResolveActionParameter(env, runActionParameter.ActionParameters);
+                else
+                {
+                    try { 
+                        ResolveActionParameter(env, runActionParameter.ActionParameters);
+                    } catch(ApplicationActionFieldRequired exception)
+                    {
+                        return new ApplicationActionResult()
+                        {
+                            Message = exception.Message,
+                            Status = ApplicationActionResultStatus.Failed
+                        };
+                    }
+                }
             }
 
             return _action.Invoke(env);
@@ -93,6 +105,13 @@ namespace Core.ApplicationAction
                 {
                     Status = status,
                     Message = message
+                };
+            } catch (Exception ex)
+            {
+                return new ApplicationActionResult()
+                {
+                    Status = ApplicationActionResultStatus.Failed,
+                    Message = ex.Message
                 };
             }
         }

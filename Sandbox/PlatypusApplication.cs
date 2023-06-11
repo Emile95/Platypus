@@ -32,15 +32,5 @@ namespace Sandbox
             Console.WriteLine(Configuration.Text);
             return "Some action success you fool";
         }
-
-        public override bool ValidateConfiguration(Configuration configuration)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnConfigurationUpdate(Configuration previousConfiguration)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

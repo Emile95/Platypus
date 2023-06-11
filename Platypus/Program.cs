@@ -1,6 +1,7 @@
 using Core;
 using Core.ApplicationAction.Run;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Utils.Json;
 using Web.Model;
 
@@ -42,6 +43,11 @@ app.MapGet(@"/action/runnings", () =>
 app.MapPost(@"/application/install", ([FromBody] InstallApplicationBody body) =>
 {
     serverInstance.InstallApplication(body.DllFilePath);
+});
+
+app.MapPut(@"/application/configuration", ([FromBody] Dictionary<string, object> body) =>
+{
+    
 });
 
 app.UseHttpsRedirection();

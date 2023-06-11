@@ -6,7 +6,7 @@ namespace Sandbox
     {
         [ParameterEditor(
             Name = "Text",
-            DefaultValue = "J'ai peur dur noir")]
+            IsRequired = true)]
         public string Text { get; set; }
     }
 }

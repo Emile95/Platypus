@@ -1,5 +1,8 @@
 ﻿using Common.Application;
 using Newtonsoft.Json;
+using Persistance;
+using PlatypusApplicationFramework.ApplicationAction;
+using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 
 namespace PlatypusApplicationFramework.Configuration.Application
@@ -14,9 +17,6 @@ namespace PlatypusApplicationFramework.Configuration.Application
             Configuration = new ConfigurationType();
         }
 
-        public virtual bool ValidateConfiguration(ConfigurationType configuration) { return true; }
-        protected virtual void OnConfigurationUpdate(ConfigurationType previousConfiguration) { }
-
         public override void Install(ApplicationInstallEnvironment env)
         {
             InitializeDefaultConfiguration();
@@ -28,6 +28,38 @@ namespace PlatypusApplicationFramework.Configuration.Application
             string jsonObject = env.ApplicationRepository.GetConfigurationJsonObject(env.ApplicationGuid);
             Configuration = JsonConvert.DeserializeObject<ConfigurationType>(jsonObject);
         }
+
+        public string GetConfigurationJsonObject()
+        {
+            return JsonConvert.SerializeObject(Configuration);
+        }
+
+        public void LoadConfigurationJsonObject(string jsonObject)
+        {
+            Configuration = JsonConvert.DeserializeObject<ConfigurationType>(jsonObject);
+        }
+
+        [ActionDefinition(
+            Name = "UpdateConfiguration",
+            ParameterRequired = true)]
+        public object UpdateConfiguration(ApplicationActionEnvironment<ConfigurationType> env)
+        {
+            ConfigurationType previousConfig = Configuration;
+
+            if(ValidateConfiguration(env.Parameter))
+                Configuration = env.Parameter;
+
+            string configFilePath = Path.Combine(ApplicationDirectoryPath, ApplicationPaths.APPLICATIONCONFIGFILENAME);
+            string jsonObject = JsonConvert.SerializeObject(Configuration);
+            File.WriteAllText(configFilePath, jsonObject);
+
+            OnConfigurationUpdate(previousConfig);
+
+            return null;
+        }
+
+        protected virtual bool ValidateConfiguration(ConfigurationType configuration) { return true; }
+        protected virtual void OnConfigurationUpdate(ConfigurationType previousConfiguration) { }
 
         private void InitializeDefaultConfiguration()
         {
@@ -46,16 +78,6 @@ namespace PlatypusApplicationFramework.Configuration.Application
             }
 
             Configuration = defaultConfig;
-        }
-
-        public string GetConfigurationJsonObject()
-        {
-            return JsonConvert.SerializeObject(Configuration);
-        }
-
-        public void LoadConfigurationJsonObject(string jsonObject)
-        {
-            Configuration = JsonConvert.DeserializeObject<ConfigurationType>(jsonObject);
         }
 
     }
