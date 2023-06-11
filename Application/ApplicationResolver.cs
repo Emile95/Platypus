@@ -1,6 +1,6 @@
 ﻿using Application.ApplicationAction;
-using PlatypusApplicationFramework;
-using PlatypusApplicationFramework.ApplicationAction.Configuration;
+using PlatypusApplicationFramework.Configuration;
+using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 
 namespace Application

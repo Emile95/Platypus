@@ -1,7 +1,7 @@
 ﻿using Persistance;
 using Persistance.Entity;
-using PlatypusApplicationFramework;
-using PlatypusApplicationFramework.ApplicationAction.Configuration;
+using PlatypusApplicationFramework.Configuration;
+using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Utils;
 

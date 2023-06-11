@@ -1,6 +1,7 @@
-﻿namespace PlatypusApplicationFramework
+﻿namespace PlatypusApplicationFramework.Configuration
 {
     public abstract class PlatypusApplicationBase
     {
+
     }
 }

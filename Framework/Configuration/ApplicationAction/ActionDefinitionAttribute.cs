@@ -1,4 +1,4 @@
-﻿namespace PlatypusApplicationFramework.ApplicationAction.Configuration
+﻿namespace PlatypusApplicationFramework.Configuration.ApplicationAction
 {
     public class ActionDefinitionAttribute : Attribute
     {

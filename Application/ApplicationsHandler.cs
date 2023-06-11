@@ -1,7 +1,7 @@
 ﻿using Application.ApplicationAction;
 using Persistance;
 using Persistance.Entity;
-using PlatypusApplicationFramework;
+using PlatypusApplicationFramework.Configuration;
 using Utils;
 using Utils.GuidGeneratorHelper;
 

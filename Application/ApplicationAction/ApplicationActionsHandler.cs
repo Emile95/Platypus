@@ -1,8 +1,8 @@
 ﻿using Application.ApplicationAction.Run;
 using Persistance;
-using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.ApplicationAction;
-using PlatypusApplicationFramework.ApplicationAction.Configuration;
+using PlatypusApplicationFramework.Configuration;
+using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Utils.GuidGeneratorHelper;
 

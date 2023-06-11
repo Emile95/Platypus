@@ -1,8 +1,8 @@
 ﻿using Application.ApplicationAction.Run;
 using Application.Exceptions;
-using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.ApplicationAction;
-using PlatypusApplicationFramework.ApplicationAction.Configuration;
+using PlatypusApplicationFramework.Configuration;
+using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 
 namespace Application.ApplicationAction
