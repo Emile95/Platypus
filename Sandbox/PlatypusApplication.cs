@@ -1,6 +1,7 @@
 ﻿using PlatypusApplicationFramework;
 using PlatypusApplicationFramework.ApplicationAction;
 using PlatypusApplicationFramework.ApplicationAction.Configuration;
+using PlatypusApplicationFramework.ApplicationAction.Logger;
 using Sandbox.ActionParameter;
 
 namespace Sandbox
@@ -11,6 +12,9 @@ namespace Sandbox
             Name = "Some action")]
         public object SomeAction(ApplicationActionEnvironment<SomeActionParameter> env)
         {
+            env.ActionLoggers.Log<ApplicationActionRunFileLogger>("j'aime ca logger");
+            env.ActionLoggers.Log<ApplicationActionRunFileLogger>("oh que oui");
+
             Console.WriteLine("phase 1");
             Task.Delay(5000).Wait();
             env.AssertCanceled("phase 2 canceled", () => {

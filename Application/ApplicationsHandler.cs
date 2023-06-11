@@ -1,6 +1,8 @@
 ﻿using Application.ApplicationAction;
 using Persistance;
+using Persistance.Entity;
 using PlatypusApplicationFramework;
+using Utils;
 using Utils.GuidGeneratorHelper;
 
 namespace Application
@@ -29,9 +31,13 @@ namespace Application
 
         public void LoadApplications()
         {
-            List<Tuple<PlatypusApplicationBase, string>> applications = _applicationRepository.LoadApplications();
-            foreach(Tuple<PlatypusApplicationBase, string> application in applications)
-                LoadApplication(application.Item1, application.Item2);
+            List<ApplicationEntity> applications = _applicationRepository.LoadApplications();
+            foreach(ApplicationEntity application in applications)
+            {
+                PlatypusApplicationBase applicationBase = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(application.DllFilePath);
+                LoadApplication(applicationBase, application.Guid);
+            }
+                
         }
 
         public void LoadApplication(PlatypusApplicationBase application, string applicationGuid)

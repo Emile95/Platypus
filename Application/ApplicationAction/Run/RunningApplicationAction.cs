@@ -1,4 +1,5 @@
 ﻿using Persistance;
+using Persistance.Entity;
 using PlatypusApplicationFramework.ApplicationAction;
 using PlatypusApplicationFramework.ApplicationAction.Logger;
 
@@ -35,11 +36,11 @@ namespace Application.ApplicationAction.Run
             Env = env;
 
             _loggers = new ApplicationActionRunLoggers(Guid);
-            _loggers.AddLogger<ApplicationActionRunFileLogger>();
+            _loggers.AddLogger<ApplicationActionRunFileLogger>(_applicationActionRepository, RunNumber);
 
             Env.ActionLoggers = _loggers;
 
-            Task = new Task(() => RunAction(() => action.RunAction(env, runActionParameter)));
+            Task = new Task(() => RunAction(() => action.RunAction(Env, runActionParameter)));
             Task.Start();
         }
 
@@ -71,7 +72,7 @@ namespace Application.ApplicationAction.Run
                     Status = RunningApplicationActionStatus.Aborted;
                     break;
             }
-            _applicationActionRepository.SaveActionResult(Result);
+            _applicationActionRepository.SaveActionResult(new ApplicationActionResultEntity());
             _runningApplicationActions.Remove(Guid);
         }
     }

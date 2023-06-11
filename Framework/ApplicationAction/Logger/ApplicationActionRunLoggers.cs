@@ -24,17 +24,24 @@
             _loggers[loggerType].Log(message);
         }
 
-        public void AddLogger<LoggerType>()
-            where LoggerType : ApplicationActionRunLoggerBase
+        public void AddLogger<LoggerType>(params object[] parameters)
+            where LoggerType : IApplicationActionRunLogger
         {
             Type loggerType = typeof(LoggerType);
-            AddLogger(loggerType);
+            AddLogger(loggerType, parameters);
         }
 
-        public void AddLogger(Type loggerType)
+        public void AddLogger(Type loggerType, params object[] parameters)
         {
-            if(loggerType.IsInstanceOfType(typeof(ApplicationActionRunLoggerBase)))
-                _loggers.Add(loggerType, Activator.CreateInstance(loggerType, new object[] { _runningActionGuid }) as ApplicationActionRunLoggerBase);
+            List<object> paramsToPass = new List<object>();
+
+            paramsToPass.Add(_runningActionGuid);
+
+            foreach (object parameter in parameters)
+                paramsToPass.Add(parameter);
+
+            if (typeof(IApplicationActionRunLogger).IsAssignableFrom(loggerType))
+                _loggers.Add(loggerType, Activator.CreateInstance(loggerType, paramsToPass.ToArray()) as IApplicationActionRunLogger);
         }
     }
 }

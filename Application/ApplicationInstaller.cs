@@ -1,6 +1,6 @@
 ﻿using Persistance;
+using Persistance.Entity;
 using PlatypusApplicationFramework;
-using PlatypusApplicationFramework.ApplicationAction;
 using PlatypusApplicationFramework.ApplicationAction.Configuration;
 using System.Reflection;
 using Utils;
@@ -27,7 +27,11 @@ namespace Application
         public void InstallApplication(string newGuid, string dllFilePath)
         {
             PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(dllFilePath);
-            _applicationRepository.SaveApplication(newGuid, dllFilePath);
+            _applicationRepository.SaveApplication(new ApplicationEntity()
+            {
+                Guid = newGuid,
+                DllFilePath = dllFilePath
+            });
 
             Type type = platypusApplication.GetType();
             MethodInfo[] methods = type.GetMethods();

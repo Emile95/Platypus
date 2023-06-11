@@ -35,9 +35,9 @@
             return Path.Combine(basePath, ACTIONRUNSDIRECTORYNAME);
         }
 
-        public static string GetActionRunDirectoryPath(string actionGuid, int buildNumber)
+        public static string GetActionRunLogFilePath(string actionGuid, int buildNumber)
         {
-            return Path.Combine(GetActionRunsDirectoryPath(actionGuid), buildNumber.ToString());
+            return Path.Combine(GetActionRunsDirectoryPath(actionGuid), buildNumber.ToString(), ACTIONLOGFILENAME);
         }
 
         public static string GetActionRunDirectoryPathByBasePath(string basePath, string actionGuid, int buildNumber)

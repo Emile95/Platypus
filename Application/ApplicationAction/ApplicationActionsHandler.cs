@@ -42,7 +42,7 @@ namespace Application.ApplicationAction
 
             string runningActionGUID = GuidGenerator.GenerateFromEnumerable(RunningApplicationActions.Keys);
 
-            RunningApplicationAction runningApplicationAction = new RunningApplicationAction(runningActionGUID, runNumber, _applicationActionRepository, action, runActionParameter, env, RunningApplicationActions);
+            RunningApplicationAction runningApplicationAction = new RunningApplicationAction(runActionParameter.Guid, runNumber, _applicationActionRepository, action, runActionParameter, env, RunningApplicationActions);
 
             RunningApplicationActions.Add(
                 runningActionGUID,

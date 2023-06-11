@@ -2,11 +2,11 @@
 {
     public abstract class ApplicationActionRunLoggerBase : IApplicationActionRunLogger
     {
-        protected string RunningActionGuid;
+        protected string ActionGuid;
 
-        public ApplicationActionRunLoggerBase(string runningActionGuid)
+        public ApplicationActionRunLoggerBase(string actionGuid)
         {
-            RunningActionGuid = runningActionGuid;
+            ActionGuid = actionGuid;
         }
 
         public abstract void Log(string message);

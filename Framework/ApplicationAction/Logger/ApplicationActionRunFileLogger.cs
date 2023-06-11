@@ -1,13 +1,20 @@
-﻿namespace PlatypusApplicationFramework.ApplicationAction.Logger
+﻿using Persistance;
+
+namespace PlatypusApplicationFramework.ApplicationAction.Logger
 {
     public class ApplicationActionRunFileLogger : ApplicationActionRunLoggerBase
     {
-        public ApplicationActionRunFileLogger(string runningActionGuid)
-            : base(runningActionGuid) {}
+        private readonly string _logFilePath;
+
+        public ApplicationActionRunFileLogger(string actionGuid, ApplicationActionRepository applicationActionRepository, int runNumber)
+            : base(actionGuid) 
+        {
+            _logFilePath = applicationActionRepository.GetRunActionLogFilePath(actionGuid, runNumber);
+        }
 
         public override void Log(string message)
         {
-            Console.WriteLine(message);
+            File.AppendAllText(_logFilePath, message + Environment.NewLine);
         }
     }
 }

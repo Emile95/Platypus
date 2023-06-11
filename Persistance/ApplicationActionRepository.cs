@@ -1,10 +1,10 @@
-﻿using PlatypusApplicationFramework.ApplicationAction;
+﻿using Persistance.Entity;
 
 namespace Persistance
 {
     public class ApplicationActionRepository
     {
-        public void SaveActionResult(ApplicationActionResult result)
+        public void SaveActionResult(ApplicationActionResultEntity result)
         {
 
         }
@@ -50,6 +50,11 @@ namespace Persistance
             int lastRunNumber = Convert.ToInt32(lastRunNumberStr);
             File.WriteAllText(actionLastRunNumberFilePath, (++lastRunNumber).ToString());
             return lastRunNumber;
+        }
+
+        public string GetRunActionLogFilePath(string actionGuid, int runNumber)
+        {
+            return ApplicationPaths.GetActionRunLogFilePath(actionGuid, runNumber);
         }
     }
 }
