@@ -1,4 +1,4 @@
-﻿namespace PlatypusApplicationFramework.Configuration
+﻿namespace PlatypusApplicationFramework.Configuration.Application
 {
     public abstract class ConfigurablePlatypusApplication<ConfigurationType> : PlatypusApplicationBase
         where ConfigurationType : class, new()

@@ -1,7 +1,7 @@
 ﻿using Application.ApplicationAction;
 using Persistance;
 using Persistance.Entity;
-using PlatypusApplicationFramework.Configuration;
+using PlatypusApplicationFramework.Configuration.Application;
 using Utils;
 using Utils.GuidGeneratorHelper;
 
@@ -37,7 +37,6 @@ namespace Application
                 PlatypusApplicationBase applicationBase = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(application.DllFilePath);
                 LoadApplication(applicationBase, application.Guid);
             }
-                
         }
 
         public void LoadApplication(PlatypusApplicationBase application, string applicationGuid)

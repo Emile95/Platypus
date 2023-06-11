@@ -1,5 +1,5 @@
 ﻿using Application.ApplicationAction;
-using PlatypusApplicationFramework.Configuration;
+using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 

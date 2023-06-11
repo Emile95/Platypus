@@ -3,6 +3,7 @@ using Application.Exceptions;
 using PlatypusAPI.ApplicationAction;
 using PlatypusApplicationFramework.ApplicationAction;
 using PlatypusApplicationFramework.Configuration;
+using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 
@@ -112,23 +113,23 @@ namespace Application.ApplicationAction
 
         private void ResolveActionParameterProperty(Dictionary<string, object> parameters, object resolvedParam, PropertyInfo propertyInfo)
         {
-            ActionParameterAttribute actionParameterAttribute = propertyInfo.GetCustomAttribute<ActionParameterAttribute>();
-            if (actionParameterAttribute == null) return;
+            ParameterEditorAttribute parameterEditorAttribute = propertyInfo.GetCustomAttribute<ParameterEditorAttribute>();
+            if (parameterEditorAttribute == null) return;
 
-            if (parameters.ContainsKey(actionParameterAttribute.Name))
+            if (parameters.ContainsKey(parameterEditorAttribute.Name))
             {
-                propertyInfo.SetValue(resolvedParam, parameters[actionParameterAttribute.Name]);
+                propertyInfo.SetValue(resolvedParam, parameters[parameterEditorAttribute.Name]);
                 return;
             }
 
-            if (actionParameterAttribute.DefaultValue != null)
+            if (parameterEditorAttribute.DefaultValue != null)
             {
-                propertyInfo.SetValue(resolvedParam, actionParameterAttribute.DefaultValue);
+                propertyInfo.SetValue(resolvedParam, parameterEditorAttribute.DefaultValue);
                 return;
             }
 
-            if (actionParameterAttribute.Required)
-                throw new ApplicationActionFieldRequired(actionParameterAttribute.Name);
+            if (parameterEditorAttribute.IsRequired)
+                throw new ApplicationActionFieldRequired(parameterEditorAttribute.Name);
         }
 
         public ApplicationActionEnvironmentBase CreateStartActionEnvironment()

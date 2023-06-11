@@ -1,40 +1,40 @@
-﻿using PlatypusApplicationFramework.Configuration.ApplicationAction;
+﻿using PlatypusApplicationFramework.Configuration;
 
 namespace Sandbox.ActionParameter
 {
     public class SomeActionParameter
     {
-        [ActionParameter(
+        [ParameterEditor(
             Name = "Text",
             DefaultValue = "Guacamole")]
         public string Text { get; set; }
 
-        [ActionParameter(
+        [ParameterEditor(
             Name = "Number",
-            Required = true)]
+            IsRequired = true)]
         public int Number { get; set; }
 
-        [ActionParameter(
+        [ParameterEditor(
             Name = "Double",
-            Required = true)]
+            IsRequired = true)]
         public double Double { get; set; }
 
-        [ActionParameter(
+        [ParameterEditor(
             Name = "Boolean",
-            Required = true)]
+            IsRequired = true)]
         public bool Boolean { get; set; }
     }
 
     public class Param2
     {
-        [ActionParameter(
+        [ParameterEditor(
             Name = "Text",
             DefaultValue = "Guacamole")]
         public string Text { get; set; }
 
-        [ActionParameter(
+        [ParameterEditor(
             Name = "Number",
-            Required = true)]
+            IsRequired = true)]
         public int Number { get; set; }
     }
 }
