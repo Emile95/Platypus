@@ -1,4 +1,4 @@
-﻿namespace Application.ApplicationAction
+﻿namespace PlatypusAPI.ApplicationAction
 {
     public enum ApplicationActionResultStatus
     {

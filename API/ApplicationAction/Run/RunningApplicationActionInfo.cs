@@ -1,4 +1,4 @@
-﻿namespace Application.ApplicationAction.Run
+﻿namespace PlatypusAPI.ApplicationAction.Run
 {
     public class RunningApplicationActionInfo
     {
