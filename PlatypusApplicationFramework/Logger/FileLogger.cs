@@ -1,8 +1,8 @@
 ﻿using Logging;
 
-namespace Core.Logger
+namespace PlatypusApplicationFramework.Logger.FileLogger
 {
-    public class FileLogger : ILogger
+    public abstract class FileLogger : LoggerBase
     {
         private readonly string _filePath;
 
@@ -11,7 +11,7 @@ namespace Core.Logger
             _filePath = filePath;
         }
 
-        public void Log(string line)
+        public override void Log(string line)
         {
             File.WriteAllText(_filePath, line);
         }
