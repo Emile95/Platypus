@@ -9,16 +9,16 @@ namespace Core.Application
 {
     public class ApplicationResolver
     {
-        private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly ApplicationRepository _applicationRepository;
+        private readonly ApplicationActionsHandler _applicationActionsHandler;
 
         public ApplicationResolver(
-            ApplicationActionsHandler applicationActionsHandler,
-            ApplicationRepository applicationRepository
+            ApplicationRepository applicationRepository,
+            ApplicationActionsHandler applicationActionsHandler
         )
         {
-            _applicationActionsHandler = applicationActionsHandler;
             _applicationRepository = applicationRepository;
+            _applicationActionsHandler = applicationActionsHandler;
         }
 
         public void ResolvePlatypusApplication(PlatypusApplicationBase platypusApplication, string applicationGuid)

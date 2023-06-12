@@ -15,20 +15,23 @@ namespace Core.Application
         public Dictionary<string, PlatypusApplicationBase> _applications { get; private set; }
 
         public ApplicationsHandler(
+            ApplicationRepository applicationRepository,
             ApplicationActionRepository applicationActionRepository,
             ApplicationActionsHandler applicationActionsHandler
         )
         {
-            _applicationRepository = new ApplicationRepository();
+            _applicationRepository = applicationRepository;
+
             _applicationResolver = new ApplicationResolver(
-                applicationActionsHandler,
-                _applicationRepository
+                _applicationRepository,
+                applicationActionsHandler
             );
+
             _applicationInstaller = new ApplicationInstaller(
                 _applicationRepository,
-                applicationActionRepository,
-                _applicationResolver
+                applicationActionRepository
              );
+
             _applications = new Dictionary<string, PlatypusApplicationBase>();
         }
 
@@ -52,7 +55,8 @@ namespace Core.Application
         public void InstallApplication(string dllFilePath)
         {
             string newGuid = GuidGenerator.GenerateFromEnumerable(_applications.Keys);
-            _applicationInstaller.InstallApplication(newGuid, dllFilePath);
+            PlatypusApplicationBase application = _applicationInstaller.InstallApplication(newGuid, dllFilePath);
+            LoadApplication(application, newGuid);
         }
     }
 }

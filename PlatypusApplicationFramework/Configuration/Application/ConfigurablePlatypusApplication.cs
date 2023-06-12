@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Persistance;
 using PlatypusApplicationFramework.Application;
 using PlatypusApplicationFramework.ApplicationAction;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
@@ -49,9 +48,8 @@ namespace PlatypusApplicationFramework.Configuration.Application
             if(ValidateConfiguration(env.Parameter))
                 Configuration = env.Parameter;
 
-            string configFilePath = Path.Combine(ApplicationDirectoryPath, ApplicationPaths.APPLICATIONCONFIGFILENAME);
             string jsonObject = JsonConvert.SerializeObject(Configuration);
-            File.WriteAllText(configFilePath, jsonObject);
+            env.ApplicationRepository.SaveApplicationConfigurationByBasePath(ApplicationDirectoryPath, jsonObject);
 
             OnConfigurationUpdate(previousConfig);
 

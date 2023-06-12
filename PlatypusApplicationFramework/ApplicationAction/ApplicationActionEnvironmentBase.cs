@@ -1,4 +1,5 @@
-﻿using PlatypusApplicationFramework.ApplicationAction.Logger;
+﻿using Persistance;
+using PlatypusApplicationFramework.ApplicationAction.Logger;
 
 namespace PlatypusApplicationFramework.ApplicationAction
 {
@@ -8,6 +9,6 @@ namespace PlatypusApplicationFramework.ApplicationAction
         public Action<string> AssertFailed { get; set; }
         public Action<string, Action> AssertCanceled { get; set; }
         public ApplicationActionRunLoggers ActionLoggers { get; set; }
-
+        public ApplicationRepository ApplicationRepository { get; set; }
     }
 }

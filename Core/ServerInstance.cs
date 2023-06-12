@@ -12,14 +12,21 @@ namespace Core
     {
         private readonly ApplicationsHandler _applicationsHandler;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
+        private readonly ApplicationRepository _applicationRepository;
 
         public ServerInstance()
         {
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
+            
 
-            _applicationActionsHandler = new ApplicationActionsHandler(applicationActionRepository);
+            _applicationActionsHandler = new ApplicationActionsHandler(
+                applicationActionRepository
+            );
+
+            _applicationRepository = new ApplicationRepository();
 
             _applicationsHandler = new ApplicationsHandler(
+                _applicationRepository,
                 applicationActionRepository,
                 _applicationActionsHandler
             );
@@ -49,6 +56,7 @@ namespace Core
                 };
 
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
+            env.ApplicationRepository = _applicationRepository;
 
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }

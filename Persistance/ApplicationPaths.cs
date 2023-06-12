@@ -26,6 +26,11 @@
             return Path.Combine(GetApplicationDirectoryPath(applicationGuid), APPLICATIONCONFIGFILENAME);
         }
 
+        public static string GetApplicationConfigFilePathByBasePath(string basePath)
+        {
+            return Path.Combine(basePath, APPLICATIONCONFIGFILENAME);
+        }
+
         public static string GetActionDirectoryPath(string actionGuid)
         {
             return Path.Combine(ACTIONSDIRECTORYPATH, actionGuid);

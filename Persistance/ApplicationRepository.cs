@@ -36,6 +36,12 @@ namespace Persistance
             File.WriteAllText(configFilePath, configuration); 
         }
 
+        public void SaveApplicationConfigurationByBasePath(string basePath, string configuration)
+        {
+            string configFilePath = ApplicationPaths.GetApplicationConfigFilePathByBasePath(basePath);
+            File.WriteAllText(configFilePath, configuration);
+        }
+
         public string GetConfigurationJsonObject(string applicationGuid)
         {
             string configFilePath = ApplicationPaths.GetApplicationConfigFilePath(applicationGuid);

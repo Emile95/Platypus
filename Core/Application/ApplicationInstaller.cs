@@ -12,20 +12,17 @@ namespace Core.Application
     {
         private readonly ApplicationRepository _applicationRepository;
         private readonly ApplicationActionRepository _applicationActionRepository;
-        private readonly ApplicationResolver _applicationResolver;
 
         public ApplicationInstaller(
             ApplicationRepository applicationRepository,
-            ApplicationActionRepository applicationActionRepository,
-            ApplicationResolver applicationResolver
+            ApplicationActionRepository applicationActionRepository
         )
         {
             _applicationRepository = applicationRepository;
             _applicationActionRepository = applicationActionRepository;
-            _applicationResolver = applicationResolver;
         }
 
-        public void InstallApplication(string newGuid, string dllFilePath)
+        public PlatypusApplicationBase InstallApplication(string newGuid, string dllFilePath)
         {
             PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(dllFilePath);
             _applicationRepository.SaveApplication(new ApplicationEntity()
@@ -46,7 +43,7 @@ namespace Core.Application
 
             platypusApplication.Install(env);
 
-            _applicationResolver.ResolvePlatypusApplication(platypusApplication, newGuid);
+            return platypusApplication;
         }
 
         private void InstallActions(string applicationGuid, MethodInfo methodInfo)
