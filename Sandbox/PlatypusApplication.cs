@@ -1,6 +1,5 @@
 ﻿using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using PlatypusApplicationFramework.ApplicationAction;
-using PlatypusApplicationFramework.ApplicationAction.Logger;
 using Sandbox.ActionParameter;
 using PlatypusApplicationFramework.Configuration.Application;
 
@@ -12,8 +11,7 @@ namespace Sandbox
             Name = "Some action")]
         public object SomeAction(ApplicationActionEnvironment<SomeActionParameter> env)
         {
-            env.ActionLoggers.Log<ApplicationActionRunFileLogger>("j'aime ca logger");
-            env.ActionLoggers.Log<ApplicationActionRunFileLogger>("oh que oui");
+            env.ActionLoggers.Log("orion");
 
             Console.WriteLine("phase 1");
             Task.Delay(5000).Wait();

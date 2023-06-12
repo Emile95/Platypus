@@ -1,9 +1,10 @@
-﻿using Persistance;
+﻿using Core.Logger;
+using Logging;
+using Persistance;
 using Persistance.Entity;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.ApplicationAction;
-using PlatypusApplicationFramework.ApplicationAction.Logger;
 
 namespace Core.ApplicationAction.Run
 {
@@ -11,7 +12,6 @@ namespace Core.ApplicationAction.Run
     {
         private readonly ApplicationActionRepository _applicationActionRepository;
         private readonly Dictionary<string, RunningApplicationAction> _runningApplicationActions;
-        private readonly ApplicationActionRunLoggers _loggers;
 
         public string Guid { get; set; }
         public int RunNumber { get; set; }
@@ -37,10 +37,7 @@ namespace Core.ApplicationAction.Run
             _runningApplicationActions = runningApplicationActions;
             Env = env;
 
-            _loggers = new ApplicationActionRunLoggers(Guid);
-            _loggers.AddLogger<ApplicationActionRunFileLogger>(_applicationActionRepository, RunNumber);
-
-            Env.ActionLoggers = _loggers;
+            SetLoggerManager();
 
             Task = new Task(() => RunAction(() => action.RunAction(Env, runActionParameter)));
             Task.Start();
@@ -76,6 +73,16 @@ namespace Core.ApplicationAction.Run
             }
             _applicationActionRepository.SaveActionResult(new ApplicationActionResultEntity());
             _runningApplicationActions.Remove(Guid);
+        }
+
+        private void SetLoggerManager()
+        {
+            LoggerManager loggerManager = new LoggerManager();
+
+            string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(Guid, RunNumber);
+            loggerManager.CreateLogger<FileLogger>(configFilePath);
+
+            Env.ActionLoggers = loggerManager;
         }
     }
 }
