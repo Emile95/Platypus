@@ -1,6 +1,6 @@
 ﻿using Logging;
 
-namespace PlatypusApplicationFramework.Logger.FileLogger
+namespace Common.Logger.FileLogger
 {
     public abstract class FileLogger : LoggerBase
     {

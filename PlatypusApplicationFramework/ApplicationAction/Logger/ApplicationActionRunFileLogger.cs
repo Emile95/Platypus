@@ -1,5 +1,5 @@
 ﻿using Logging;
-using PlatypusApplicationFramework.Logger.FileLogger;
+using Common.Logger.FileLogger;
 
 namespace PlatypusApplicationFramework.ApplicationAction.Logger
 {
