@@ -13,6 +13,7 @@ namespace Core.ApplicationAction.Run
         private readonly ApplicationActionRepository _applicationActionRepository;
         private readonly Dictionary<string, RunningApplicationAction> _runningApplicationActions;
 
+        public string ActionGuid { get; set; }
         public string Guid { get; set; }
         public int RunNumber { get; set; }
         public Task Task { get; private set; }
@@ -21,6 +22,7 @@ namespace Core.ApplicationAction.Run
         public ApplicationActionResult Result { get; private set; }
 
         public RunningApplicationAction(
+            string actionGuid,
             string guid,
             int runNumber,
             ApplicationActionRepository applicationActionRepository, 
@@ -30,6 +32,7 @@ namespace Core.ApplicationAction.Run
             Dictionary<string, RunningApplicationAction> runningApplicationActions
         )
         {
+            ActionGuid = actionGuid;
             Guid = guid;
             RunNumber = runNumber;
             Env = env;
@@ -71,13 +74,22 @@ namespace Core.ApplicationAction.Run
                     Status = RunningApplicationActionStatus.Aborted;
                     break;
             }
-            _applicationActionRepository.SaveActionResult(new ApplicationActionResultEntity());
+
+            _applicationActionRepository.SaveActionRunResult(
+                ActionGuid,
+                RunNumber,
+                new ApplicationActionResultEntity()
+                {
+                    Status = Result.Status.ToString(),
+                    Message = Result.Message
+                }
+             );
             _runningApplicationActions.Remove(Guid);
         }
 
         private void SetLoggerManager()
         {
-            string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(Guid, RunNumber);
+            string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(ActionGuid, RunNumber);
             Env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
         }
     }

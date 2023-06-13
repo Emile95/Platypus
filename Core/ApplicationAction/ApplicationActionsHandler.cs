@@ -49,7 +49,7 @@ namespace Core.ApplicationAction
             string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, runNumber);
             env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
 
-            RunningApplicationAction runningApplicationAction = new RunningApplicationAction(runActionParameter.Guid, runNumber, _applicationActionRepository, action, runActionParameter, env, RunningApplicationActions);
+            RunningApplicationAction runningApplicationAction = new RunningApplicationAction(runActionParameter.Guid, runningActionGUID, runNumber, _applicationActionRepository, action, runActionParameter, env, RunningApplicationActions);
 
             RunningApplicationActions.Add(
                 runningActionGUID,

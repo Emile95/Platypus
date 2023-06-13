@@ -1,12 +1,16 @@
-﻿using Persistance.Entity;
+﻿using Newtonsoft.Json;
+using Persistance.Entity;
 
 namespace Persistance
 {
     public class ApplicationActionRepository
     {
-        public void SaveActionResult(ApplicationActionResultEntity result)
+        public void SaveActionRunResult(string actionGuid, int runNumber, ApplicationActionResultEntity result)
         {
-
+            string actionRunDirectoryPath = Path.Combine(ApplicationPaths.GetActionRunsDirectoryPath(actionGuid), runNumber.ToString());
+            string resultFilePath = Path.Combine(actionRunDirectoryPath, "result.json");
+            File.WriteAllText(resultFilePath, JsonConvert.SerializeObject(result));
+            
         }
 
         public void SaveAction(string actionGuid)
