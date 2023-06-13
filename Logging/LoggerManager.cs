@@ -110,7 +110,11 @@
             foreach (object parameter in parameters)
                 paramsToPass.Add(parameter);
 
-            LoggerBase logger = Activator.CreateInstance(loggerType, paramsToPass.ToArray()) as LoggerBase;
+            LoggerBase logger;
+            if (parameters.Length == 0)
+                logger = Activator.CreateInstance(loggerType) as LoggerBase;
+            else
+                logger = Activator.CreateInstance(loggerType, paramsToPass.ToArray()) as LoggerBase;
 
             if (logger == null) return;
 

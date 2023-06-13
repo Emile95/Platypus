@@ -2,8 +2,6 @@
 {
     public abstract class LoggerBase
     {
-        public string LineFormat { get; set; }
-
         public abstract void Log(string line);
 
         public abstract void Log(LoggingLevel level, string line);

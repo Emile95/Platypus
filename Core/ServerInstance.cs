@@ -1,6 +1,8 @@
-﻿using Core.Application;
+﻿using Common.Logger;
+using Core.Application;
 using Core.ApplicationAction;
 using Core.ApplicationAction.Run;
+using Logging;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
@@ -18,7 +20,6 @@ namespace Core
         {
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
             
-
             _applicationActionsHandler = new ApplicationActionsHandler(
                 applicationActionRepository
             );
@@ -57,6 +58,8 @@ namespace Core
 
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
             env.ApplicationRepository = _applicationRepository;
+            env.ActionLoggers = new LoggerManager();
+            env.ActionLoggers.CreateLogger<ConsoleLogger>();
 
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }

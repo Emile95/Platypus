@@ -1,8 +1,10 @@
 ﻿using Core.ApplicationAction.Run;
+using Logging;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.ApplicationAction;
+using PlatypusApplicationFramework.ApplicationAction.Logger;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
@@ -43,6 +45,9 @@ namespace Core.ApplicationAction
             ApplicationAction action = ApplicationActions[runActionParameter.Guid];
 
             string runningActionGUID = GuidGenerator.GenerateFromEnumerable(RunningApplicationActions.Keys);
+
+            string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, runNumber);
+            env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
 
             RunningApplicationAction runningApplicationAction = new RunningApplicationAction(runActionParameter.Guid, runNumber, _applicationActionRepository, action, runActionParameter, env, RunningApplicationActions);
 

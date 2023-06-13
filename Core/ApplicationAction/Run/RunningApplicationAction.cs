@@ -77,12 +77,8 @@ namespace Core.ApplicationAction.Run
 
         private void SetLoggerManager()
         {
-            LoggerManager loggerManager = new LoggerManager();
-
             string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(Guid, RunNumber);
-            loggerManager.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
-
-            Env.ActionLoggers = loggerManager;
+            Env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
         }
     }
 }
