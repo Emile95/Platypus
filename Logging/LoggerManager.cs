@@ -2,23 +2,23 @@
 {
     public class LoggerManager
     {
-        protected readonly Dictionary<Type, LoggerBase> _loggersWithoutSensivity;
-        protected readonly Dictionary<Type, LoggerBase> _loggerWithSensivity;
+        protected readonly Dictionary<Type, List<LoggerBase>> _loggersWithoutSensivity;
+        protected readonly Dictionary<Type, List<LoggerBase>> _loggerWithSensivity;
 
         public LoggerManager()
         {
-            _loggersWithoutSensivity = new Dictionary<Type, LoggerBase>();
-            _loggerWithSensivity = new Dictionary<Type, LoggerBase>();
+            _loggersWithoutSensivity = new Dictionary<Type, List<LoggerBase>>();
+            _loggerWithSensivity = new Dictionary<Type, List<LoggerBase>>();
         }
 
-        public LoggerType GetLogger<LoggerType>()
+        public List<LoggerBase> GetLoggers<LoggerType>()
             where LoggerType : LoggerBase
         {
             Type type = typeof(LoggerType);
-            return (LoggerType)GetLogger(type);
+            return GetLoggers(type);
         }
 
-        public LoggerBase GetLogger(Type type)
+        public List<LoggerBase> GetLoggers(Type type)
         {
 
             if(_loggersWithoutSensivity.ContainsKey(type))
@@ -37,17 +37,21 @@
             ConsumeLoggerByLogLevel(level, (logger) => fittingLoggers.Add(logger));
 
             if (includeUnsensivitiveLoggers)
-                fittingLoggers.AddRange(_loggersWithoutSensivity.Values);
+                foreach(List<LoggerBase> loggerWithoutSensivityList in _loggersWithoutSensivity.Values)
+                    fittingLoggers.AddRange(loggerWithoutSensivityList);
 
             return fittingLoggers;
         }
 
         public void Log(string line)
         {
-            foreach(LoggerBase logger in _loggersWithoutSensivity.Values)
-                logger.Log(line);
-            foreach (LoggerBase logger in _loggerWithSensivity.Values)
-                logger.Log(line);
+            foreach(List<LoggerBase> loggers in _loggersWithoutSensivity.Values)
+                foreach(LoggerBase logger in loggers)
+                    logger.Log(line);
+
+            foreach (List<LoggerBase> loggers in _loggerWithSensivity.Values)
+                foreach (LoggerBase logger in loggers)
+                    logger.Log(line);
         }
 
         public void Log(LoggingLevel level, string line, bool includeUnsensivitiveLoggers = true)
@@ -56,24 +60,26 @@
 
             if (includeUnsensivitiveLoggers)
             {
-                foreach (LoggerBase logger in _loggersWithoutSensivity.Values)
-                    logger.Log(line);
+                foreach(List<LoggerBase> loggers in _loggersWithoutSensivity.Values)
+                    foreach (LoggerBase logger in loggers)
+                        logger.Log(line);
             }
         }
 
         public void Log<LoggerType>(string line)
             where LoggerType : LoggerBase
         {
-            LoggerType logger = GetLogger<LoggerType>();
-            if(logger != null)
-                logger.Log(line);
+            Log(typeof(LoggerType), line);
         }
 
         public void Log(Type type, string line)
         {
-            LoggerBase logger = GetLogger(type);
-            if (logger != null)
-                logger.Log(line);
+            List<LoggerBase> loggers = GetLoggers(type);
+            if (loggers != null)
+            {
+                foreach(LoggerBase logger in loggers)
+                    logger.Log(line);
+            }
         }
 
         public void AddLogger(LoggerBase logger)
@@ -95,11 +101,14 @@
 
         private void ConsumeLoggerByLogLevel(LoggingLevel level, Action<LoggerBase> consumer)
         {
-            foreach (LoggerBase logger in _loggerWithSensivity.Values)
+            foreach (List<LoggerBase> loggers in _loggerWithSensivity.Values)
             {
-                ILoggingSensivity loggingSensivity = logger as ILoggingSensivity;
-                if (loggingSensivity.MinimumLoggingLevel <= level && loggingSensivity.MaximumLoggingLevel >= level)
-                    consumer.Invoke(logger);
+                foreach(LoggerBase logger in loggers)
+                {
+                    ILoggingSensivity loggingSensivity = logger as ILoggingSensivity;
+                    if (loggingSensivity.MinimumLoggingLevel <= level && loggingSensivity.MaximumLoggingLevel >= level)
+                        consumer.Invoke(logger);
+                }
             }
         }
 
@@ -126,19 +135,19 @@
 
         private void AddLoggerWithTypeObject(LoggerBase logger, Type type)
         {
-            if (_loggersWithoutSensivity.ContainsKey(type))
-                return;
-            if (_loggerWithSensivity.ContainsKey(type))
-                return;
+            if (_loggersWithoutSensivity.ContainsKey(type) == false)
+                _loggersWithoutSensivity.Add(type, new List<LoggerBase>());
+            else if (_loggerWithSensivity.ContainsKey(type) == false)
+                _loggerWithSensivity.Add(type, new List<LoggerBase>());
 
             if (typeof(LoggerBase).IsAssignableFrom(type))
             {
                 if (typeof(ILoggingSensivity).IsAssignableFrom(type))
                 {
-                    _loggerWithSensivity.Add(type, logger);
+                    _loggerWithSensivity[type].Add(logger);
                     return;
                 }
-                _loggersWithoutSensivity.Add(type, logger);
+                _loggersWithoutSensivity[type].Add(logger);
             }
         }
     }
