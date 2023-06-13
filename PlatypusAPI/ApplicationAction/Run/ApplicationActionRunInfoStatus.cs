@@ -1,6 +1,6 @@
 ﻿namespace PlatypusAPI.ApplicationAction.Run
 {
-    public enum RunningApplicationActionStatus
+    public enum ApplicationActionRunInfoStatus
     {
         Running,
         Finish,

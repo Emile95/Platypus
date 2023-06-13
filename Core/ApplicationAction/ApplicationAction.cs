@@ -33,7 +33,7 @@ namespace Core.ApplicationAction
             _action = (env) => BuildAction(application, env, methodInfo);
         }
 
-        public ApplicationActionResult RunAction(ApplicationActionEnvironmentBase env, RunActionParameter runActionParameter)
+        public ApplicationActionResult RunAction(ApplicationActionEnvironmentBase env, ApplicationActionRunParameter runActionParameter)
         {
             if (ParameterType != null)
             {

@@ -48,7 +48,7 @@ namespace Core
             _applicationsHandler.InstallApplication(dllFilePath);
         }
 
-        public ApplicationActionResult RunAction(RunActionParameter runActionParameter)
+        public ApplicationActionResult RunAction(ApplicationActionRunParameter runActionParameter)
         {
             if (_applicationActionsHandler.ApplicationActions.ContainsKey(runActionParameter.Guid) == false)
                 return new ApplicationActionResult() { 
@@ -69,7 +69,7 @@ namespace Core
             _applicationActionsHandler.CancelRunningAction(guid);
         }
 
-        public IEnumerable<RunningApplicationActionInfo> GetRunningApplicationActions()
+        public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions()
         {
             return _applicationActionsHandler.GetRunningApplicationActionInfos();
         }

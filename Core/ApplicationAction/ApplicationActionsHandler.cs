@@ -1,5 +1,4 @@
 ﻿using Core.ApplicationAction.Run;
-using Logging;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
@@ -15,7 +14,7 @@ namespace Core.ApplicationAction
     public class ApplicationActionsHandler
     {
         public Dictionary<string, ApplicationAction> ApplicationActions { get; private set; }
-        public Dictionary<string, RunningApplicationAction> RunningApplicationActions { get; private set; }
+        public Dictionary<string, ApplicationActionRun> ApplicationActionRuns { get; private set; }
 
         private readonly ApplicationActionRepository _applicationActionRepository;
 
@@ -25,7 +24,7 @@ namespace Core.ApplicationAction
         {
             ApplicationActions = new Dictionary<string, ApplicationAction>();
             _applicationActionRepository = applicationActionRepository;
-            RunningApplicationActions = new Dictionary<string, RunningApplicationAction>();
+            ApplicationActionRuns = new Dictionary<string, ApplicationActionRun>();
         }
 
         public void AddAction(PlatypusApplicationBase application, string applicationGuid, ActionDefinitionAttribute actionDefinition, MethodInfo methodInfo)
@@ -36,7 +35,7 @@ namespace Core.ApplicationAction
             ApplicationActions.Add(actionGuid, applicationAction);
         }
 
-        public ApplicationActionResult RunAction(RunActionParameter runActionParameter, ApplicationActionEnvironmentBase env)
+        public ApplicationActionResult RunAction(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
         {
             string actionRunsFilePath = ApplicationPaths.GetActionRunsDirectoryPath(runActionParameter.Guid);
             int runNumber = _applicationActionRepository.GetAndIncrementActionRunNumberByBasePath(actionRunsFilePath);
@@ -44,39 +43,46 @@ namespace Core.ApplicationAction
 
             ApplicationAction action = ApplicationActions[runActionParameter.Guid];
 
-            string runningActionGUID = GuidGenerator.GenerateFromEnumerable(RunningApplicationActions.Keys);
+            string applicationActionRunGUID = GuidGenerator.GenerateFromEnumerable(ApplicationActionRuns.Keys);
 
             string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, runNumber);
             env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
 
-            RunningApplicationAction runningApplicationAction = new RunningApplicationAction(runActionParameter.Guid, runningActionGUID, runNumber, _applicationActionRepository, action, runActionParameter, env, RunningApplicationActions);
+            ApplicationActionRun applicationActionRun = new ApplicationActionRun(_applicationActionRepository, ApplicationActionRuns);
 
-            RunningApplicationActions.Add(
-                runningActionGUID,
-                runningApplicationAction
+            applicationActionRun.ActionGuid = runActionParameter.Guid;
+            applicationActionRun.Guid = applicationActionRunGUID;
+            applicationActionRun.RunNumber = runNumber;
+            applicationActionRun.Env = env;
+
+            ApplicationActionRuns.Add(
+                applicationActionRunGUID,
+                applicationActionRun
             );
 
-            if(runActionParameter.Async)
+            applicationActionRun.StartRun(action, runActionParameter);
+
+            if (runActionParameter.Async)
                 return new ApplicationActionResult() { 
                     Message = $"new action has been started",
                     Status = ApplicationActionResultStatus.Started 
                 };
 
-            runningApplicationAction.Task.Wait();
+            applicationActionRun.Task.Wait();
 
-            return runningApplicationAction.Result;
+            return applicationActionRun.Result;
         }
 
         public void CancelRunningAction(string guid)
         {
-            if (RunningApplicationActions.ContainsKey(guid) == false)
+            if (ApplicationActionRuns.ContainsKey(guid) == false)
                 return;
-            RunningApplicationActions[guid].Cancel();
+            ApplicationActionRuns[guid].Cancel();
         }
 
-        public IEnumerable<RunningApplicationActionInfo> GetRunningApplicationActionInfos()
+        public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActionInfos()
         {
-            return RunningApplicationActions.Values.Select(x => x.GetInfo());
+            return ApplicationActionRuns.Values.Select(x => x.GetInfo());
                 
         }
 

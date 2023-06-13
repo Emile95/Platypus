@@ -24,7 +24,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.MapPost(@"/action", ([FromBody]RunActionParameter runActionParameter) => 
+app.MapPost(@"/action", ([FromBody]ApplicationActionRunParameter runActionParameter) => 
 {
     runActionParameter.ActionParameters = JsonHelper.GetDictObjectFromJsonElementsDict(runActionParameter.ActionParameters);
     return serverInstance.RunAction(runActionParameter);

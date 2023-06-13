@@ -1,9 +1,9 @@
 ﻿namespace PlatypusAPI.ApplicationAction.Run
 {
-    public class RunningApplicationActionInfo
+    public class ApplicationActionRunInfo
     {
         public string Guid { get; set; }
-        public RunningApplicationActionStatus Status { get; set; }
+        public ApplicationActionRunInfoStatus Status { get; set; }
         public int RunNumber { get; set; }
     }
 }

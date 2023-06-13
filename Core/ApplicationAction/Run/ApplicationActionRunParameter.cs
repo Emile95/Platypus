@@ -1,6 +1,6 @@
 ﻿namespace Core.ApplicationAction.Run
 {
-    public class RunActionParameter
+    public class ApplicationActionRunParameter
     {
         public string Guid { get; set; }
         public Dictionary<string, object> ActionParameters { get; set; }
