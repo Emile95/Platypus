@@ -1,4 +1,4 @@
-﻿using PlatypusApplicationFramework.Application;
+﻿using PlatypusApplicationFramework.Core.Application;
 
 namespace PlatypusApplicationFramework.Configuration.Application
 {

@@ -2,8 +2,8 @@
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
-using PlatypusApplicationFramework.ApplicationAction;
-using PlatypusApplicationFramework.ApplicationAction.Logger;
+using PlatypusApplicationFramework.Core.ApplicationAction;
+using PlatypusApplicationFramework.Core.ApplicationAction.Logger;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;

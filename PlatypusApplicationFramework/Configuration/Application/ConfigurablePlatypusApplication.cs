@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using PlatypusApplicationFramework.Application;
-using PlatypusApplicationFramework.ApplicationAction;
+using PlatypusApplicationFramework.Core.Application;
+using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 

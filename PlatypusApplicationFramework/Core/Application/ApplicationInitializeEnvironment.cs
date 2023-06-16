@@ -1,6 +1,6 @@
 ﻿using Persistance;
 
-namespace PlatypusApplicationFramework.Application
+namespace PlatypusApplicationFramework.Core.Application
 {
     public class ApplicationInitializeEnvironment
     {

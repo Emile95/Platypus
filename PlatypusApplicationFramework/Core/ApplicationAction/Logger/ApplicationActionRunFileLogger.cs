@@ -1,7 +1,7 @@
 ﻿using Logging;
 using Common.Logger.FileLogger;
 
-namespace PlatypusApplicationFramework.ApplicationAction.Logger
+namespace PlatypusApplicationFramework.Core.ApplicationAction.Logger
 {
     public class ApplicationActionRunFileLogger : FileLogger
     {

@@ -1,7 +1,7 @@
 ﻿using Logging;
 using Persistance;
 
-namespace PlatypusApplicationFramework.ApplicationAction
+namespace PlatypusApplicationFramework.Core.ApplicationAction
 {
     public class ApplicationActionEnvironmentBase
     {

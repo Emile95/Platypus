@@ -6,7 +6,7 @@ using Logging;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
-using PlatypusApplicationFramework.ApplicationAction;
+using PlatypusApplicationFramework.Core.ApplicationAction;
 
 namespace Core
 {
@@ -15,6 +15,7 @@ namespace Core
         private readonly ApplicationsHandler _applicationsHandler;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly ApplicationRepository _applicationRepository;
+        private readonly LoggerManager _loggerManager;
 
         public ServerInstance()
         {
@@ -31,6 +32,9 @@ namespace Core
                 applicationActionRepository,
                 _applicationActionsHandler
             );
+
+            _loggerManager = new LoggerManager();
+            _loggerManager.CreateLogger<PlatypusServerConsoleLogger>();
         }
 
         public void LoadConfiguration()
@@ -59,7 +63,6 @@ namespace Core
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
             env.ApplicationRepository = _applicationRepository;
             env.ActionLoggers = new LoggerManager();
-            env.ActionLoggers.CreateLogger<ConsoleLogger>();
 
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }

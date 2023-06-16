@@ -2,8 +2,11 @@
 
 namespace Common.Logger
 {
-    public class ConsoleLogger : LoggerBase
+    public class PlatypusServerConsoleLogger : LoggerBase, ILoggingSensivity
     {
+        public LoggingLevel MinimumLoggingLevel { get; set; }
+        public LoggingLevel MaximumLoggingLevel { get; set; }
+
         public override void Log(string line)
         {
             Console.WriteLine(line);

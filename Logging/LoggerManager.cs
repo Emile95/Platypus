@@ -135,18 +135,20 @@
 
         private void AddLoggerWithTypeObject(LoggerBase logger, Type type)
         {
-            if (_loggersWithoutSensivity.ContainsKey(type) == false)
-                _loggersWithoutSensivity.Add(type, new List<LoggerBase>());
-            else if (_loggerWithSensivity.ContainsKey(type) == false)
-                _loggerWithSensivity.Add(type, new List<LoggerBase>());
-
             if (typeof(LoggerBase).IsAssignableFrom(type))
             {
                 if (typeof(ILoggingSensivity).IsAssignableFrom(type))
                 {
+                     if (_loggerWithSensivity.ContainsKey(type) == false)
+                        _loggerWithSensivity.Add(type, new List<LoggerBase>());
+
                     _loggerWithSensivity[type].Add(logger);
                     return;
                 }
+
+                if (_loggersWithoutSensivity.ContainsKey(type) == false)
+                    _loggersWithoutSensivity.Add(type, new List<LoggerBase>());
+
                 _loggersWithoutSensivity[type].Add(logger);
             }
         }

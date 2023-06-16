@@ -1,4 +1,4 @@
-﻿namespace PlatypusApplicationFramework.ApplicationAction
+﻿namespace PlatypusApplicationFramework.Core.ApplicationAction
 {
     public class ApplicationActionEnvironment<ParameterType> : ApplicationActionEnvironmentBase
     {

@@ -1,6 +1,6 @@
 ﻿using Persistance;
 using Persistance.Entity;
-using PlatypusApplicationFramework.Application;
+using PlatypusApplicationFramework.Core.Application;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
