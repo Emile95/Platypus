@@ -1,4 +1,4 @@
-﻿namespace PlatypusApplicationFramework.Configuration.Event
+﻿namespace PlatypusApplicationFramework.Core.Event
 {
     public enum EventHandlerType
     {

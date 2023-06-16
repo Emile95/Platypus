@@ -1,4 +1,6 @@
-﻿namespace PlatypusApplicationFramework.Configuration.Event
+﻿using PlatypusApplicationFramework.Core.Event;
+
+namespace PlatypusApplicationFramework.Configuration.Event
 {
     public class EventHandlerAttribute : Attribute
     {
