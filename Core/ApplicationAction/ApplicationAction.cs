@@ -1,27 +1,30 @@
 ﻿using Core.ApplicationAction.Run;
 using Core.Exceptions;
-using PlatypusAPI.ApplicationAction;
+using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Configuration;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
+using PlatypusAPI.ApplicationAction;
 
 namespace Core.ApplicationAction
 {
     public class ApplicationAction
     {
-        private readonly Func<ApplicationActionEnvironmentBase, ApplicationActionResult> _action;
+        private readonly Func<ApplicationActionEnvironmentBase, ApplicationActionRunResult> _action;
 
+        public string Guid { get; private set; }
         public string Name { get; private set; }
         public Type EnvironmentParameterType { get; private set; }
         public Type ParameterType { get; private set; }
         public bool ParameterRequired { get; private set; }
 
-        public ApplicationAction(PlatypusApplicationBase application, ActionDefinitionAttribute actionDefinitionAttribute, MethodInfo methodInfo)
+        public ApplicationAction(PlatypusApplicationBase application, ActionDefinitionAttribute actionDefinitionAttribute, MethodInfo methodInfo, string guid)
         {
             ParameterInfo parameterInfos = methodInfo.GetParameters()[0];
 
+            Guid = guid;
             Name = actionDefinitionAttribute.Name;
             EnvironmentParameterType = parameterInfos.ParameterType;
 
@@ -33,7 +36,7 @@ namespace Core.ApplicationAction
             _action = (env) => BuildAction(application, env, methodInfo);
         }
 
-        public ApplicationActionResult RunAction(ApplicationActionEnvironmentBase env, ApplicationActionRunParameter runActionParameter)
+        public ApplicationActionRunResult RunAction(ApplicationActionEnvironmentBase env, ApplicationActionRunParameter runActionParameter)
         {
             if (ParameterType != null)
             {
@@ -48,10 +51,10 @@ namespace Core.ApplicationAction
                         ResolveActionParameter(env, runActionParameter.ActionParameters);
                     } catch(ApplicationActionFieldRequired exception)
                     {
-                        return new ApplicationActionResult()
+                        return new ApplicationActionRunResult()
                         {
                             Message = exception.Message,
-                            Status = ApplicationActionResultStatus.Failed
+                            Status = ApplicationActionRunResultStatus.Failed
                         };
                     }
                 }
@@ -60,7 +63,16 @@ namespace Core.ApplicationAction
             return _action.Invoke(env);
         }
 
-        private ApplicationActionResult BuildAction(PlatypusApplicationBase application, ApplicationActionEnvironmentBase env, MethodInfo methodInfo)
+        public ApplicationActionInfo GetInfo()
+        {
+            return new ApplicationActionInfo()
+            {
+                Name = this.Name,
+                Guid = this.Guid
+            };
+        }
+
+        private ApplicationActionRunResult BuildAction(PlatypusApplicationBase application, ApplicationActionEnvironmentBase env, MethodInfo methodInfo)
         {
             try
             {
@@ -75,9 +87,9 @@ namespace Core.ApplicationAction
                 };
 
                 object objectResult = methodInfo.Invoke(application, new object[] { env });
-                return new ApplicationActionResult()
+                return new ApplicationActionRunResult()
                 {
-                    Status = ApplicationActionResultStatus.Success,
+                    Status = ApplicationActionRunResultStatus.Success,
                     Message = "Application run successfully",
                     ResultObject = objectResult
                 }; ;
@@ -85,7 +97,7 @@ namespace Core.ApplicationAction
             catch (TargetInvocationException ex)
             {
                 string message = "";
-                ApplicationActionResultStatus status = ApplicationActionResultStatus.Failed;
+                ApplicationActionRunResultStatus status = ApplicationActionRunResultStatus.Failed;
                 if (ex.InnerException is ApplicationActionRunFailedException)
                 {
                     ApplicationActionRunFailedException exception = (ApplicationActionRunFailedException)ex.InnerException;
@@ -94,23 +106,23 @@ namespace Core.ApplicationAction
                 else if (ex.InnerException is ApplicationActionCanceledException)
                 {
                     ApplicationActionCanceledException exception = (ApplicationActionCanceledException)ex.InnerException;
-                    status = ApplicationActionResultStatus.Canceled;
+                    status = ApplicationActionRunResultStatus.Canceled;
                     message = exception.CancelMessage;
                 }
                 else
                 {
                     message = ex.InnerException.Message;
                 }
-                return new ApplicationActionResult()
+                return new ApplicationActionRunResult()
                 {
                     Status = status,
                     Message = message
                 };
             } catch (Exception ex)
             {
-                return new ApplicationActionResult()
+                return new ApplicationActionRunResult()
                 {
-                    Status = ApplicationActionResultStatus.Failed,
+                    Status = ApplicationActionRunResultStatus.Failed,
                     Message = ex.Message
                 };
             }

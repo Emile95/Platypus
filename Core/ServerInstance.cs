@@ -64,12 +64,12 @@ namespace Core
             _applicationsHandler.InstallApplication(dllFilePath);
         }
 
-        public ApplicationActionResult RunAction(ApplicationActionRunParameter runActionParameter)
+        public ApplicationActionRunResult RunAction(ApplicationActionRunParameter runActionParameter)
         {
             if (_applicationActionsHandler.HasActionWithGuid(runActionParameter.Guid) == false)
-                return new ApplicationActionResult() { 
+                return new ApplicationActionRunResult() { 
                     Message = $"action with guid {runActionParameter.Guid} non existant",
-                    Status = ApplicationActionResultStatus.Failed,
+                    Status = ApplicationActionRunResultStatus.Failed,
                 };
             
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);

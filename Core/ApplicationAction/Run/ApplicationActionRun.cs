@@ -11,10 +11,10 @@ namespace Core.ApplicationAction.Run
         public int RunNumber { get; set; }
         public ApplicationActionEnvironmentBase Env { get; set; }
         public ApplicationActionRunInfoStatus Status { get; private set; }
-        public ApplicationActionResult Result { get; private set; }
+        public ApplicationActionRunResult Result { get; private set; }
         public Task Task { get; private set; }
 
-        public void StartRun(ApplicationAction action, ApplicationActionRunParameter parameter, Action<string> runCallBack)
+        public void StartRun(ApplicationAction action, ApplicationActionRunParameter parameter, Action runCallBack)
         {
             Status = ApplicationActionRunInfoStatus.Running;
             Task = new Task(() => RunAction(() => action.RunAction(Env, parameter), runCallBack));
@@ -36,20 +36,20 @@ namespace Core.ApplicationAction.Run
             Env.ActionCancelled = true;
         }
 
-        private void RunAction(Func<ApplicationActionResult> action, Action<string> runCallBack)
+        private void RunAction(Func<ApplicationActionRunResult> action, Action runCallBack)
         {
             Result = action();
             switch(Result.Status)
             {
-                case ApplicationActionResultStatus.Success:
+                case ApplicationActionRunResultStatus.Success:
                     Status = ApplicationActionRunInfoStatus.Finish;
                     break;
-                case ApplicationActionResultStatus.Failed:
-                case ApplicationActionResultStatus.Canceled:
+                case ApplicationActionRunResultStatus.Failed:
+                case ApplicationActionRunResultStatus.Canceled:
                     Status = ApplicationActionRunInfoStatus.Aborted;
                     break;
             }
-            runCallBack(Guid);
+            runCallBack();
         }
     }
 }
