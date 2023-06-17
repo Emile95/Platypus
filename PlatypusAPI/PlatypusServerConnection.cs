@@ -7,7 +7,7 @@ namespace PlatypusAPI
     {
         private BaseSocketHandler<ServerReceivedState> _socketHandler;
 
-        public PlatypusServerApplication Connect(string protocol = "tcp", string host = "localhost", int port = 2000)
+        public PlatypusServerApplication Connect(string protocol = "tcp", string host = null, int port = 2000)
         {
             switch(protocol)
             {
@@ -17,7 +17,7 @@ namespace PlatypusAPI
             }
             if (_socketHandler == null) return null;
 
-            _socketHandler.Initialize(port, host);
+            _socketHandler.Initialize(port);
 
             return new PlatypusServerApplication(_socketHandler);
         }
