@@ -5,7 +5,6 @@ using Core.ApplicationAction.Run;
 using Core.Event;
 using Logging;
 using Persistance;
-using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 
@@ -66,11 +65,17 @@ namespace Core
 
         public ApplicationActionRunResult RunAction(ApplicationActionRunParameter runActionParameter)
         {
+            
             if (_applicationActionsHandler.HasActionWithGuid(runActionParameter.Guid) == false)
-                return new ApplicationActionRunResult() { 
-                    Message = $"action with guid {runActionParameter.Guid} non existant",
+            {
+                string message = String.Format(Strings.ResourceManager.GetString("ApplicationActionNotFound"), runActionParameter.Guid);
+                return new ApplicationActionRunResult()
+                {
+                    Message = message,
                     Status = ApplicationActionRunResultStatus.Failed,
                 };
+            }
+                
             
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
             env.ApplicationRepository = _applicationRepository;

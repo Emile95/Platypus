@@ -1,5 +1,4 @@
-﻿using PlatypusAPI.ApplicationAction;
-using PlatypusAPI.ApplicationAction.Run;
+﻿using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 
 namespace Core.ApplicationAction.Run

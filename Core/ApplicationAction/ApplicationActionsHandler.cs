@@ -63,11 +63,15 @@ namespace Core.ApplicationAction
             });
 
             if (runActionParameter.Async)
-                return new ApplicationActionRunResult() { 
-                    Message = $"new action has been started",
-                    Status = ApplicationActionRunResultStatus.Started 
+            {
+                string message = Strings.ResourceManager.GetString("NewApplicationActionStarted");
+                return new ApplicationActionRunResult()
+                {
+                    Message = message,
+                    Status = ApplicationActionRunResultStatus.Started
                 };
-
+            }
+                
             applicationActionRun.Task.Wait();
 
             return applicationActionRun.Result;
