@@ -42,7 +42,6 @@ namespace Core
             _applicationsHandler = new ApplicationsHandler(
                 _applicationRepository,
                 applicationActionRepository,
-                _applicationActionsHandler,
                 applicationResolver
             );
 
@@ -67,7 +66,7 @@ namespace Core
 
         public ApplicationActionResult RunAction(ApplicationActionRunParameter runActionParameter)
         {
-            if (_applicationActionsHandler.ApplicationActions.ContainsKey(runActionParameter.Guid) == false)
+            if (_applicationActionsHandler.HasActionWithGuid(runActionParameter.Guid) == false)
                 return new ApplicationActionResult() { 
                     Message = $"action with guid {runActionParameter.Guid} non existant",
                     Status = ApplicationActionResultStatus.Failed,

@@ -12,12 +12,11 @@ namespace Core.Application
         private readonly ApplicationRepository _applicationRepository;
         private readonly ApplicationInstaller _applicationInstaller;
         private readonly ApplicationResolver _applicationResolver;
-        public Dictionary<string, PlatypusApplicationBase> _applications { get; private set; }
+        private readonly Dictionary<string, PlatypusApplicationBase> _applications;
 
         public ApplicationsHandler(
             ApplicationRepository applicationRepository,
             ApplicationActionRepository applicationActionRepository,
-            ApplicationActionsHandler applicationActionsHandler,
             ApplicationResolver applicationResolver
         )
         {

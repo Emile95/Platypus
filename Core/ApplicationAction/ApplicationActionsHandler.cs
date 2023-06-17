@@ -17,9 +17,8 @@ namespace Core.ApplicationAction
 {
     public class ApplicationActionsHandler
     {
-        public Dictionary<string, ApplicationAction> ApplicationActions { get; private set; }
-        public Dictionary<string, ApplicationActionRun> ApplicationActionRuns { get; private set; }
-
+        private readonly Dictionary<string, ApplicationAction> _applicationActions;
+        private readonly Dictionary<string, ApplicationActionRun> _applicationActionRuns;
         private readonly ApplicationActionRepository _applicationActionRepository;
         private readonly EventsHandler _eventsHandler;
 
@@ -28,9 +27,8 @@ namespace Core.ApplicationAction
             EventsHandler eventsHandler
         )
         {
-            ApplicationActions = new Dictionary<string, ApplicationAction>();
-            ApplicationActionRuns = new Dictionary<string, ApplicationActionRun>();
-
+            _applicationActions = new Dictionary<string, ApplicationAction>();
+            _applicationActionRuns = new Dictionary<string, ApplicationActionRun>();
             _applicationActionRepository = applicationActionRepository;
             _eventsHandler = eventsHandler;
         }
@@ -38,10 +36,15 @@ namespace Core.ApplicationAction
         public void AddAction(PlatypusApplicationBase application, string applicationGuid, ActionDefinitionAttribute actionDefinition, MethodInfo methodInfo)
         {
             string actionGuid = actionDefinition.Name+applicationGuid;
-            if (ApplicationActions.ContainsKey(actionGuid)) return;
+            if (_applicationActions.ContainsKey(actionGuid)) return;
 
             ApplicationAction applicationAction = new ApplicationAction(application,actionDefinition,methodInfo);
-            ApplicationActions.Add(actionGuid, applicationAction);
+            _applicationActions.Add(actionGuid, applicationAction);
+        }
+
+        public bool HasActionWithGuid(string actionGuid)
+        {
+            return _applicationActions.ContainsKey(actionGuid);
         }
 
         public ApplicationActionResult RunAction(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
@@ -54,7 +57,7 @@ namespace Core.ApplicationAction
             string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, applicationActionRun.RunNumber);
             env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
 
-            ApplicationAction applicationAction = ApplicationActions[runActionParameter.Guid];
+            ApplicationAction applicationAction = _applicationActions[runActionParameter.Guid];
 
             applicationActionRun.StartRun(applicationAction, runActionParameter, (guid) => {
                 ApplicationActionRunCallBack(applicationActionRun, guid);
@@ -73,20 +76,20 @@ namespace Core.ApplicationAction
 
         public void CancelRunningAction(string guid)
         {
-            if (ApplicationActionRuns.ContainsKey(guid) == false)
+            if (_applicationActionRuns.ContainsKey(guid) == false)
                 return;
-            ApplicationActionRuns[guid].Cancel();
+            _applicationActionRuns[guid].Cancel();
         }
 
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActionInfos()
         {
-            return ApplicationActionRuns.Values.Select(x => x.GetInfo());
+            return _applicationActionRuns.Values.Select(x => x.GetInfo());
                 
         }
 
         public ApplicationActionEnvironmentBase CreateStartActionEnvironment(string actionName)
         {
-            return ApplicationActions[actionName].CreateStartActionEnvironment();
+            return _applicationActions[actionName].CreateStartActionEnvironment();
         }
 
         private int CreateNewActionRunNumber(string applicationRunGuid)
@@ -99,7 +102,7 @@ namespace Core.ApplicationAction
 
         private ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
         {
-            string applicationActionRunGUID = GuidGenerator.GenerateFromEnumerable(ApplicationActionRuns.Keys);
+            string applicationActionRunGUID = GuidGenerator.GenerateFromEnumerable(_applicationActionRuns.Keys);
             int runNumber = CreateNewActionRunNumber(runActionParameter.Guid);
 
             ApplicationActionRun applicationActionRun = new ApplicationActionRun()
@@ -110,7 +113,7 @@ namespace Core.ApplicationAction
                 Env = env
             };
 
-            ApplicationActionRuns.Add(
+            _applicationActionRuns.Add(
                 applicationActionRunGUID,
                 applicationActionRun
             );
@@ -120,7 +123,7 @@ namespace Core.ApplicationAction
 
         private void ApplicationActionRunCallBack(ApplicationActionRun run, string applicationRunGuid)
         {
-            ApplicationActionRuns.Remove(applicationRunGuid);
+            _applicationActionRuns.Remove(applicationRunGuid);
 
             if(run.Result.Status != ApplicationActionResultStatus.Failed &&
                run.Result.Status != ApplicationActionResultStatus.Canceled)
