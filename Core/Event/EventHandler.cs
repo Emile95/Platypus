@@ -27,6 +27,8 @@ namespace Core.Event
                 _action(env);
             } catch(TargetInvocationException ex)
             {
+                if(ex.InnerException is null)
+                    throw new EventHandlerException(Type, Name, ex.Message);
                 throw new EventHandlerException(Type, Name, ex.InnerException.Message);
             }
         }
