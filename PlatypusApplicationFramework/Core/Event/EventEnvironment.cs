@@ -1,6 +1,6 @@
 ﻿namespace PlatypusApplicationFramework.Core.Event
 {
-    public class EventEnvironment
+    public class EventHandlerEnvironment
     {
     }
 }

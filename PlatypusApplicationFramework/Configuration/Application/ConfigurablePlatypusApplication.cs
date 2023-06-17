@@ -59,7 +59,7 @@ namespace PlatypusApplicationFramework.Configuration.Application
         protected virtual bool ValidateConfiguration(ConfigurationType configuration) { return true; }
         protected virtual void OnConfigurationUpdate(ConfigurationType previousConfiguration) { }
 
-        private void InitializeDefaultConfiguration()
+        protected void InitializeDefaultConfiguration()
         {
             ConfigurationType defaultConfig = new ConfigurationType();
 

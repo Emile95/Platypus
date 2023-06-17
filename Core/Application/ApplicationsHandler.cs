@@ -17,15 +17,13 @@ namespace Core.Application
         public ApplicationsHandler(
             ApplicationRepository applicationRepository,
             ApplicationActionRepository applicationActionRepository,
-            ApplicationActionsHandler applicationActionsHandler
+            ApplicationActionsHandler applicationActionsHandler,
+            ApplicationResolver applicationResolver
         )
         {
             _applicationRepository = applicationRepository;
 
-            _applicationResolver = new ApplicationResolver(
-                _applicationRepository,
-                applicationActionsHandler
-            );
+            _applicationResolver = applicationResolver;
 
             _applicationInstaller = new ApplicationInstaller(
                 _applicationRepository,

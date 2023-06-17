@@ -2,11 +2,13 @@
 using Core.Application;
 using Core.ApplicationAction;
 using Core.ApplicationAction.Run;
+using Core.Event;
 using Logging;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.Core.ApplicationAction;
+using PlatypusApplicationFramework.Core.Event;
 
 namespace Core
 {
@@ -14,8 +16,11 @@ namespace Core
     {
         private readonly ApplicationsHandler _applicationsHandler;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
+        private readonly EventsHandler _eventsHandlers;
+
         private readonly ApplicationRepository _applicationRepository;
         private readonly LoggerManager _loggerManager;
+        
 
         public ServerInstance()
         {
@@ -25,12 +30,21 @@ namespace Core
                 applicationActionRepository
             );
 
+            _eventsHandlers = new EventsHandler();
+
             _applicationRepository = new ApplicationRepository();
+
+            ApplicationResolver applicationResolver = new ApplicationResolver(
+                _applicationRepository,
+                _applicationActionsHandler,
+                _eventsHandlers
+            );
 
             _applicationsHandler = new ApplicationsHandler(
                 _applicationRepository,
                 applicationActionRepository,
-                _applicationActionsHandler
+                _applicationActionsHandler,
+                applicationResolver
             );
 
             _loggerManager = new LoggerManager();
@@ -59,6 +73,9 @@ namespace Core
                     Message = $"action with guid {runActionParameter.Guid} non existant",
                     Status = ApplicationActionResultStatus.Failed,
                 };
+
+            EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
+            _eventsHandlers.RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv);
 
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
             env.ApplicationRepository = _applicationRepository;

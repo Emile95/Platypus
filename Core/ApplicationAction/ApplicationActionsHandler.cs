@@ -31,6 +31,7 @@ namespace Core.ApplicationAction
         {
             string actionGuid = actionDefinition.Name+applicationGuid;
             if (ApplicationActions.ContainsKey(actionGuid)) return;
+
             ApplicationAction applicationAction = new ApplicationAction(application,actionDefinition,methodInfo);
             ApplicationActions.Add(actionGuid, applicationAction);
         }

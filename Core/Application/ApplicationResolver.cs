@@ -4,6 +4,8 @@ using PlatypusApplicationFramework.Core.Application;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
+using Core.Event;
+using PlatypusApplicationFramework.Configuration.Event;
 
 namespace Core.Application
 {
@@ -11,14 +13,17 @@ namespace Core.Application
     {
         private readonly ApplicationRepository _applicationRepository;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
+        private readonly EventsHandler _eventsHandler;
 
         public ApplicationResolver(
             ApplicationRepository applicationRepository,
-            ApplicationActionsHandler applicationActionsHandler
+            ApplicationActionsHandler applicationActionsHandler,
+            EventsHandler eventsHandler
         )
         {
             _applicationRepository = applicationRepository;
             _applicationActionsHandler = applicationActionsHandler;
+            _eventsHandler = eventsHandler;
         }
 
         public void ResolvePlatypusApplication(PlatypusApplicationBase platypusApplication, string applicationGuid)
@@ -26,8 +31,11 @@ namespace Core.Application
             Type type = platypusApplication.GetType();
             MethodInfo[] methods = type.GetMethods();
 
-            foreach(MethodInfo method in methods)
-                ResolvePlatypusApplicationMethod(platypusApplication, applicationGuid, method);
+            foreach(MethodInfo methodInfo in methods)
+            {
+                if(ResolvePlatypusApplicationMethod<ActionDefinitionAttribute>(methodInfo, (attribute) => _applicationActionsHandler.AddAction(platypusApplication, applicationGuid, attribute, methodInfo) )) continue;
+                if(ResolvePlatypusApplicationMethod<EventHandlerAttribute>(methodInfo, (attribute) => _eventsHandler.AddEventHandler(platypusApplication, attribute, methodInfo) )) continue;
+            }
 
             ApplicationInitializeEnvironment env = new ApplicationInitializeEnvironment();
             env.ApplicationRepository = _applicationRepository;
@@ -36,17 +44,13 @@ namespace Core.Application
             platypusApplication.Initialize(env);
         }
 
-        private void ResolvePlatypusApplicationMethod(PlatypusApplicationBase platypusApplication, string applicationGuid, MethodInfo methodInfo)
+        private bool ResolvePlatypusApplicationMethod<AttributeType>(MethodInfo methodInfo, Action<AttributeType> consumer)
+            where AttributeType : Attribute
         {
-            ResolveActionDefinition(platypusApplication, applicationGuid, methodInfo);
-        }
-
-        private void ResolveActionDefinition(PlatypusApplicationBase platypusApplication, string applicationGuid, MethodInfo methodInfo)
-        {
-            ActionDefinitionAttribute actionDefinition = methodInfo.GetCustomAttribute<ActionDefinitionAttribute>();
-            if (actionDefinition == null) return;
-
-            _applicationActionsHandler.AddAction(platypusApplication, applicationGuid, actionDefinition, methodInfo);
+            AttributeType attribute = methodInfo.GetCustomAttribute<AttributeType>();
+            if (attribute == null) return false;
+            consumer(attribute);
+            return true;
         }
     }
 }

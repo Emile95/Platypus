@@ -43,7 +43,7 @@
             return fittingLoggers;
         }
 
-        public void Log(string line)
+        public virtual void Log(string line)
         {
             foreach(List<LoggerBase> loggers in _loggersWithoutSensivity.Values)
                 foreach(LoggerBase logger in loggers)
@@ -54,7 +54,7 @@
                     logger.Log(line);
         }
 
-        public void Log(LoggingLevel level, string line, bool includeUnsensivitiveLoggers = true)
+        public virtual void Log(LoggingLevel level, string line, bool includeUnsensivitiveLoggers = true)
         {
             ConsumeLoggerByLogLevel(level, (logger) => logger.Log(line));
 
@@ -66,13 +66,13 @@
             }
         }
 
-        public void Log<LoggerType>(string line)
+        public virtual void Log<LoggerType>(string line)
             where LoggerType : LoggerBase
         {
             Log(typeof(LoggerType), line);
         }
 
-        public void Log(Type type, string line)
+        public virtual void Log(Type type, string line)
         {
             List<LoggerBase> loggers = GetLoggers(type);
             if (loggers != null)
