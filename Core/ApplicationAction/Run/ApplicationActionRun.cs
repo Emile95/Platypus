@@ -1,4 +1,5 @@
-﻿using Persistance;
+﻿using Core.Exceptions;
+using Persistance;
 using Persistance.Entity;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
@@ -10,6 +11,7 @@ namespace Core.ApplicationAction.Run
     public class ApplicationActionRun
     {
         private readonly ApplicationActionRepository _applicationActionRepository;
+        private readonly Action<string> _runCallBack;
         private readonly Dictionary<string, ApplicationActionRun> _applicationActionRuns;
 
         public string ActionGuid { get; set; }
@@ -22,11 +24,11 @@ namespace Core.ApplicationAction.Run
 
         public ApplicationActionRun(
             ApplicationActionRepository applicationActionRepository, 
-            Dictionary<string, ApplicationActionRun> runningApplicationActions
+            Action<string> runCallBack
         )
         {
             _applicationActionRepository = applicationActionRepository;
-            _applicationActionRuns = runningApplicationActions;
+            _runCallBack = runCallBack;
         }
 
         public void StartRun(ApplicationAction action, ApplicationActionRunParameter parameter)
@@ -66,6 +68,15 @@ namespace Core.ApplicationAction.Run
                     break;
             }
 
+            try
+            {
+                _runCallBack(Guid);
+            } catch (EventHandlerException ex)
+            {
+                Result.Status = ApplicationActionResultStatus.Failed;
+                Result.Message = ex.Message;
+            }
+            
             _applicationActionRepository.SaveActionRunResult(
                 ActionGuid,
                 RunNumber,
@@ -75,8 +86,6 @@ namespace Core.ApplicationAction.Run
                     Message = Result.Message
                 }
              );
-
-            _applicationActionRuns.Remove(Guid);
         }
 
         private void SetLoggerManager()

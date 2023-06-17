@@ -26,12 +26,13 @@ namespace Core
         public ServerInstance()
         {
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
-            
-            _applicationActionsHandler = new ApplicationActionsHandler(
-                applicationActionRepository
-            );
 
             _eventsHandlers = new EventsHandler();
+
+            _applicationActionsHandler = new ApplicationActionsHandler(
+                applicationActionRepository,
+                _eventsHandlers
+            );
 
             _applicationRepository = new ApplicationRepository();
 

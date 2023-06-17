@@ -8,6 +8,8 @@ using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Utils.GuidGeneratorHelper;
+using Core.Event;
+using PlatypusApplicationFramework.Core.Event;
 
 namespace Core.ApplicationAction
 {
@@ -17,14 +19,18 @@ namespace Core.ApplicationAction
         public Dictionary<string, ApplicationActionRun> ApplicationActionRuns { get; private set; }
 
         private readonly ApplicationActionRepository _applicationActionRepository;
+        private readonly EventsHandler _eventHandlers;
 
         public ApplicationActionsHandler(
-            ApplicationActionRepository applicationActionRepository
+            ApplicationActionRepository applicationActionRepository,
+            EventsHandler eventHandlers
         )
         {
             ApplicationActions = new Dictionary<string, ApplicationAction>();
-            _applicationActionRepository = applicationActionRepository;
             ApplicationActionRuns = new Dictionary<string, ApplicationActionRun>();
+
+            _applicationActionRepository = applicationActionRepository;
+            _eventHandlers = eventHandlers;
         }
 
         public void AddAction(PlatypusApplicationBase application, string applicationGuid, ActionDefinitionAttribute actionDefinition, MethodInfo methodInfo)
@@ -49,7 +55,11 @@ namespace Core.ApplicationAction
             string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, runNumber);
             env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
 
-            ApplicationActionRun applicationActionRun = new ApplicationActionRun(_applicationActionRepository, ApplicationActionRuns);
+            ApplicationActionRun applicationActionRun = new ApplicationActionRun(_applicationActionRepository, (guid) => {
+                ApplicationActionRuns.Remove(guid);
+                EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
+                _eventHandlers.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
+            });
 
             applicationActionRun.ActionGuid = runActionParameter.Guid;
             applicationActionRun.Guid = applicationActionRunGUID;
