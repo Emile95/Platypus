@@ -18,7 +18,9 @@ namespace Core
 
         private readonly ApplicationRepository _applicationRepository;
         private readonly LoggerManager _loggerManager;
-        
+
+        private readonly PlatypusTCPClientSocketsHandler _tcpClientSocketsHandler;
+
         public ServerInstance()
         {
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
@@ -46,6 +48,11 @@ namespace Core
 
             _loggerManager = new LoggerManager();
             _loggerManager.CreateLogger<PlatypusServerConsoleLogger>();
+
+            _tcpClientSocketsHandler = new PlatypusTCPClientSocketsHandler(
+                _applicationActionsHandler
+            );
+            _tcpClientSocketsHandler.Initialize(2000);
         }
 
         public void LoadConfiguration()
