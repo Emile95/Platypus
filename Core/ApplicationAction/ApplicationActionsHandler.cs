@@ -21,18 +21,18 @@ namespace Core.ApplicationAction
         public Dictionary<string, ApplicationActionRun> ApplicationActionRuns { get; private set; }
 
         private readonly ApplicationActionRepository _applicationActionRepository;
-        private readonly EventsHandler _eventHandlers;
+        private readonly EventsHandler _eventsHandler;
 
         public ApplicationActionsHandler(
             ApplicationActionRepository applicationActionRepository,
-            EventsHandler eventHandlers
+            EventsHandler eventsHandler
         )
         {
             ApplicationActions = new Dictionary<string, ApplicationAction>();
             ApplicationActionRuns = new Dictionary<string, ApplicationActionRun>();
 
             _applicationActionRepository = applicationActionRepository;
-            _eventHandlers = eventHandlers;
+            _eventsHandler = eventsHandler;
         }
 
         public void AddAction(PlatypusApplicationBase application, string applicationGuid, ActionDefinitionAttribute actionDefinition, MethodInfo methodInfo)
@@ -46,6 +46,9 @@ namespace Core.ApplicationAction
 
         public ApplicationActionResult RunAction(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
         {
+            ApplicationActionResult result = BeforeApplicationActionRun();
+            if (result is not null) return result;
+
             ApplicationActionRun applicationActionRun = CreateApplicationActionRun(runActionParameter, env);
 
             string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, applicationActionRun.RunNumber);
@@ -121,7 +124,7 @@ namespace Core.ApplicationAction
             EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
             try
             {
-                _eventHandlers.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
+                _eventsHandler.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
             }
             catch (EventHandlerException ex)
             {
@@ -138,6 +141,25 @@ namespace Core.ApplicationAction
                     Message = run.Result.Message
                 }
              );
+        }
+
+        private ApplicationActionResult BeforeApplicationActionRun()
+        {
+            EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
+            try
+            {
+                _eventsHandler.RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv);
+            }
+            catch (EventHandlerException ex)
+            {
+                return new ApplicationActionResult()
+                {
+                    Status = ApplicationActionResultStatus.Failed,
+                    Message = ex.Message,
+                };
+            }
+
+            return null;
         }
     }
 }

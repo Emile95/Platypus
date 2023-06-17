@@ -22,7 +22,6 @@ namespace Core
         private readonly ApplicationRepository _applicationRepository;
         private readonly LoggerManager _loggerManager;
         
-
         public ServerInstance()
         {
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
@@ -75,19 +74,6 @@ namespace Core
                     Message = $"action with guid {runActionParameter.Guid} non existant",
                     Status = ApplicationActionResultStatus.Failed,
                 };
-
-            EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
-            try
-            {
-                _eventsHandlers.RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv);
-            } catch(EventHandlerException ex)
-            {
-                return new ApplicationActionResult()
-                {
-                    Status = ApplicationActionResultStatus.Failed,
-                    Message = ex.Message,
-                };
-            }
             
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
             env.ApplicationRepository = _applicationRepository;
