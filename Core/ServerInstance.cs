@@ -3,6 +3,7 @@ using Core.Application;
 using Core.ApplicationAction;
 using Core.ApplicationAction.Run;
 using Core.Event;
+using Core.Exceptions;
 using Logging;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
@@ -75,8 +76,18 @@ namespace Core
                 };
 
             EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
-            _eventsHandlers.RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv);
-
+            try
+            {
+                _eventsHandlers.RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv);
+            } catch(EventHandlerException ex)
+            {
+                return new ApplicationActionResult()
+                {
+                    Status = ApplicationActionResultStatus.Failed,
+                    Message = ex.Message,
+                };
+            }
+            
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
             env.ApplicationRepository = _applicationRepository;
             env.ActionLoggers = new LoggerManager();

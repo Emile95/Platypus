@@ -1,4 +1,5 @@
-﻿using PlatypusApplicationFramework.Configuration.Application;
+﻿using Core.Exceptions;
+using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.Event;
 using PlatypusApplicationFramework.Core.Event;
 using System.Reflection;
@@ -7,27 +8,27 @@ namespace Core.Event
 {
     public class EventsHandler
     {
-        public Dictionary<EventHandlerType, List<Action<EventHandlerEnvironment>>> EventHandlers { get; private set; }
+        public Dictionary<EventHandlerType, List<EventHandler>> EventHandlers { get; private set; }
 
         public EventsHandler()
         {
-            EventHandlers = new Dictionary<EventHandlerType, List<Action<EventHandlerEnvironment>>>();
+            EventHandlers = new Dictionary<EventHandlerType, List<EventHandler>>();
         }
 
         public void AddEventHandler(PlatypusApplicationBase application, EventHandlerAttribute eventHandlerAttribute, MethodInfo methodInfo)
         {
             if (EventHandlers.ContainsKey(eventHandlerAttribute.EventHandlerType) == false)
-                EventHandlers[eventHandlerAttribute.EventHandlerType] = new List<Action<EventHandlerEnvironment>>();
+                EventHandlers[eventHandlerAttribute.EventHandlerType] = new List<EventHandler>();
 
-            Action<EventHandlerEnvironment> action = (env) => methodInfo.Invoke(application, new object[] { env });
-            EventHandlers[eventHandlerAttribute.EventHandlerType].Add(action);
+            EventHandler eventhandler = new EventHandler(application, eventHandlerAttribute, methodInfo);
+            EventHandlers[eventHandlerAttribute.EventHandlerType].Add(eventhandler);
         }
 
         public void RunEventHandlers(EventHandlerType type, EventHandlerEnvironment env)
         {
             if (EventHandlers.ContainsKey(type) == false) return;
-            foreach(Action<EventHandlerEnvironment> action in EventHandlers[type])
-                action(env);
+            foreach (EventHandler eventHandler in EventHandlers[type])
+                eventHandler.RunEventHandler(env);
         }
     }
 }
