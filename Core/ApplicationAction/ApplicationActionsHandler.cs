@@ -10,6 +10,8 @@ using System.Reflection;
 using Utils.GuidGeneratorHelper;
 using Core.Event;
 using PlatypusApplicationFramework.Core.Event;
+using Persistance.Entity;
+using Core.Exceptions;
 
 namespace Core.ApplicationAction
 {
@@ -44,34 +46,16 @@ namespace Core.ApplicationAction
 
         public ApplicationActionResult RunAction(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
         {
-            string actionRunsFilePath = ApplicationPaths.GetActionRunsDirectoryPath(runActionParameter.Guid);
-            int runNumber = _applicationActionRepository.GetAndIncrementActionRunNumberByBasePath(actionRunsFilePath);
-            _applicationActionRepository.SaveActionRunByBasePath(actionRunsFilePath, runNumber);
+            ApplicationActionRun applicationActionRun = CreateApplicationActionRun(runActionParameter, env);
 
-            ApplicationAction action = ApplicationActions[runActionParameter.Guid];
-
-            string applicationActionRunGUID = GuidGenerator.GenerateFromEnumerable(ApplicationActionRuns.Keys);
-
-            string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, runNumber);
+            string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, applicationActionRun.RunNumber);
             env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
 
-            ApplicationActionRun applicationActionRun = new ApplicationActionRun(_applicationActionRepository, (guid) => {
-                ApplicationActionRuns.Remove(guid);
-                EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
-                _eventHandlers.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
+            ApplicationAction applicationAction = ApplicationActions[runActionParameter.Guid];
+
+            applicationActionRun.StartRun(applicationAction, runActionParameter, (guid) => {
+                ApplicationActionRunCallBack(applicationActionRun, guid);
             });
-
-            applicationActionRun.ActionGuid = runActionParameter.Guid;
-            applicationActionRun.Guid = applicationActionRunGUID;
-            applicationActionRun.RunNumber = runNumber;
-            applicationActionRun.Env = env;
-
-            ApplicationActionRuns.Add(
-                applicationActionRunGUID,
-                applicationActionRun
-            );
-
-            applicationActionRun.StartRun(action, runActionParameter);
 
             if (runActionParameter.Async)
                 return new ApplicationActionResult() { 
@@ -101,6 +85,59 @@ namespace Core.ApplicationAction
         {
             return ApplicationActions[actionName].CreateStartActionEnvironment();
         }
-        
+
+        private int CreateNewActionRunNumber(string applicationRunGuid)
+        {
+            string actionRunsFilePath = ApplicationPaths.GetActionRunsDirectoryPath(applicationRunGuid);
+            int runNumber = _applicationActionRepository.GetAndIncrementActionRunNumberByBasePath(actionRunsFilePath);
+            _applicationActionRepository.SaveActionRunByBasePath(actionRunsFilePath, runNumber);
+            return runNumber;
+        }
+
+        private ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
+        {
+            string applicationActionRunGUID = GuidGenerator.GenerateFromEnumerable(ApplicationActionRuns.Keys);
+            int runNumber = CreateNewActionRunNumber(runActionParameter.Guid);
+
+            ApplicationActionRun applicationActionRun = new ApplicationActionRun()
+            {
+                ActionGuid = runActionParameter.Guid,
+                Guid = applicationActionRunGUID,
+                RunNumber = runNumber,
+                Env = env
+            };
+
+            ApplicationActionRuns.Add(
+                applicationActionRunGUID,
+                applicationActionRun
+            );
+
+            return applicationActionRun;
+        }
+
+        private void ApplicationActionRunCallBack(ApplicationActionRun run, string applicationRunGuid)
+        {
+            ApplicationActionRuns.Remove(applicationRunGuid);
+            EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
+            try
+            {
+                _eventHandlers.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
+            }
+            catch (EventHandlerException ex)
+            {
+                run.Result.Status = ApplicationActionResultStatus.Failed;
+                run.Result.Message = ex.Message;
+            }
+
+            _applicationActionRepository.SaveActionRunResult(
+                run.ActionGuid,
+                run.RunNumber,
+                new ApplicationActionResultEntity()
+                {
+                    Status = run.Result.Status.ToString(),
+                    Message = run.Result.Message
+                }
+             );
+        }
     }
 }
