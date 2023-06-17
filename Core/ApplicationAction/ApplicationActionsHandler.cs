@@ -125,15 +125,17 @@ namespace Core.ApplicationAction
         {
             _applicationActionRuns.Remove(applicationRunGuid);
 
-            if(run.Result.Status != ApplicationActionResultStatus.Failed &&
-               run.Result.Status != ApplicationActionResultStatus.Canceled)
+            
+            EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
+            eventEnv.ApplicationActionResult = run.Result;
+            try
             {
-                EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
-                try
-                {
-                    _eventsHandler.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
-                }
-                catch (EventHandlerException ex)
+                _eventsHandler.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
+            }
+            catch (EventHandlerException ex)
+            {
+                if (run.Result.Status != ApplicationActionResultStatus.Failed &&
+                    run.Result.Status != ApplicationActionResultStatus.Canceled)
                 {
                     run.Result.Status = ApplicationActionResultStatus.Failed;
                     run.Result.Message = ex.Message;
