@@ -9,8 +9,7 @@ namespace Persistance
         {
             string actionRunDirectoryPath = Path.Combine(ApplicationPaths.GetActionRunsDirectoryPath(actionGuid), runNumber.ToString());
             string resultFilePath = Path.Combine(actionRunDirectoryPath, "result.json");
-            File.WriteAllText(resultFilePath, JsonConvert.SerializeObject(result));
-            
+            File.WriteAllText(resultFilePath, JsonConvert.SerializeObject(result, Formatting.Indented));
         }
 
         public void SaveAction(string actionGuid)
