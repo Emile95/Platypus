@@ -120,15 +120,21 @@ namespace Core.ApplicationAction
 
         private void ApplicationActionRunCallBack(ApplicationActionRun run, string applicationRunGuid)
         {
-            EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
-            try
+            ApplicationActionRuns.Remove(applicationRunGuid);
+
+            if(run.Result.Status != ApplicationActionResultStatus.Failed &&
+               run.Result.Status != ApplicationActionResultStatus.Canceled)
             {
-                _eventsHandler.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
-            }
-            catch (EventHandlerException ex)
-            {
-                run.Result.Status = ApplicationActionResultStatus.Failed;
-                run.Result.Message = ex.Message;
+                EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
+                try
+                {
+                    _eventsHandler.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
+                }
+                catch (EventHandlerException ex)
+                {
+                    run.Result.Status = ApplicationActionResultStatus.Failed;
+                    run.Result.Message = ex.Message;
+                }
             }
 
             _applicationActionRepository.SaveActionRunResult(
@@ -139,8 +145,7 @@ namespace Core.ApplicationAction
                     Status = run.Result.Status.ToString(),
                     Message = run.Result.Message
                 }
-             );
-            ApplicationActionRuns.Remove(applicationRunGuid);
+            );
         }
 
         private ApplicationActionResult BeforeApplicationActionRun()
