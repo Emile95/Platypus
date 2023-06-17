@@ -120,7 +120,6 @@ namespace Core.ApplicationAction
 
         private void ApplicationActionRunCallBack(ApplicationActionRun run, string applicationRunGuid)
         {
-            ApplicationActionRuns.Remove(applicationRunGuid);
             EventHandlerEnvironment eventEnv = new EventHandlerEnvironment();
             try
             {
@@ -141,6 +140,7 @@ namespace Core.ApplicationAction
                     Message = run.Result.Message
                 }
              );
+            ApplicationActionRuns.Remove(applicationRunGuid);
         }
 
         private ApplicationActionResult BeforeApplicationActionRun()
