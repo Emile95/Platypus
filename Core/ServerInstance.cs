@@ -3,13 +3,11 @@ using Core.Application;
 using Core.ApplicationAction;
 using Core.ApplicationAction.Run;
 using Core.Event;
-using Core.Exceptions;
 using Logging;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.Core.ApplicationAction;
-using PlatypusApplicationFramework.Core.Event;
 
 namespace Core
 {

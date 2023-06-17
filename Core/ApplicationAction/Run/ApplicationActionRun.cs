@@ -1,5 +1,4 @@
-﻿using Core.Exceptions;
-using PlatypusAPI.ApplicationAction;
+﻿using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 
