@@ -1,4 +1,4 @@
-﻿using Persistance;
+﻿using Persistance.Repository;
 
 namespace PlatypusApplicationFramework.Core.Application
 {

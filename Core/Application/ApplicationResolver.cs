@@ -1,5 +1,5 @@
 ﻿using Core.ApplicationAction;
-using Persistance;
+using Persistance.Repository;
 using PlatypusApplicationFramework.Core.Application;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;

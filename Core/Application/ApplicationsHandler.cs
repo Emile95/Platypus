@@ -1,9 +1,9 @@
-﻿using Core.ApplicationAction;
-using Persistance;
+﻿using Persistance.Repository;
 using Persistance.Entity;
 using PlatypusApplicationFramework.Configuration.Application;
 using Utils;
 using Utils.GuidGeneratorHelper;
+using Persistance;
 
 namespace Core.Application
 {

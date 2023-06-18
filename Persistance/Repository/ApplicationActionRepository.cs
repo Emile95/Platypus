@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Persistance.Entity;
 
-namespace Persistance
+namespace Persistance.Repository
 {
     public class ApplicationActionRepository
     {

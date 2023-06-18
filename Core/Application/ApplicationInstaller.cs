@@ -1,4 +1,4 @@
-﻿using Persistance;
+﻿using Persistance.Repository;
 using Persistance.Entity;
 using PlatypusApplicationFramework.Core.Application;
 using PlatypusApplicationFramework.Configuration.Application;
