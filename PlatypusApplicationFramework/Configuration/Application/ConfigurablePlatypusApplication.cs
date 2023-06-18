@@ -2,7 +2,7 @@
 using PlatypusApplicationFramework.Core.Application;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
-using System.Reflection;
+using PlatypusApplicationFramework.Confugration;
 
 namespace PlatypusApplicationFramework.Configuration.Application
 {
@@ -18,7 +18,7 @@ namespace PlatypusApplicationFramework.Configuration.Application
 
         public override void Install(ApplicationInstallEnvironment env)
         {
-            InitializeDefaultConfiguration();
+            Configuration = ParameterEditorObjectResolver.CreateDefaultObject<ConfigurationType>();
             env.ApplicationRepository.SaveApplicationConfiguration(env.ApplicationGuid, GetConfigurationJsonObject());
         }
 
@@ -58,25 +58,5 @@ namespace PlatypusApplicationFramework.Configuration.Application
 
         protected virtual bool ValidateConfiguration(ConfigurationType configuration) { return true; }
         protected virtual void OnConfigurationUpdate(ConfigurationType previousConfiguration) { }
-
-        protected void InitializeDefaultConfiguration()
-        {
-            ConfigurationType defaultConfig = new ConfigurationType();
-
-            Type typeOfConfig = typeof(ConfigurationType);
-
-            PropertyInfo[] propertyInfos = typeOfConfig.GetProperties();
-            foreach (PropertyInfo propertyInfo in propertyInfos)
-            {
-                ParameterEditorAttribute parameterEditor = propertyInfo.GetCustomAttribute<ParameterEditorAttribute>();
-                if (parameterEditor == null) continue;
-
-                if (parameterEditor.DefaultValue != null)
-                    propertyInfo.SetValue(defaultConfig, parameterEditor.DefaultValue);
-            }
-
-            Configuration = defaultConfig;
-        }
-
     }
 }

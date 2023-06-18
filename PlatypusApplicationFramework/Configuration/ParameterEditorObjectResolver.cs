@@ -39,5 +39,27 @@ namespace PlatypusApplicationFramework.Confugration
 
             return ResolveByDictionnary(typeOfObject, dict) as ObjectType;
         }
+
+        public static ObjectType CreateDefaultObject<ObjectType>()
+            where ObjectType : class, new()
+        {
+            return CreateDefaultObject(typeof(ObjectType)) as ObjectType;
+        }
+
+        public static object CreateDefaultObject(Type type)
+        {
+            PropertyInfo[] propertyInfos = type.GetProperties();
+            object newObject = Activator.CreateInstance(type);
+            foreach (PropertyInfo propertyInfo in propertyInfos)
+            {
+                ParameterEditorAttribute parameterEditor = propertyInfo.GetCustomAttribute<ParameterEditorAttribute>();
+                if (parameterEditor == null) continue;
+
+                if (parameterEditor.DefaultValue != null)
+                    propertyInfo.SetValue(newObject, parameterEditor.DefaultValue);
+            }
+
+            return newObject;
+        }
     }
 }
