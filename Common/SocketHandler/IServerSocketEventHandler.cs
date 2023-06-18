@@ -2,7 +2,7 @@
 
 namespace Common.SocketHandler
 {
-    public interface IServerSocketEventHandler<ClientKeyType> : ISocketEventHandler<ClientReceivedState<ClientKeyType>>
+    public interface IServerSocketEventHandler<ClientKeyType>
         where ClientKeyType : class
     {
         void OnAccept(ClientReceivedState<ClientKeyType> receivedState);

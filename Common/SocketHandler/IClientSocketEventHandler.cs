@@ -2,7 +2,7 @@
 
 namespace Common.SocketHandler
 {
-    public interface IClientSocketEventHandler : ISocketEventHandler<ServerReceivedState>
+    public interface IClientSocketEventHandler
     {
         void OnConnect(ServerReceivedState state);
     }

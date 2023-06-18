@@ -1,14 +1,13 @@
 ﻿using Common.SocketHandler;
-using Common.SocketHandler.State;
 
 namespace PlatypusAPI
 {
     public class PlatypusServerApplication
     {
-        private BaseSocketHandler<ServerReceivedState> _socketHandler;
+        private ClientSocketHandler _socketHandler;
 
         public PlatypusServerApplication(
-            BaseSocketHandler<ServerReceivedState> socketHandler
+            ClientSocketHandler socketHandler
         )
         {
             _socketHandler = socketHandler;

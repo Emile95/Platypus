@@ -1,17 +1,17 @@
-﻿using Common.SocketHandler.State;
-using Common.SocketHandler.Tcp;
+﻿using Common.SocketHandler;
+using Common.SocketHandler.State;
 using Core.ApplicationAction;
 using Utils.GuidGeneratorHelper;
 
 namespace Core
 {
-    internal class PlatypusTCPClientSocketsHandler : TCPServerSocketHandler<string>
+    internal class PlatypusTCPClientSocketsHandler : ServerSocketHandler<string>
     {
         private readonly ApplicationActionsHandler _applicationActionsHandler;
 
         public PlatypusTCPClientSocketsHandler(
             ApplicationActionsHandler applicationActionsHandler
-        )
+        ) : base("tcp")
         {
             _applicationActionsHandler = applicationActionsHandler;
         }

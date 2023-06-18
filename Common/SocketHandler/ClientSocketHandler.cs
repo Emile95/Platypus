@@ -2,11 +2,14 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Common.SocketHandler.Tcp
+namespace Common.SocketHandler
 {
-    public abstract class TCPClientSocketHandler : TCPSocketHandler<ServerReceivedState>, IClientSocketEventHandler
+    public abstract class ClientSocketHandler : BaseSocketHandler<ServerReceivedState>, IClientSocketEventHandler, ISocketHandlerInitiator
     {
-        public sealed override void Initialize(int port, string host = null)
+        public ClientSocketHandler(string protocol)
+            : base(protocol) { }
+
+        public void Initialize(int port, string host = null)
         {
             IPAddress hostIpAdress = null;
             if (host == null)
@@ -23,7 +26,7 @@ namespace Common.SocketHandler.Tcp
             state.BufferSize = _receivedBufferSize;
             state.Buffer = new byte[_receivedBufferSize];
             state.WorkSocket = _socket;
-            _socket.BeginReceive(state.Buffer, 0, _receivedBufferSize, 0, new AsyncCallback(ReadCallBack), state);
+            _socket.BeginReceive(state.Buffer, 0, _receivedBufferSize, 0, new AsyncCallback(_socketResolver.ReadCallBack), state);
             OnConnect(state);
         }
 

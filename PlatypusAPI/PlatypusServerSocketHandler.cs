@@ -1,14 +1,12 @@
-﻿using Common.SocketHandler.State;
-using Common.SocketHandler.Tcp;
+﻿using Common.SocketHandler;
+using Common.SocketHandler.State;
 
 namespace PlatypusAPI
 {
-    internal class PlatypusTCPServerSocketHandler : TCPClientSocketHandler
+    public class PlatypusServerSocketHandler : ClientSocketHandler
     {
-        public PlatypusTCPServerSocketHandler()
-        {
-
-        }
+        public PlatypusServerSocketHandler(string protocol) 
+            : base(protocol) { }
 
         public override void OnConnect(ServerReceivedState state)
         {
