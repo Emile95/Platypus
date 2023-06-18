@@ -10,12 +10,17 @@ namespace PlatypusAPI
 
         }
 
-        protected override void OnLostSocket(ServerReceivedState receivedState)
+        public override void OnConnect(ServerReceivedState state)
         {
             
         }
 
-        protected override void OnReceive(ServerReceivedState receivedState)
+        public override void OnLostSocket(ServerReceivedState receivedState)
+        {
+            
+        }
+
+        public override void OnReceive(ServerReceivedState receivedState)
         {
             
         }

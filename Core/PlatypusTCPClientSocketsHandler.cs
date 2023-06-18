@@ -21,17 +21,17 @@ namespace Core
             return GuidGenerator.GenerateFromEnumerable(currentKeys);
         }
 
-        protected override void OnAccept(ClientReceivedState<string> receivedState)
+        public override void OnAccept(ClientReceivedState<string> receivedState)
         {
             Console.WriteLine($"new client connected, key='{receivedState.ClientKey}'");
         }
 
-        protected override void OnLostSocket(ClientReceivedState<string> receivedState)
+        public override void OnLostSocket(ClientReceivedState<string> receivedState)
         {
             Console.WriteLine($"client lost, key='{receivedState.ClientKey}'");
         }
 
-        protected override void OnReceive(ClientReceivedState<string> receivedState)
+        public override void OnReceive(ClientReceivedState<string> receivedState)
         {
             
         }

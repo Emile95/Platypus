@@ -4,14 +4,14 @@ using System.Net.Sockets;
 
 namespace Common.SocketHandler.Tcp
 {
-    public abstract class TCPServerSocketHandler<ClientSocketKeyType> : TCPSocketHandler<ClientReceivedState<ClientSocketKeyType>>
+    public abstract class TCPServerSocketHandler<ClientSocketKeyType> : TCPSocketHandler<ClientReceivedState<ClientSocketKeyType>>, IServerSocketHandler<ClientSocketKeyType>
         where ClientSocketKeyType : class
     {
-        private readonly Dictionary<ClientSocketKeyType, Socket> _clientSockets;
-        
+        public Dictionary<ClientSocketKeyType, Socket> ClientSockets { get; set; }
+
         public TCPServerSocketHandler()
         {
-            _clientSockets = new Dictionary<ClientSocketKeyType, Socket>();
+            ClientSockets = new Dictionary<ClientSocketKeyType, Socket>();
         }
 
         public sealed override void Initialize(int port, string host = null)
@@ -31,13 +31,12 @@ namespace Common.SocketHandler.Tcp
             _socket.AcceptAsync();
             _socket.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
         }
-
         private void AcceptCallBack(IAsyncResult ar)
         {
             Socket serverSocket = (Socket)ar.AsyncState;
             Socket clientSocket = serverSocket.EndAccept(ar);
-            ClientSocketKeyType clientKey = GenerateClientKey(_clientSockets.Keys.ToList());
-            _clientSockets.Add(clientKey, clientSocket);
+            ClientSocketKeyType clientKey = GenerateClientKey(ClientSockets.Keys.ToList());
+            ClientSockets.Add(clientKey, clientSocket);
 
             ClientReceivedState<ClientSocketKeyType> state = new ClientReceivedState<ClientSocketKeyType>();
             state.BufferSize = _receivedBufferSize;
@@ -53,16 +52,17 @@ namespace Common.SocketHandler.Tcp
 
         public void SendToClient(ClientSocketKeyType clientSocketKey, byte[] bytes)
         {
-            Send(_clientSockets[clientSocketKey], bytes);
+            Send(ClientSockets[clientSocketKey], bytes);
         }
 
         public void SendToAllClients(byte[] bytes)
         {
-            foreach(Socket clientSocket in _clientSockets.Values)
+            foreach(Socket clientSocket in ClientSockets.Values)
                 Send(clientSocket, bytes);
         }
 
-        protected abstract void OnAccept(ClientReceivedState<ClientSocketKeyType> receivedState);
         protected abstract ClientSocketKeyType GenerateClientKey(List<ClientSocketKeyType> currentKeys);
+
+        public abstract void OnAccept(ClientReceivedState<ClientSocketKeyType> receivedState);
     }
 }

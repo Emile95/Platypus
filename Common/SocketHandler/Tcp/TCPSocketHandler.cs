@@ -2,7 +2,7 @@
 
 namespace Common.SocketHandler.Tcp
 {
-    public abstract class TCPSocketHandler<ReceivedStateType> : BaseSocketHandler<ReceivedStateType>
+    public abstract class TCPSocketHandler<ReceivedStateType> : BaseSocketHandler<ReceivedStateType>, ISocketEventHandler<ReceivedStateType>
         where ReceivedStateType : ReceivedState, new()
     {
         private readonly int sizeOfInt = sizeof(int);
@@ -70,5 +70,9 @@ namespace Common.SocketHandler.Tcp
 
             socket.Send(newBytes);
         }
+
+        public abstract void OnReceive(ReceivedStateType receivedState);
+
+        public abstract void OnLostSocket(ReceivedStateType receivedState);
     }
 }

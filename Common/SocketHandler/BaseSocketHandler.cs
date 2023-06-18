@@ -15,10 +15,7 @@ namespace Common.SocketHandler
         }
 
         public abstract void Initialize(int port, string host = null);
-
         public abstract void Send(Socket socket, byte[] bytes);
         protected abstract void ReadCallBack(IAsyncResult ar);
-        protected abstract void OnReceive(ReceivedStateType receivedState);
-        protected abstract void OnLostSocket(ReceivedStateType receivedState);
     }
 }

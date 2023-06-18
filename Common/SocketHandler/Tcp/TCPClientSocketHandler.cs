@@ -4,11 +4,8 @@ using System.Net.Sockets;
 
 namespace Common.SocketHandler.Tcp
 {
-    public abstract class TCPClientSocketHandler : TCPSocketHandler<ServerReceivedState>
+    public abstract class TCPClientSocketHandler : TCPSocketHandler<ServerReceivedState>, IClientSocketEventHandler
     {
-
-        protected virtual void OnConnect(ServerReceivedState state) {  }
-
         public sealed override void Initialize(int port, string host = null)
         {
             IPAddress hostIpAdress = null;
@@ -34,5 +31,7 @@ namespace Common.SocketHandler.Tcp
         {
             Send(_socket, bytes);
         }
+
+        public abstract void OnConnect(ServerReceivedState state);
     }
 }
