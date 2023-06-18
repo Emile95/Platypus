@@ -10,6 +10,8 @@
         public static string ACTIONRUNSDIRECTORYNAME { get; private set; } = "runs";
         public static string ACTIONLASTRUNNUMBERFILENIME { get; private set; } = "lastRunNumber";
         public static string ACTIONLOGFILENAME { get; private set; } = "action.log";
+        public static string USERSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "users");
+        public static string USERFILENAME { get; private set; } = "user.json";
 
         public static string GetApplicationDirectoryPath(string applicationGuid)
         {
@@ -69,6 +71,21 @@
         public static string GetActionLastRunNumberFilePathByBasePath(string basePath)
         {
             return Path.Combine(basePath, ACTIONLASTRUNNUMBERFILENIME);
+        }
+
+        public static string GetUserDirectoryPath(int userID)
+        {
+            return Path.Combine(Path.Combine(USERSDIRECTORYPATH, userID.ToString()));
+        }
+
+        public static string GetUserFilePath(int userID)
+        {
+            return Path.Combine(Path.Combine(USERSDIRECTORYPATH, userID.ToString(), USERFILENAME));
+        }
+
+        public static string GetUserFilePathByBasePath(string basePath)
+        {
+            return Path.Combine(Path.Combine(basePath, USERFILENAME));
         }
     }
 }
