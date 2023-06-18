@@ -3,7 +3,7 @@ using Common.SocketHandler.State;
 using Core.ApplicationAction;
 using Utils.GuidGeneratorHelper;
 
-namespace Core
+namespace Core.Sockethandler
 {
     internal class PlatypusTCPClientSocketsHandler : ServerSocketHandler<string>
     {
