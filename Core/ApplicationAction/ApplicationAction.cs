@@ -8,6 +8,7 @@ using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using PlatypusAPI.ApplicationAction;
 using PlatypusApplicationFramework.Confugration;
+using PlatypusApplicationFramework.Configuration.Exceptions;
 
 namespace Core.ApplicationAction
 {
@@ -50,7 +51,7 @@ namespace Core.ApplicationAction
                 {
                     try {
                         ResolveActionParameter(env, runActionParameter.ActionParameters);
-                    } catch(ApplicationActionFieldRequired exception)
+                    } catch(ParameterEditorFieldRequiredException exception)
                     {
                         return new ApplicationActionRunResult()
                         {
