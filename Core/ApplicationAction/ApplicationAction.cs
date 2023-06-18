@@ -7,6 +7,7 @@ using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using PlatypusAPI.ApplicationAction;
+using PlatypusApplicationFramework.Confugration;
 
 namespace Core.ApplicationAction
 {
@@ -47,7 +48,7 @@ namespace Core.ApplicationAction
                 }
                 else
                 {
-                    try { 
+                    try {
                         ResolveActionParameter(env, runActionParameter.ActionParameters);
                     } catch(ApplicationActionFieldRequired exception)
                     {
@@ -132,11 +133,7 @@ namespace Core.ApplicationAction
 
         private void ResolveActionParameter(ApplicationActionEnvironmentBase env, Dictionary<string, object> parameters)
         {
-            object resolvedParam = Activator.CreateInstance(ParameterType);
-
-            PropertyInfo[] propertyInfos = ParameterType.GetProperties();
-            foreach (PropertyInfo propertyInfo in propertyInfos)
-                ResolveActionParameterProperty(parameters, resolvedParam, propertyInfo);
+            object resolvedParam = ParameterEditorObjectResolver.ResolveByDictionnary(ParameterType, parameters);
 
             Type environmentType = env.GetType();
             PropertyInfo parameterPropertyInfo = environmentType.GetProperty("Parameter");
