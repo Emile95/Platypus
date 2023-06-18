@@ -5,7 +5,7 @@ using Utils.GuidGeneratorHelper;
 
 namespace Core.Sockethandler
 {
-    public class PlatypusServerSocketHandler : ServerSocketHandler<string>
+    internal class PlatypusServerSocketHandler : ServerSocketHandler<string>
     {
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly int _port;

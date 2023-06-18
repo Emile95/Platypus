@@ -3,7 +3,6 @@ using Core.Application;
 using Core.ApplicationAction;
 using Core.ApplicationAction.Run;
 using Core.Event;
-using Core.Sockethandler;
 using Core.SocketHandler;
 using Logging;
 using Persistance;
