@@ -4,6 +4,7 @@ using Core.ApplicationAction;
 using Core.ApplicationAction.Run;
 using Core.Event;
 using Core.Sockethandler;
+using Core.SocketHandler;
 using Logging;
 using Persistance;
 using PlatypusAPI.ApplicationAction.Run;
@@ -20,7 +21,7 @@ namespace Core
         private readonly ApplicationRepository _applicationRepository;
         private readonly LoggerManager _loggerManager;
 
-        private readonly PlatypusTCPClientSocketsHandler _tcpClientSocketsHandler;
+        private readonly PlatypusSocketsHandler _socketsHandler;
 
         public ServerInstance()
         {
@@ -50,10 +51,9 @@ namespace Core
             _loggerManager = new LoggerManager();
             _loggerManager.CreateLogger<PlatypusServerConsoleLogger>();
 
-            _tcpClientSocketsHandler = new PlatypusTCPClientSocketsHandler(
+            _socketsHandler = new PlatypusSocketsHandler(
                 _applicationActionsHandler
             );
-            _tcpClientSocketsHandler.Initialize(2000);
         }
 
         public void LoadConfiguration()
@@ -69,6 +69,11 @@ namespace Core
         public void InstallApplication(string dllFilePath)
         {
             _applicationsHandler.InstallApplication(dllFilePath);
+        }
+
+        public void InitializeServerSocketHandlers()
+        {
+            _socketsHandler.InitializeSocketHandlers();
         }
 
         public ApplicationActionRunResult RunAction(ApplicationActionRunParameter runActionParameter)

@@ -5,15 +5,19 @@ using Utils.GuidGeneratorHelper;
 
 namespace Core.Sockethandler
 {
-    internal class PlatypusTCPClientSocketsHandler : ServerSocketHandler<string>
+    public class PlatypusServerSocketHandler : ServerSocketHandler<string>
     {
         private readonly ApplicationActionsHandler _applicationActionsHandler;
+        private readonly int _port;
 
-        public PlatypusTCPClientSocketsHandler(
+        public PlatypusServerSocketHandler(
+            string protocol,
+            int port,
             ApplicationActionsHandler applicationActionsHandler
-        ) : base("tcp")
+        ) : base(protocol)
         {
             _applicationActionsHandler = applicationActionsHandler;
+            _port = port;
         }
 
         protected override string GenerateClientKey(List<string> currentKeys)
@@ -34,6 +38,11 @@ namespace Core.Sockethandler
         public override void OnReceive(ClientReceivedState<string> receivedState)
         {
             
+        }
+
+        public void Initialize(string host)
+        {
+            Initialize(_port, host);
         }
     }
 }

@@ -3,9 +3,9 @@ using Common.SocketHandler.State;
 
 namespace PlatypusAPI
 {
-    public class PlatypusServerSocketHandler : ClientSocketHandler
+    public class PlatypusClientSocketHandler : ClientSocketHandler
     {
-        public PlatypusServerSocketHandler(string protocol) 
+        public PlatypusClientSocketHandler(string protocol) 
             : base(protocol) { }
 
         public override void OnConnect(ServerReceivedState state)

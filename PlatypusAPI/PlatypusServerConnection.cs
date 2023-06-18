@@ -8,7 +8,7 @@ namespace PlatypusAPI
 
         public PlatypusServerApplication Connect(string protocol = "tcp", string host = null, int port = 2000)
         {
-            _socketHandler = new PlatypusServerSocketHandler(protocol);
+            _socketHandler = new PlatypusClientSocketHandler(protocol);
             _socketHandler.Initialize(port);
             return new PlatypusServerApplication(_socketHandler);
         }

@@ -1,13 +1,13 @@
 using Core;
 using Core.ApplicationAction.Run;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using Utils.Json;
 using Web.Model;
 
 ServerInstance serverInstance = new ServerInstance();
 serverInstance.LoadConfiguration();
 serverInstance.LoadApplications();
+serverInstance.InitializeServerSocketHandlers();
 
 var builder = WebApplication.CreateBuilder(args);
 
