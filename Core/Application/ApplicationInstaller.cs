@@ -24,12 +24,13 @@ namespace Core.Application
 
         public PlatypusApplicationBase InstallApplication(string newGuid, string dllFilePath)
         {
-            PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(dllFilePath);
-            _applicationRepository.SaveApplication(new ApplicationEntity()
+            string newDllFilePath = _applicationRepository.SaveApplication(new ApplicationEntity()
             {
                 Guid = newGuid,
                 DllFilePath = dllFilePath
             });
+
+            PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(newDllFilePath);
 
             Type type = platypusApplication.GetType();
             MethodInfo[] methods = type.GetMethods();

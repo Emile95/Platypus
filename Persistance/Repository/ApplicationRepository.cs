@@ -4,12 +4,13 @@ namespace Persistance.Repository
 {
     public class ApplicationRepository
     {
-        public void SaveApplication(ApplicationEntity entity)
+        public string SaveApplication(ApplicationEntity entity)
         {
             string newApplicationDirectoryPath = Path.Combine(ApplicationPaths.APPLICATIONSDIRECTORYPATHS, entity.Guid);
             Directory.CreateDirectory(newApplicationDirectoryPath);
             string newApplicationDllFilePath = Path.Combine(newApplicationDirectoryPath, ApplicationPaths.APPLICATIONDLLFILENAME);
             File.Copy(entity.DllFilePath, newApplicationDllFilePath, true);
+            return newApplicationDllFilePath;
         }
 
         public List<ApplicationEntity> LoadApplications()
