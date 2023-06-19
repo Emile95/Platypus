@@ -5,21 +5,25 @@ using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Utils;
+using PlatypusApplicationFramework.Configuration.User;
 
 namespace Core.Application
 {
-    internal class ApplicationInstaller
+    public class ApplicationInstaller
     {
         private readonly ApplicationRepository _applicationRepository;
         private readonly ApplicationActionRepository _applicationActionRepository;
+        private readonly UserRepository _userRepository;
 
         public ApplicationInstaller(
             ApplicationRepository applicationRepository,
-            ApplicationActionRepository applicationActionRepository
+            ApplicationActionRepository applicationActionRepository,
+            UserRepository userRepository
         )
         {
             _applicationRepository = applicationRepository;
             _applicationActionRepository = applicationActionRepository;
+            _userRepository = userRepository;
         }
 
         public PlatypusApplicationBase InstallApplication(string newGuid, string dllFilePath)
@@ -36,7 +40,10 @@ namespace Core.Application
             MethodInfo[] methods = type.GetMethods();
 
             foreach (MethodInfo method in methods)
-                InstallActions(newGuid, method);
+            {
+                if (InstallAction(newGuid, method)) continue;
+                if (InstallUserConnectionMethod(platypusApplication, newGuid, method)) continue;
+            }
 
             ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
             env.ApplicationRepository = _applicationRepository;
@@ -59,12 +66,30 @@ namespace Core.Application
             return _applicationActionRepository.RemoveActionsOfApplication(applicationGuid);
         }
 
-        private void InstallActions(string applicationGuid, MethodInfo methodInfo)
+        private bool InstallAction(string applicationGuid, MethodInfo methodInfo)
         {
             ActionDefinitionAttribute actionDefinition = methodInfo.GetCustomAttribute<ActionDefinitionAttribute>();
-            if (actionDefinition == null) return;
+            if (actionDefinition == null) return false;
 
             _applicationActionRepository.SaveAction(actionDefinition.Name+ applicationGuid);
+            return true;
+        }
+
+        public bool InstallUserConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
+        {
+            UserConnectionMethodCreatorAttribute userConnectionMethodCreatorAttribute = methodInfo.GetCustomAttribute<UserConnectionMethodCreatorAttribute>();
+            if (userConnectionMethodCreatorAttribute == null) return false;
+
+            IUserConnectionMethod connectionMethod = methodInfo.Invoke(application, new object[] { }) as IUserConnectionMethod;
+            string connectionMethodName = connectionMethod.GetName();
+            _userRepository.SaveUserCredentialMethod(new UserCredentialMethodEntity()
+            {
+                Description = connectionMethod.GetDescription(),
+                Name = connectionMethodName,
+                Guid = connectionMethodName+applicationGuid
+            });
+
+            return true;
         }
     }
 }

@@ -86,5 +86,23 @@ namespace Core {
                 return ResourceManager.GetString("NewApplicationActionStarted", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default user for platypus application.
+        /// </summary>
+        internal static string PlatypusUserCredentialMethodDescription {
+            get {
+                return ResourceManager.GetString("PlatypusUserCredentialMethodDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Platypus User.
+        /// </summary>
+        internal static string PlatypusUserCredentialMethodName {
+            get {
+                return ResourceManager.GetString("PlatypusUserCredentialMethodName", resourceCulture);
+            }
+        }
     }
 }

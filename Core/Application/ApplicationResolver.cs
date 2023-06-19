@@ -36,18 +36,18 @@ namespace Core.Application
             Type type = platypusApplication.GetType();
             MethodInfo[] methods = type.GetMethods();
 
-            foreach(MethodInfo methodInfo in methods)
-            {
-                if(ResolvePlatypusApplicationMethod<ActionDefinitionAttribute>(methodInfo, (attribute) => _applicationActionsHandler.AddAction(platypusApplication, applicationGuid, attribute, methodInfo) )) continue;
-                if(ResolvePlatypusApplicationMethod<EventHandlerAttribute>(methodInfo, (attribute) => _eventsHandler.AddEventHandler(platypusApplication, attribute, methodInfo) )) continue;
-                if(ResolvePlatypusApplicationMethod<UserCredentialMethodCreatorAttribute>(methodInfo, (attribute) => _usersHandler.AddCredentialMethod(platypusApplication, methodInfo))) continue;
-            }
-
             ApplicationInitializeEnvironment env = new ApplicationInitializeEnvironment();
             env.ApplicationRepository = _applicationRepository;
             env.ApplicationGuid = applicationGuid;
 
             platypusApplication.Initialize(env);
+
+            foreach (MethodInfo methodInfo in methods)
+            {
+                if(ResolvePlatypusApplicationMethod<ActionDefinitionAttribute>(methodInfo, (attribute) => _applicationActionsHandler.AddAction(platypusApplication, applicationGuid, attribute, methodInfo) )) continue;
+                if(ResolvePlatypusApplicationMethod<EventHandlerAttribute>(methodInfo, (attribute) => _eventsHandler.AddEventHandler(platypusApplication, attribute, methodInfo) )) continue;
+                if(ResolvePlatypusApplicationMethod<UserConnectionMethodCreatorAttribute>(methodInfo, (attribute) => _usersHandler.AddCredentialMethod(platypusApplication, applicationGuid, methodInfo))) continue;
+            }
         }
 
         private bool ResolvePlatypusApplicationMethod<AttributeType>(MethodInfo methodInfo, Action<AttributeType> consumer)

@@ -3,15 +3,25 @@ using PlatypusApplicationFramework.Configuration.User;
 
 namespace Core.User
 {
-    public class PlatypusUserCredentialMethod : UserCredentialMethod<PlatypusUserCredential>
+    public class PlatypusUserConnectionMethod : UserConnectionMethod<PlatypusUserCredential>
     {
         private readonly UserRepository _userRepository;
 
-        public PlatypusUserCredentialMethod(
+        public PlatypusUserConnectionMethod(
             UserRepository _userRepository
         )
         {
             _userRepository = _userRepository;
+        }
+
+        public override string GetName()
+        {
+            return Strings.PlatypusUserCredentialMethodName;
+        }
+
+        public override string GetDescription()
+        {
+            return Strings.PlatypusUserCredentialMethodDescription;
         }
 
         protected override void LoginImplementation(PlatypusUserCredential credential)

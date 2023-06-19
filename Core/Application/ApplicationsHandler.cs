@@ -17,18 +17,15 @@ namespace Core.Application
 
         public ApplicationsHandler(
             ApplicationRepository applicationRepository,
-            ApplicationActionRepository applicationActionRepository,
-            ApplicationResolver applicationResolver
+            ApplicationResolver applicationResolver,
+            ApplicationInstaller applicationInstaller
         )
         {
             _applicationRepository = applicationRepository;
 
             _applicationResolver = applicationResolver;
 
-            _applicationInstaller = new ApplicationInstaller(
-                _applicationRepository,
-                applicationActionRepository
-             );
+            _applicationInstaller = applicationInstaller;
 
             _applications = new Dictionary<string, PlatypusApplicationBase>();
         }

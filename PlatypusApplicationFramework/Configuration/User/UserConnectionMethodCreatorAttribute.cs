@@ -1,6 +1,6 @@
 ﻿namespace PlatypusApplicationFramework.Configuration.User
 {
-    public class UserCredentialMemberAttribute : ParameterEditorAttribute
+    public class UserConnectionMethodCreatorAttribute : Attribute
     {
     }
 }

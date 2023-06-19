@@ -126,4 +126,10 @@
   <data name="NewApplicationActionStarted" xml:space="preserve">
     <value>new action has been started</value>
   </data>
+  <data name="PlatypusUserCredentialMethodDescription" xml:space="preserve">
+    <value>Default user for platypus application</value>
+  </data>
+  <data name="PlatypusUserCredentialMethodName" xml:space="preserve">
+    <value>Platypus User</value>
+  </data>
 </root>
