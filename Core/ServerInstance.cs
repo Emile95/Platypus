@@ -36,12 +36,20 @@ namespace Core
                 _eventsHandlers
             );
 
+            UserRepository userRepository = new UserRepository();
+            _usersHandler = new UsersHandler(
+                userRepository
+             );
+
+            _usersHandler.AddCredentialMethod(new PlatypusUserCredentialMethod(userRepository));
+
             _applicationRepository = new ApplicationRepository();
 
             ApplicationResolver applicationResolver = new ApplicationResolver(
                 _applicationRepository,
                 _applicationActionsHandler,
-                _eventsHandlers
+                _eventsHandlers,
+                _usersHandler
             );
 
             _applicationsHandler = new ApplicationsHandler(
@@ -50,12 +58,7 @@ namespace Core
                 applicationResolver
             );
 
-            UserRepository userRepository = new UserRepository();
-            _usersHandler = new UsersHandler(
-                userRepository
-             );
-
-            _usersHandler.AddCredentialMethod(new PlatypusUserCredentialMethod(userRepository));
+            
 
             _loggerManager = new LoggerManager();
             _loggerManager.CreateLogger<PlatypusServerConsoleLogger>();

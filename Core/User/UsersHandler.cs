@@ -1,6 +1,8 @@
 ﻿using Persistance.Repository;
 using PlatypusAPI.User;
+using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.User;
+using System.Reflection;
 using Utils.GuidGeneratorHelper;
 
 namespace Core.User
@@ -20,6 +22,12 @@ namespace Core.User
             _users = new Dictionary<int, UserDefinition>();
 
             _userRepository = userRepository;
+        }
+
+        public void AddCredentialMethod(PlatypusApplicationBase application, MethodInfo methodInfo)
+        {
+            IUserCredentialMethod credentialMethod = methodInfo.Invoke(application, new object[] { }) as IUserCredentialMethod;
+            AddCredentialMethod(credentialMethod);
         }
 
         public void AddCredentialMethod(IUserCredentialMethod credentialMethod)

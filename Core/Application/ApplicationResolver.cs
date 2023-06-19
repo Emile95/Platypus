@@ -6,6 +6,8 @@ using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Core.Event;
 using PlatypusApplicationFramework.Configuration.Event;
+using PlatypusApplicationFramework.Configuration.User;
+using Core.User;
 
 namespace Core.Application
 {
@@ -14,16 +16,19 @@ namespace Core.Application
         private readonly ApplicationRepository _applicationRepository;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly EventsHandler _eventsHandler;
+        private readonly UsersHandler _usersHandler;
 
         public ApplicationResolver(
             ApplicationRepository applicationRepository,
             ApplicationActionsHandler applicationActionsHandler,
-            EventsHandler eventsHandler
+            EventsHandler eventsHandler,
+            UsersHandler usersHandler
         )
         {
             _applicationRepository = applicationRepository;
             _applicationActionsHandler = applicationActionsHandler;
             _eventsHandler = eventsHandler;
+            _usersHandler = usersHandler;
         }
 
         public void ResolvePlatypusApplication(PlatypusApplicationBase platypusApplication, string applicationGuid)
@@ -35,6 +40,7 @@ namespace Core.Application
             {
                 if(ResolvePlatypusApplicationMethod<ActionDefinitionAttribute>(methodInfo, (attribute) => _applicationActionsHandler.AddAction(platypusApplication, applicationGuid, attribute, methodInfo) )) continue;
                 if(ResolvePlatypusApplicationMethod<EventHandlerAttribute>(methodInfo, (attribute) => _eventsHandler.AddEventHandler(platypusApplication, attribute, methodInfo) )) continue;
+                if(ResolvePlatypusApplicationMethod<UserCredentialMethodCreatorAttribute>(methodInfo, (attribute) => _usersHandler.AddCredentialMethod(platypusApplication, methodInfo))) continue;
             }
 
             ApplicationInitializeEnvironment env = new ApplicationInitializeEnvironment();
