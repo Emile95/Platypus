@@ -47,6 +47,18 @@ namespace Core.Application
             return platypusApplication;
         }
 
+        public List<string> UninstallApplication(PlatypusApplicationBase application, string applicationGuid)
+        {
+            ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
+            env.ApplicationRepository = _applicationRepository;
+            env.ApplicationGuid = applicationGuid;
+
+            application.Uninstall(env);
+
+            _applicationRepository.RemoveApplication(applicationGuid);
+            return _applicationActionRepository.RemoveActionsOfApplication(applicationGuid);
+        }
+
         private void InstallActions(string applicationGuid, MethodInfo methodInfo)
         {
             ActionDefinitionAttribute actionDefinition = methodInfo.GetCustomAttribute<ActionDefinitionAttribute>();

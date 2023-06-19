@@ -9,7 +9,8 @@ namespace Utils
             where PluginType : class
         {
             List<PluginType> plugins = new List<PluginType>();
-            Assembly assembly = Assembly.LoadFile(dllPath);
+
+            Assembly assembly = LoadAssembly(dllPath);
 
             Type pluginType = typeof(PluginType);
 
@@ -28,7 +29,7 @@ namespace Utils
         public static PluginType InstanciateImplementationFromDll<PluginType>(string dllPath, bool exceptionIfNotFound = false)
             where PluginType : class
         {
-            Assembly assembly = Assembly.LoadFile(dllPath);
+            Assembly assembly = LoadAssembly(dllPath);
 
             Type pluginType = typeof(PluginType);
 
@@ -42,6 +43,12 @@ namespace Utils
                 throw new NoImplementationFoundException<PluginType>();
 
             return null;
+        }
+
+        private static Assembly LoadAssembly(string dllFilePath)
+        {
+            byte[] assemblyBytes = File.ReadAllBytes(dllFilePath);
+            return Assembly.Load(assemblyBytes);
         }
     }
 }

@@ -42,6 +42,16 @@ namespace Core.ApplicationAction
             _applicationActions.Add(actionGuid, applicationAction);
         }
 
+        public void RemoveAction(string actionGuid)
+        {
+            foreach(ApplicationActionRun applicationActionRun in _applicationActionRuns.Values)
+            {
+                if (applicationActionRun.ActionGuid == actionGuid)
+                    CancelRunningAction(applicationActionRun.Guid);
+            }
+            _applicationActions.Remove(actionGuid);
+        }
+
         public bool HasActionWithGuid(string actionGuid)
         {
             return _applicationActions.ContainsKey(actionGuid);
@@ -129,6 +139,9 @@ namespace Core.ApplicationAction
         {
             _applicationActionRuns.Remove(run.Guid);
 
+            if (run.Env.ActionCancelled)
+                return;
+
             ActionRunEventHandlerEnvironment eventEnv = new ActionRunEventHandlerEnvironment();
             eventEnv.ApplicationActionResult = run.Result;
             eventEnv.ApplicationActionInfo = applicationAction.GetInfo();
@@ -140,8 +153,7 @@ namespace Core.ApplicationAction
             }
             catch (EventHandlerException ex)
             {
-                if (run.Result.Status != ApplicationActionRunResultStatus.Failed &&
-                    run.Result.Status != ApplicationActionRunResultStatus.Canceled)
+                if (run.Result.Status != ApplicationActionRunResultStatus.Failed)
                 {
                     run.Result.Status = ApplicationActionRunResultStatus.Failed;
                     run.Result.Message = ex.Message;

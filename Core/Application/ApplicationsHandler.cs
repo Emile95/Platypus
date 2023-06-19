@@ -4,6 +4,7 @@ using PlatypusApplicationFramework.Configuration.Application;
 using Utils;
 using Utils.GuidGeneratorHelper;
 using Persistance;
+using Core.Exceptions;
 
 namespace Core.Application
 {
@@ -54,6 +55,16 @@ namespace Core.Application
             string newGuid = GuidGenerator.GenerateFromEnumerable(_applications.Keys);
             PlatypusApplicationBase application = _applicationInstaller.InstallApplication(newGuid, dllFilePath);
             LoadApplication(application, newGuid);
+        }
+
+        public List<string> UninstallApplication(string applicationGuid)
+        {
+            if (_applications.ContainsKey(applicationGuid) == false)
+                throw new ApplicationInexistantException(applicationGuid);
+
+            PlatypusApplicationBase application = _applications[applicationGuid];
+            _applications.Remove(applicationGuid);
+            return _applicationInstaller.UninstallApplication(application, applicationGuid);
         }
     }
 }

@@ -23,6 +23,11 @@
             return Path.Combine(GetApplicationDirectoryPath(applicationGuid), APPLICATIONDLLFILENAME);
         }
 
+        public static string GetApplicationDllFilePathByBasePath(string basePath)
+        {
+            return Path.Combine(basePath, APPLICATIONDLLFILENAME);
+        }
+
         public static string GetApplicationConfigFilePath(string applicationGuid)
         {
             return Path.Combine(GetApplicationDirectoryPath(applicationGuid), APPLICATIONCONFIGFILENAME);

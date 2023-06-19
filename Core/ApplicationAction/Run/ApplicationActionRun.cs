@@ -18,6 +18,8 @@ namespace Core.ApplicationAction.Run
             Status = ApplicationActionRunInfoStatus.Running;
             Task = new Task(() => RunAction(() => action.RunAction(Env, parameter), runCallBack));
             Task.Start();
+
+            Result = new ApplicationActionRunResult();
         }
 
         public ApplicationActionRunInfo GetInfo()

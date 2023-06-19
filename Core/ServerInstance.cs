@@ -70,6 +70,13 @@ namespace Core
             _applicationsHandler.InstallApplication(dllFilePath);
         }
 
+        public void UninstalApplication(string applicationGuid)
+        {
+            List<string> actionGuids = _applicationsHandler.UninstallApplication(applicationGuid);
+            foreach(string actionGuid in actionGuids)
+                _applicationActionsHandler.RemoveAction(actionGuid);
+        }
+
         public void InitializeServerSocketHandlers()
         {
             _socketsHandler.InitializeSocketHandlers();

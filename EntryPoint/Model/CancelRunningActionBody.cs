@@ -1,4 +1,4 @@
-﻿namespace Web.Model
+﻿namespace EntryPoint.Model
 {
     public class CancelRunningActionBody
     {

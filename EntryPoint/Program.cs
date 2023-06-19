@@ -1,8 +1,8 @@
 using Core;
 using Core.ApplicationAction.Run;
+using EntryPoint.Model;
 using Microsoft.AspNetCore.Mvc;
 using Utils.Json;
-using Web.Model;
 
 ServerInstance serverInstance = new ServerInstance();
 serverInstance.LoadConfiguration();
@@ -43,6 +43,18 @@ app.MapGet(@"/action/runnings", () =>
 app.MapPost(@"/application/install", ([FromBody] InstallApplicationBody body) =>
 {
     serverInstance.InstallApplication(body.DllFilePath);
+});
+
+app.MapPost(@"/application/uninstall", ([FromBody] UninstallApplicationBody body) =>
+{
+    try
+    {
+        serverInstance.UninstalApplication(body.ApplicationGuid);
+    } catch (Exception ex)
+    {
+        return ex.Message;
+    }
+    return "uninstalled";
 });
 
 app.MapPut(@"/application/configuration", ([FromBody] Dictionary<string, object> body) =>
