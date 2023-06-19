@@ -2,6 +2,6 @@
 {
     public interface IUserCredentialMethod
     {
-        void Login(Dictionary<string, object> parameter);
+        void Login(Dictionary<string, object> credential);
     }
 }

@@ -4,6 +4,7 @@ using Core.ApplicationAction;
 using Core.ApplicationAction.Run;
 using Core.Event;
 using Core.SocketHandler;
+using Core.User;
 using Logging;
 using Persistance.Repository;
 using PlatypusAPI.ApplicationAction.Run;
@@ -16,11 +17,13 @@ namespace Core
         private readonly ApplicationsHandler _applicationsHandler;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly EventsHandler _eventsHandlers;
+        private readonly UsersHandler _usersHandler;
 
         private readonly ApplicationRepository _applicationRepository;
         private readonly LoggerManager _loggerManager;
 
         private readonly PlatypusSocketsHandler _socketsHandler;
+
 
         public ServerInstance()
         {
@@ -46,6 +49,13 @@ namespace Core
                 applicationActionRepository,
                 applicationResolver
             );
+
+            UserRepository userRepository = new UserRepository();
+            _usersHandler = new UsersHandler(
+                userRepository
+             );
+
+            _usersHandler.AddCredentialMethod(new PlatypusUserCredentialMethod(userRepository));
 
             _loggerManager = new LoggerManager();
             _loggerManager.CreateLogger<PlatypusServerConsoleLogger>();

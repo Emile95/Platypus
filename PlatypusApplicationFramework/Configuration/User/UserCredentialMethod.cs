@@ -5,12 +5,12 @@ namespace PlatypusApplicationFramework.Configuration.User
     public abstract class UserCredentialMethod<ParameterType> : IUserCredentialMethod
         where ParameterType : class, new()
     {
-        public void Login(Dictionary<string, object> parameter)
+        public void Login(Dictionary<string, object> credential)
         {
-            ParameterType parameterObject = ParameterEditorObjectResolver.ResolveByDictionnary<ParameterType>(parameter);
+            ParameterType parameterObject = ParameterEditorObjectResolver.ResolveByDictionnary<ParameterType>(credential);
             LoginImplementation(parameterObject);
         }
 
-        protected abstract void LoginImplementation(ParameterType parameter);
+        protected abstract void LoginImplementation(ParameterType credential);
     }
 }
