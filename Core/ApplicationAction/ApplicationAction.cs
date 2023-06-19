@@ -2,7 +2,6 @@
 using Core.Exceptions;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.Core.ApplicationAction;
-using PlatypusApplicationFramework.Configuration;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
@@ -141,27 +140,6 @@ namespace Core.ApplicationAction
             PropertyInfo parameterPropertyInfo = environmentType.GetProperty("Parameter");
 
             parameterPropertyInfo.SetValue(env, resolvedParam);
-        }
-
-        private void ResolveActionParameterProperty(Dictionary<string, object> parameters, object resolvedParam, PropertyInfo propertyInfo)
-        {
-            ParameterEditorAttribute parameterEditorAttribute = propertyInfo.GetCustomAttribute<ParameterEditorAttribute>();
-            if (parameterEditorAttribute == null) return;
-
-            if (parameters.ContainsKey(parameterEditorAttribute.Name))
-            {
-                propertyInfo.SetValue(resolvedParam, parameters[parameterEditorAttribute.Name]);
-                return;
-            }
-
-            if (parameterEditorAttribute.DefaultValue != null)
-            {
-                propertyInfo.SetValue(resolvedParam, parameterEditorAttribute.DefaultValue);
-                return;
-            }
-
-            if (parameterEditorAttribute.IsRequired)
-                throw new ApplicationActionFieldRequired(parameterEditorAttribute.Name);
         }
 
         public ApplicationActionEnvironmentBase CreateStartActionEnvironment()

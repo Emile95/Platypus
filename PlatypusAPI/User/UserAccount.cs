@@ -3,12 +3,14 @@
     public class UserAccount
     {
         public int ID { get; private set; }
-        public string Name { get; private set; }
+        public string FirstName { get; private set; }
+        public string LastName { get; private set; }
 
-        public UserAccount(int id, string name)
+        public UserAccount(int id, string firstName, string lastName)
         {
             ID = id;
-            Name = name;
+            FirstName = firstName;
+            LastName = lastName;
         }
     }
 }

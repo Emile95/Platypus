@@ -1,15 +1,16 @@
-﻿namespace PlatypusApplicationFramework.Configuration.User
+﻿using PlatypusApplicationFramework.Confugration;
+
+namespace PlatypusApplicationFramework.Configuration.User
 {
     public abstract class UserCredentialMethod<ParameterType> : IUserCredentialMethod
-        where ParameterType : class
+        where ParameterType : class, new()
     {
-        protected ParameterType Parameter { get; set; }
-
-        public void Login(Dictionary<string, object> Parameter)
+        public void Login(Dictionary<string, object> parameter)
         {
-            LoginImplementation(Parameter as ParameterType);
+            ParameterType parameterObject = ParameterEditorObjectResolver.ResolveByDictionnary<ParameterType>(parameter);
+            LoginImplementation(parameterObject);
         }
 
-        protected abstract object LoginImplementation(ParameterType parameter);
+        protected abstract void LoginImplementation(ParameterType parameter);
     }
 }
