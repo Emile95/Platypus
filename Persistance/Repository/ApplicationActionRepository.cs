@@ -3,7 +3,7 @@ using Persistance.Entity;
 
 namespace Persistance.Repository
 {
-    public class ApplicationActionRepository
+    public class ApplicationActionRepository : MemberOfApplicationRepository
     {
         public void SaveActionRunResult(string actionGuid, int runNumber, ApplicationActionResultEntity result)
         {
@@ -14,16 +14,7 @@ namespace Persistance.Repository
 
         public List<string> RemoveActionsOfApplication(string applicationGuid)
         {
-            string regularExpression = $"*{applicationGuid}";
-            string[] actionOfApplicationDirectoryPaths = Directory.GetDirectories(ApplicationPaths.ACTIONSDIRECTORYPATH, regularExpression);
-            List<string> actionGuidss = new List<string>();
-            foreach(string actionOfApplicationDirectoryPath in actionOfApplicationDirectoryPaths)
-            {
-                DirectoryInfo actionDirectoryInfo = new DirectoryInfo(actionOfApplicationDirectoryPath);
-                actionGuidss.Add(actionDirectoryInfo.Name);
-                Directory.Delete(actionOfApplicationDirectoryPath, true);
-            }
-            return actionGuidss;
+            return RemoveByApplicationGuid(ApplicationPaths.ACTIONSDIRECTORYPATH, applicationGuid);
         }
 
         public void SaveAction(string actionGuid)

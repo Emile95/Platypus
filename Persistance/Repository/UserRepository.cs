@@ -3,7 +3,7 @@ using Persistance.Entity;
 
 namespace Persistance.Repository
 {
-    public class UserRepository
+    public class UserRepository : MemberOfApplicationRepository
     {
         public string SaveUser(UserEntity entity)
         {
@@ -39,16 +39,7 @@ namespace Persistance.Repository
 
         public List<string> RemoveUserCredentialMethodOfApplication(string applicationGuid)
         {
-            string regularExpression = $"*{applicationGuid}";
-            string[] actionOfApplicationDirectoryPaths = Directory.GetDirectories(ApplicationPaths.USERCREDENTIALMETHODSDIRECTORYPATH, regularExpression);
-            List<string> actionGuidss = new List<string>();
-            foreach (string actionOfApplicationDirectoryPath in actionOfApplicationDirectoryPaths)
-            {
-                DirectoryInfo actionDirectoryInfo = new DirectoryInfo(actionOfApplicationDirectoryPath);
-                actionGuidss.Add(actionDirectoryInfo.Name);
-                Directory.Delete(actionOfApplicationDirectoryPath, true);
-            }
-            return actionGuidss;
+            return RemoveByApplicationGuid(ApplicationPaths.USERCREDENTIALMETHODSDIRECTORYPATH, applicationGuid);
         }
     }
 }
