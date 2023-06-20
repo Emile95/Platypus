@@ -16,12 +16,12 @@ namespace Core.User
 
         public override string GetName()
         {
-            return Strings.PlatypusUserCredentialMethodName;
+            return Strings.PlatypusUserConnectionMethodName;
         }
 
         public override string GetDescription()
         {
-            return Strings.PlatypusUserCredentialMethodDescription;
+            return Strings.PlatypusUserConnectionMethodDescription;
         }
 
         protected override bool LoginImplementation(UserConnectEnvironment<PlatypusUserCredential> env)

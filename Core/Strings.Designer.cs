@@ -90,18 +90,18 @@ namespace Core {
         /// <summary>
         ///   Looks up a localized string similar to Default user for platypus application.
         /// </summary>
-        internal static string PlatypusUserCredentialMethodDescription {
+        internal static string PlatypusUserConnectionMethodDescription {
             get {
-                return ResourceManager.GetString("PlatypusUserCredentialMethodDescription", resourceCulture);
+                return ResourceManager.GetString("PlatypusUserConnectionMethodDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Platypus User.
         /// </summary>
-        internal static string PlatypusUserCredentialMethodName {
+        internal static string PlatypusUserConnectionMethodName {
             get {
-                return ResourceManager.GetString("PlatypusUserCredentialMethodName", resourceCulture);
+                return ResourceManager.GetString("PlatypusUserConnectionMethodName", resourceCulture);
             }
         }
     }
