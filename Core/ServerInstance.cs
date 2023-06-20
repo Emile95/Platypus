@@ -41,9 +41,8 @@ namespace Core
                 userRepository
              );
 
-            //_usersHandler.AddCredentialMethod(new PlatypusUserCredentialMethod(userRepository));
+            _usersHandler.AddDefaultCredentialMethod(new PlatypusUserConnectionMethod(userRepository), "Default-PlatypusUser");
 
-            
             _applicationRepository = new ApplicationRepository();
 
             ApplicationInstaller applicationInstaller = new ApplicationInstaller(

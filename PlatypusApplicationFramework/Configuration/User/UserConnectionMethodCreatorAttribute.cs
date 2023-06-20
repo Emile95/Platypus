@@ -1,6 +1,4 @@
 ﻿namespace PlatypusApplicationFramework.Configuration.User
 {
-    public class UserConnectionMethodCreatorAttribute : Attribute
-    {
-    }
+    public class UserConnectionMethodCreatorAttribute : Attribute { }
 }

@@ -1,8 +1,10 @@
-﻿namespace PlatypusApplicationFramework.Configuration.User
+﻿using PlatypusAPI.User;
+
+namespace PlatypusApplicationFramework.Configuration.User
 {
     public interface IUserConnectionMethod
     {
-        void Login(Dictionary<string, object> credential);
+        bool Login(Dictionary<string,object> credential, ref string loginAttemptMessage, ref UserAccount userAccount);
         string GetName();
         string GetDescription();
     }

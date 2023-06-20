@@ -1,20 +1,32 @@
-﻿using PlatypusApplicationFramework.Confugration;
+﻿using PlatypusAPI.User;
+using PlatypusApplicationFramework.Confugration;
 
 namespace PlatypusApplicationFramework.Configuration.User
 {
-    public abstract class UserConnectionMethod<ParameterType> : IUserConnectionMethod
-        where ParameterType : class, new()
+    public abstract class UserConnectionMethod<CredentialType> : IUserConnectionMethod
+        where CredentialType : class, new()
     {
-        public void Login(Dictionary<string, object> credential)
+        public bool Login(Dictionary<string, object> credential, ref string loginAttemptMessage, ref UserAccount userAccount)
         {
-            ParameterType parameterObject = ParameterEditorObjectResolver.ResolveByDictionnary<ParameterType>(credential);
-            LoginImplementation(parameterObject);
+            CredentialType resolvedCredential = ParameterEditorObjectResolver.ResolveByDictionnary<CredentialType>(credential);
+
+            UserConnectEnvironment<CredentialType> env = new UserConnectEnvironment<CredentialType>()
+            {
+                Credential = resolvedCredential
+            };
+
+            bool loginSucceeded = LoginImplementation(env);
+
+            loginAttemptMessage = env.LoginAttemptMessage;
+            userAccount = env.UserAccount;
+
+            return loginSucceeded;
         }
 
         public abstract string GetName();
 
         public virtual string GetDescription() { return ""; }
 
-        protected abstract void LoginImplementation(ParameterType credential);
+        protected abstract bool LoginImplementation(UserConnectEnvironment<CredentialType> env);
     }
 }

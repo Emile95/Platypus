@@ -8,10 +8,10 @@ namespace Core.User
         private readonly UserRepository _userRepository;
 
         public PlatypusUserConnectionMethod(
-            UserRepository _userRepository
+            UserRepository userRepository
         )
         {
-            _userRepository = _userRepository;
+            _userRepository = userRepository;
         }
 
         public override string GetName()
@@ -24,9 +24,9 @@ namespace Core.User
             return Strings.PlatypusUserCredentialMethodDescription;
         }
 
-        protected override void LoginImplementation(PlatypusUserCredential credential)
+        protected override bool LoginImplementation(UserConnectEnvironment<PlatypusUserCredential> env)
         {
-            
+            return true;
         }
     }
 }

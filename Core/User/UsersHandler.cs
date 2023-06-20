@@ -30,10 +30,10 @@ namespace Core.User
             AddCredentialMethod(credentialMethod, applicationGuid);
         }
 
-        public void RemoveCredentialMethod(string credentialMethodGuid)
+        public void AddDefaultCredentialMethod(IUserConnectionMethod credentialMethod, string guid)
         {
-            _credentialMethods.Remove(credentialMethodGuid);
-            _users.Remove(credentialMethodGuid);
+            _credentialMethods.Add(guid, credentialMethod);
+            _users.Add(guid, new List<UserDefinition>());
         }
 
         public string AddCredentialMethod(IUserConnectionMethod credentialMethod, string applicationGuid)
@@ -42,6 +42,12 @@ namespace Core.User
             _credentialMethods.Add(newGuid, credentialMethod);
             _users.Add(newGuid, new List<UserDefinition>());
             return newGuid;
+        }
+
+        public void RemoveCredentialMethod(string credentialMethodGuid)
+        {
+            _credentialMethods.Remove(credentialMethodGuid);
+            _users.Remove(credentialMethodGuid);
         }
 
         public void AddUser(string credentialMethodGuid, Dictionary<string,object> credential, string userName)
