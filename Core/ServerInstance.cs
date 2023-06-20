@@ -8,6 +8,7 @@ using Core.User;
 using Logging;
 using Persistance.Repository;
 using PlatypusAPI.ApplicationAction.Run;
+using PlatypusAPI.User;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 
 namespace Core
@@ -41,7 +42,7 @@ namespace Core
                 userRepository
              );
 
-            _usersHandler.AddDefaultCredentialMethod(new PlatypusUserConnectionMethod(userRepository), "Default-PlatypusUser");
+            _usersHandler.AddBuiltInCredentialMethod(new PlatypusUserConnectionMethod(userRepository), BuiltInUserConnectionMethodGuid.PlatypusUser);
 
             _applicationRepository = new ApplicationRepository();
 

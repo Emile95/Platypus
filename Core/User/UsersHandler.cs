@@ -30,7 +30,7 @@ namespace Core.User
             AddCredentialMethod(credentialMethod, applicationGuid);
         }
 
-        public void AddDefaultCredentialMethod(IUserConnectionMethod credentialMethod, string guid)
+        public void AddBuiltInCredentialMethod(IUserConnectionMethod credentialMethod, string guid)
         {
             _credentialMethods.Add(guid, credentialMethod);
             _users.Add(guid, new List<UserDefinition>());
