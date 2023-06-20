@@ -36,5 +36,19 @@ namespace Persistance.Repository
             string json = JsonConvert.SerializeObject(entity);
             File.WriteAllText(definitionFilePath, json);
         }
+
+        public List<string> RemoveUserCredentialMethodOfApplication(string applicationGuid)
+        {
+            string regularExpression = $"*{applicationGuid}";
+            string[] actionOfApplicationDirectoryPaths = Directory.GetDirectories(ApplicationPaths.USERCREDENTIALMETHODSDIRECTORYPATH, regularExpression);
+            List<string> actionGuidss = new List<string>();
+            foreach (string actionOfApplicationDirectoryPath in actionOfApplicationDirectoryPaths)
+            {
+                DirectoryInfo actionDirectoryInfo = new DirectoryInfo(actionOfApplicationDirectoryPath);
+                actionGuidss.Add(actionDirectoryInfo.Name);
+                Directory.Delete(actionOfApplicationDirectoryPath, true);
+            }
+            return actionGuidss;
+        }
     }
 }

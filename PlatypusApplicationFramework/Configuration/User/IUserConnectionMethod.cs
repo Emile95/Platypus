@@ -4,7 +4,6 @@
     {
         void Login(Dictionary<string, object> credential);
         string GetName();
-
         string GetDescription();
     }
 }

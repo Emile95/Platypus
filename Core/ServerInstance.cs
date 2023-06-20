@@ -90,9 +90,11 @@ namespace Core
 
         public void UninstalApplication(string applicationGuid)
         {
-            List<string> actionGuids = _applicationsHandler.UninstallApplication(applicationGuid);
-            foreach(string actionGuid in actionGuids)
+            UninstallApplicationDetails details = _applicationsHandler.UninstallApplication(applicationGuid);
+            foreach(string actionGuid in details.ActionGuids)
                 _applicationActionsHandler.RemoveAction(actionGuid);
+            foreach (string userConnectionMethodGuid in details.UserConnectionMethodGuids)
+                _usersHandler.RemoveCredentialMethod(userConnectionMethodGuid);
         }
 
         public void InitializeServerSocketHandlers()

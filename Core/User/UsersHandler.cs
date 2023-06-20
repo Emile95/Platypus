@@ -4,7 +4,6 @@ using PlatypusAPI.User;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.User;
 using System.Reflection;
-using Utils.GuidGeneratorHelper;
 
 namespace Core.User
 {
@@ -29,6 +28,12 @@ namespace Core.User
         {
             IUserConnectionMethod credentialMethod = methodInfo.Invoke(application, new object[] { }) as IUserConnectionMethod;
             AddCredentialMethod(credentialMethod, applicationGuid);
+        }
+
+        public void RemoveCredentialMethod(string credentialMethodGuid)
+        {
+            _credentialMethods.Remove(credentialMethodGuid);
+            _users.Remove(credentialMethodGuid);
         }
 
         public string AddCredentialMethod(IUserConnectionMethod credentialMethod, string applicationGuid)

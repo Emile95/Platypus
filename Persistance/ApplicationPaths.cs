@@ -12,7 +12,7 @@
         public static string ACTIONLOGFILENAME { get; private set; } = "action.log";
         public static string USERSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "users");
         public static string USERFILENAME { get; private set; } = "user.json";
-        public static string USERCREDENTIALMETHODSDIRECTORYPATH { get; private set; } = Path.Combine(USERSDIRECTORYPATH, "crendialMethods");
+        public static string USERCREDENTIALMETHODSDIRECTORYPATH { get; private set; } = Path.Combine(USERSDIRECTORYPATH, "connectionMethods");
         public static string DEFINITIONFILENAME { get; private set; } = "definition.json";
 
         public static string GetApplicationDirectoryPath(string applicationGuid)

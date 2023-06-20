@@ -54,7 +54,7 @@ namespace Core.Application
             LoadApplication(application, newGuid);
         }
 
-        public List<string> UninstallApplication(string applicationGuid)
+        public UninstallApplicationDetails UninstallApplication(string applicationGuid)
         {
             if (_applications.ContainsKey(applicationGuid) == false)
                 throw new ApplicationInexistantException(applicationGuid);
