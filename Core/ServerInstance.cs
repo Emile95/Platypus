@@ -123,6 +123,11 @@ namespace Core
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }
 
+        public void AddPlatypusUser(string userName, string password)
+        {
+            _usersHandler.AddPlatypusUser(userName, password);
+        }
+
         public void CancelRunningApplicationAction(string guid)
         {
             _applicationActionsHandler.CancelRunningAction(guid);

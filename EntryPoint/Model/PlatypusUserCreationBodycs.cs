@@ -1,8 +1,7 @@
-﻿namespace Persistance.Entity
+﻿namespace EntryPoint.Model
 {
-    public class UserEntity
+    public class PlatypusUserCreationBody
     {
-        public int ID { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
     }

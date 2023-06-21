@@ -5,9 +5,9 @@ namespace Core.User
     public class PlatypusUserCredential
     {
         [ParameterEditor(
-            Name = "User",
+            Name = "UserName",
             IsRequired = true)]
-        public string User { get; set; }
+        public string UserName { get; set; }
 
         [ParameterEditor(
             Name = "Password",

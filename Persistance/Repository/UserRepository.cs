@@ -5,14 +5,38 @@ namespace Persistance.Repository
 {
     public class UserRepository : MemberOfApplicationRepository
     {
-        public string SaveUser(UserEntity entity)
+        public void SaveUser(UserEntity entity)
         {
-            string userDirectoryPath = ApplicationPaths.GetUserDirectoryPath(entity.ID);
-            if(Directory.Exists(userDirectoryPath) == false)
-                Directory.CreateDirectory(userDirectoryPath);
+            int lastID = Convert.ToInt32(File.ReadAllText(ApplicationPaths.LASTPLATYPUSUSERIDFILEPATH));
+            File.WriteAllText(ApplicationPaths.LASTPLATYPUSUSERIDFILEPATH, (lastID + 1).ToString());
+            entity.ID = lastID;
+
+            string platypusUserDirectoryPath = ApplicationPaths.GetPlatypusUserDirectoryPath(entity.ID);
+
+            if(Directory.Exists(platypusUserDirectoryPath) == false)
+                Directory.CreateDirectory(platypusUserDirectoryPath);
+
+            string platypusUserFilePath = Path.Combine(platypusUserDirectoryPath, ApplicationPaths.USERFILENAME);
+
             string json = JsonConvert.SerializeObject(entity);
-            File.WriteAllText(ApplicationPaths.GetUserFilePathByBasePath(userDirectoryPath), json);
-            return userDirectoryPath;
+            File.WriteAllText(platypusUserFilePath, json);
+        }
+
+        public UserEntity GetUserByCredential(string userName, string password)
+        {
+            string[] platypusUserDirectoires =  Directory.GetDirectories(ApplicationPaths.PLATYPUSUSERSDIRECTORYPATH);
+                
+            foreach(string platypusUserDirectoiresPath in platypusUserDirectoires)
+            {
+                string platypusUserFilePath = Path.Combine(platypusUserDirectoiresPath, ApplicationPaths.USERFILENAME);
+                string json = File.ReadAllText(platypusUserFilePath);
+                UserEntity userEntity = JsonConvert.DeserializeObject<UserEntity>(json);
+                if(userEntity.UserName == userName &&
+                   userEntity.Password == password)
+                    return userEntity;
+            }
+
+            return null;
         }
 
         public void SaveUserCredential(int userID, Dictionary<string, object> credential)

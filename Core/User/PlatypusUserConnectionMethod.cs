@@ -1,4 +1,6 @@
-﻿using Persistance.Repository;
+﻿using Persistance.Entity;
+using Persistance.Repository;
+using PlatypusAPI.User;
 using PlatypusApplicationFramework.Configuration.User;
 
 namespace Core.User
@@ -26,6 +28,16 @@ namespace Core.User
 
         protected override bool LoginImplementation(UserConnectEnvironment<PlatypusUserCredential> env)
         {
+            UserEntity userEntity = _userRepository.GetUserByCredential(env.Credential.UserName, env.Credential.Password);
+            
+            if(userEntity == null)
+            {
+                env.LoginAttemptMessage = "bad credential";
+                return false;
+            }
+
+            env.UserAccount = new UserAccount(userEntity.ID);
+
             return true;
         }
     }

@@ -57,9 +57,9 @@ app.MapPost(@"/application/uninstall", ([FromBody] UninstallApplicationBody body
     return "uninstalled";
 });
 
-app.MapPut(@"/application/configuration", ([FromBody] Dictionary<string, object> body) =>
+app.MapPost(@"/application/user", ([FromBody] PlatypusUserCreationBody body) =>
 {
-    
+    serverInstance.AddPlatypusUser(body.UserName, body.Password);
 });
 
 app.UseHttpsRedirection();
