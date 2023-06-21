@@ -1,7 +1,9 @@
 ﻿using Persistance.Entity;
 using Persistance.Repository;
+using PlatypusAPI.User;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.User;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Core.User
@@ -51,6 +53,15 @@ namespace Core.User
                 UserName = userName,
                 Password = password
             });
+        }
+
+        public string Connect(Dictionary<string, object> credential, string connectionMethodGuid)
+        {
+            string loginAttemtMessage = "";
+            UserAccount userAccount = null;
+            bool success = _credentialMethods[connectionMethodGuid].Login(credential, ref loginAttemtMessage, ref userAccount);
+            if(success) return loginAttemtMessage + ", user id " + userAccount.ID.ToString();
+            return loginAttemtMessage;
         }
 
     }

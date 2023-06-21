@@ -36,6 +36,7 @@ namespace Core.User
                 return false;
             }
 
+            env.LoginAttemptMessage = "connection successful";
             env.UserAccount = new UserAccount(userEntity.ID);
 
             return true;

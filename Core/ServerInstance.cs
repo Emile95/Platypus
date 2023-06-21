@@ -133,6 +133,11 @@ namespace Core
             _applicationActionsHandler.CancelRunningAction(guid);
         }
 
+        public string UserConnect(Dictionary<string, object> credential, string connectionMethodGuid)
+        {
+            return _usersHandler.Connect(credential, connectionMethodGuid);
+        }
+
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions()
         {
             return _applicationActionsHandler.GetRunningApplicationActionInfos();

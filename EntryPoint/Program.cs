@@ -62,6 +62,12 @@ app.MapPost(@"/application/user", ([FromBody] PlatypusUserCreationBody body) =>
     serverInstance.AddPlatypusUser(body.UserName, body.Password);
 });
 
+app.MapPost(@"/application/user/connect", ([FromBody] UserConnection body) =>
+{
+    body.Credential = JsonHelper.GetDictObjectFromJsonElementsDict(body.Credential);
+    return serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

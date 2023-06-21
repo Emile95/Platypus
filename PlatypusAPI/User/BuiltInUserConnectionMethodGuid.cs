@@ -2,6 +2,6 @@
 {
     public static class BuiltInUserConnectionMethodGuid
     {
-        public static string PlatypusUser { get; private set; } = "PlatypusUSer";
+        public static string PlatypusUser { get; private set; } = "PlatypusUser";
     }
 }
