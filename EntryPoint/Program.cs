@@ -65,7 +65,14 @@ app.MapPost(@"/application/user", ([FromBody] PlatypusUserCreationBody body) =>
 app.MapPost(@"/application/user/connect", ([FromBody] UserConnection body) =>
 {
     body.Credential = JsonHelper.GetDictObjectFromJsonElementsDict(body.Credential);
-    return serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
+    try
+    {
+        return (object)serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
+    } catch(Exception e)
+    {
+        return e.Message;
+    }
+    
 });
 
 app.UseHttpsRedirection();

@@ -133,7 +133,7 @@ namespace Core
             _applicationActionsHandler.CancelRunningAction(guid);
         }
 
-        public string UserConnect(Dictionary<string, object> credential, string connectionMethodGuid)
+        public UserAccount UserConnect(Dictionary<string, object> credential, string connectionMethodGuid)
         {
             return _usersHandler.Connect(credential, connectionMethodGuid);
         }
