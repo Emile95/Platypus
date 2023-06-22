@@ -57,6 +57,7 @@ namespace Core.User
 
         public UserAccount Connect(Dictionary<string, object> credential, string connectionMethodGuid)
         {
+            if(_credentialMethods.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
             string loginAttemtMessage = "";
             UserAccount userAccount = null;
             bool success = _credentialMethods[connectionMethodGuid].Login(credential, ref loginAttemtMessage, ref userAccount);
