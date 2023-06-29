@@ -5,55 +5,46 @@ namespace Persistance.Repository
 {
     public class UserRepository : MemberOfApplicationRepository
     {
-        public void SaveUser(UserEntity entity)
+        public int SaveUser(string connectionMethodGuid, UserEntity entity)
         {
-            int lastID = Convert.ToInt32(File.ReadAllText(ApplicationPaths.LASTPLATYPUSUSERIDFILEPATH));
-            File.WriteAllText(ApplicationPaths.LASTPLATYPUSUSERIDFILEPATH, (lastID + 1).ToString());
+            int lastID = Convert.ToInt32(File.ReadAllText(ApplicationPaths.LASTUSERIDFILEPATH));
+            int newID = (lastID + 1);
+            File.WriteAllText(ApplicationPaths.LASTUSERIDFILEPATH, newID.ToString());
             entity.ID = lastID;
 
-            string platypusUserDirectoryPath = ApplicationPaths.GetPlatypusUserDirectoryPath(entity.ID);
+            string userDirectoryPath = ApplicationPaths.GetUserDirectoryPath(connectionMethodGuid, entity.ID);
 
-            if(Directory.Exists(platypusUserDirectoryPath) == false)
-                Directory.CreateDirectory(platypusUserDirectoryPath);
+            if(Directory.Exists(userDirectoryPath) == false)
+                Directory.CreateDirectory(userDirectoryPath);
 
-            string platypusUserFilePath = Path.Combine(platypusUserDirectoryPath, ApplicationPaths.USERFILENAME);
+            string userFilePath = Path.Combine(userDirectoryPath, ApplicationPaths.USERFILENAME);
 
             string json = JsonConvert.SerializeObject(entity);
-            File.WriteAllText(platypusUserFilePath, json);
+            File.WriteAllText(userFilePath, json);
+
+            return newID;
         }
 
-        public UserEntity GetUserByCredential(string userName, string password)
+        public UserEntity GetUserByData(string userConnectionMethodGuid, Predicate<UserEntity> predicate)
         {
-            string[] platypusUserDirectoires =  Directory.GetDirectories(ApplicationPaths.PLATYPUSUSERSDIRECTORYPATH);
-                
-            foreach(string platypusUserDirectoiresPath in platypusUserDirectoires)
+            string[] userDirectories =  Directory.GetDirectories(ApplicationPaths.GetUsersByConnectionMethodDirectory(userConnectionMethodGuid));
+            
+            foreach(string userDirectoiresPath in userDirectories)
             {
-                string platypusUserFilePath = Path.Combine(platypusUserDirectoiresPath, ApplicationPaths.USERFILENAME);
-                string json = File.ReadAllText(platypusUserFilePath);
+                string userFilePath = Path.Combine(userDirectoiresPath, ApplicationPaths.USERFILENAME);
+                string json = File.ReadAllText(userFilePath);
                 UserEntity userEntity = JsonConvert.DeserializeObject<UserEntity>(json);
-                if(userEntity.UserName == userName &&
-                   userEntity.Password == password)
+
+                if(predicate(userEntity))
                     return userEntity;
             }
 
             return null;
         }
 
-        public void SaveUserCredential(int userID, Dictionary<string, object> credential)
-        {
-            string userDirectoryPath = ApplicationPaths.GetUserDirectoryPath(userID);
-            SaveUserCredentialByBasePath(userDirectoryPath, credential);
-        }
-
-        public void SaveUserCredentialByBasePath(string basePath, Dictionary<string, object> credential)
-        {
-            string json = JsonConvert.SerializeObject(credential);
-            File.WriteAllText(basePath, json);
-        }
-
         public void SaveUserCredentialMethod(UserCredentialMethodEntity entity)
         {
-            string credentialMethodDirectoryPath = Path.Combine(ApplicationPaths.USERCREDENTIALMETHODSDIRECTORYPATH, entity.Guid);
+            string credentialMethodDirectoryPath = Path.Combine(ApplicationPaths.USERSDIRECTORYPATH, entity.Guid);
             if (Directory.Exists(credentialMethodDirectoryPath) == false)
                 Directory.CreateDirectory(credentialMethodDirectoryPath);
             string definitionFilePath = Path.Combine(credentialMethodDirectoryPath, ApplicationPaths.DEFINITIONFILENAME);
@@ -63,7 +54,7 @@ namespace Persistance.Repository
 
         public List<string> RemoveUserCredentialMethodOfApplication(string applicationGuid)
         {
-            return RemoveByApplicationGuid(ApplicationPaths.USERCREDENTIALMETHODSDIRECTORYPATH, applicationGuid);
+            return RemoveByApplicationGuid(ApplicationPaths.USERSDIRECTORYPATH, applicationGuid);
         }
     }
 }

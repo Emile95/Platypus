@@ -61,5 +61,18 @@ namespace PlatypusApplicationFramework.Confugration
 
             return newObject;
         }
+
+        public static void ValidateDictionnary(Type type, Dictionary<string, object> dict)
+        {
+            PropertyInfo[] propertyInfos = type.GetProperties();
+            foreach (PropertyInfo propertyInfo in propertyInfos)
+            {
+                ParameterEditorAttribute parameterEditor = propertyInfo.GetCustomAttribute<ParameterEditorAttribute>();
+                if (parameterEditor == null) continue;
+
+                if (dict.ContainsKey(parameterEditor.Name) == false && parameterEditor.IsRequired)
+                    throw new ParameterEditorFieldRequiredException(parameterEditor.Name);
+            }
+        }
     }
 }

@@ -2,11 +2,9 @@
 {
     public class UserAccount
     {
-        public int ID { get; private set; }
+        public int ID { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
 
-        public UserAccount(int id)
-        {
-            ID = id;
-        }
     }
 }

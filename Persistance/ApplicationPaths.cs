@@ -11,10 +11,8 @@
         public static string ACTIONLASTRUNNUMBERFILENIME { get; private set; } = "lastRunNumber";
         public static string ACTIONLOGFILENAME { get; private set; } = "action.log";
         public static string USERSDIRECTORYPATH { get; private set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "users");
-        public static string PLATYPUSUSERSDIRECTORYPATH { get; private set; } = Path.Combine(USERSDIRECTORYPATH, "platypusUsers");
-        public static string LASTPLATYPUSUSERIDFILEPATH { get; private set; } = Path.Combine(PLATYPUSUSERSDIRECTORYPATH, "lastID");
+        public static string LASTUSERIDFILEPATH { get; private set; } = Path.Combine(USERSDIRECTORYPATH, "lastID");
         public static string USERFILENAME { get; private set; } = "user.json";
-        public static string USERCREDENTIALMETHODSDIRECTORYPATH { get; private set; } = Path.Combine(USERSDIRECTORYPATH, "connectionMethods");
         public static string DEFINITIONFILENAME { get; private set; } = "definition.json";
 
         public static string GetApplicationDirectoryPath(string applicationGuid)
@@ -82,14 +80,14 @@
             return Path.Combine(basePath, ACTIONLASTRUNNUMBERFILENIME);
         }
 
-        public static string GetUserDirectoryPath(int userID)
+        public static string GetUserDirectoryPath(string credentialMethodGuid, int userID)
         {
-            return Path.Combine(Path.Combine(USERSDIRECTORYPATH, userID.ToString()));
+            return Path.Combine(Path.Combine(USERSDIRECTORYPATH, credentialMethodGuid, userID.ToString()));
         }
 
-        public static string GetUserFilePath(int userID)
+        public static string GetUserFilePath(string credentialMethodGuid, int userID)
         {
-            return Path.Combine(Path.Combine(USERSDIRECTORYPATH, userID.ToString(), USERFILENAME));
+            return Path.Combine(Path.Combine(USERSDIRECTORYPATH, credentialMethodGuid, userID.ToString(), USERFILENAME));
         }
 
         public static string GetUserFilePathByBasePath(string basePath)
@@ -97,9 +95,9 @@
             return Path.Combine(Path.Combine(basePath, USERFILENAME));
         }
 
-        public static string GetPlatypusUserDirectoryPath(int userID)
+        public static string GetUsersByConnectionMethodDirectory(string credentialMethodGuid)
         {
-            return Path.Combine(PLATYPUSUSERSDIRECTORYPATH, userID.ToString());
+            return Path.Combine(USERSDIRECTORYPATH, credentialMethodGuid);
         }
     }
 }

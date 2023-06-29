@@ -4,13 +4,14 @@ using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.User;
+using PlatypusApplicationFramework.Confugration;
 using System.Reflection;
 
 namespace Core.User
 {
     public class UsersHandler
     {
-        private readonly Dictionary<string, IUserConnectionMethod> _credentialMethods;
+        private readonly Dictionary<string, UsersOfConnectionMethod> _userAccounts;
 
         private readonly UserRepository _userRepository;
 
@@ -18,7 +19,7 @@ namespace Core.User
             UserRepository userRepository
         )
         {
-            _credentialMethods = new Dictionary<string, IUserConnectionMethod>();
+            _userAccounts = new Dictionary<string, UsersOfConnectionMethod>();
 
             _userRepository = userRepository;
         }
@@ -31,36 +32,51 @@ namespace Core.User
 
         public void AddBuiltInCredentialMethod(IUserConnectionMethod credentialMethod, string guid)
         {
-            _credentialMethods.Add(guid, credentialMethod);
+            _userAccounts.Add(guid, new UsersOfConnectionMethod() { UserConnectionMethod = credentialMethod });
         }
 
         public string AddCredentialMethod(IUserConnectionMethod credentialMethod, string applicationGuid)
         {
             string newGuid = credentialMethod.GetName() + applicationGuid;
-            _credentialMethods.Add(newGuid, credentialMethod);
+            _userAccounts.Add(newGuid, new UsersOfConnectionMethod() { UserConnectionMethod = credentialMethod });
             return newGuid;
         }
 
         public void RemoveCredentialMethod(string credentialMethodGuid)
         {
-            _credentialMethods.Remove(credentialMethodGuid);
+            _userAccounts.Remove(credentialMethodGuid);
         }
 
-        public void AddPlatypusUser(string userName, string password)
+        public void AddUser(string connectionMethodGuid, string fullName, string email, Dictionary<string,object> data)
         {
-            _userRepository.SaveUser(new UserEntity()
+            if (_userAccounts.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
+
+            UsersOfConnectionMethod usersOfConnectionMethod = _userAccounts[connectionMethodGuid];
+            Type[] genericTypes = usersOfConnectionMethod.UserConnectionMethod.GetType().BaseType.GetGenericArguments();
+            if (genericTypes.Length == 0) return;
+
+            ParameterEditorObjectResolver.ValidateDictionnary(genericTypes[0], data);
+
+            int userID = _userRepository.SaveUser(connectionMethodGuid, new UserEntity()
             {
-                UserName = userName,
-                Password = password
+                FullName = fullName,
+                Email = email,
+                Data = data
+            });
+
+            usersOfConnectionMethod.Users.Add(new UserAccount() {
+                ID = userID,
+                FullName = fullName,
+                Email = email
             });
         }
 
         public UserAccount Connect(Dictionary<string, object> credential, string connectionMethodGuid)
         {
-            if(_credentialMethods.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
+            if(_userAccounts.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
             string loginAttemtMessage = "";
             UserAccount userAccount = null;
-            bool success = _credentialMethods[connectionMethodGuid].Login(credential, ref loginAttemtMessage, ref userAccount);
+            bool success = _userAccounts[connectionMethodGuid].UserConnectionMethod.Login(credential, ref loginAttemtMessage, ref userAccount);
             if (success) return userAccount;
             throw new UserConnectionFailedException(loginAttemtMessage);
         }

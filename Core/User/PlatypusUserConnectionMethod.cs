@@ -28,7 +28,14 @@ namespace Core.User
 
         protected override bool LoginImplementation(UserConnectEnvironment<PlatypusUserCredential> env)
         {
-            UserEntity userEntity = _userRepository.GetUserByCredential(env.Credential.UserName, env.Credential.Password);
+            UserEntity userEntity = _userRepository.GetUserByData(
+                BuiltInUserConnectionMethodGuid.PlatypusUser,
+                (userEntity) => {
+
+                    return userEntity.Data["UserName"].Equals(env.Credential.UserName) &&
+                           userEntity.Data["Password"].Equals(env.Credential.Password);
+                }
+            );
             
             if(userEntity == null)
             {
@@ -36,8 +43,10 @@ namespace Core.User
                 return false;
             }
 
-            env.LoginAttemptMessage = "connection successful";
-            env.UserAccount = new UserAccount(userEntity.ID);
+            env.UserAccount = new UserAccount()
+            {
+                ID = userEntity.ID,
+            };
 
             return true;
         }

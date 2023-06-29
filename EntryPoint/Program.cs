@@ -57,9 +57,19 @@ app.MapPost(@"/application/uninstall", ([FromBody] UninstallApplicationBody body
     return "uninstalled";
 });
 
-app.MapPost(@"/application/user", ([FromBody] PlatypusUserCreationBody body) =>
+app.MapPost(@"/application/user", ([FromBody] UserCreationBody body) =>
 {
-    serverInstance.AddPlatypusUser(body.UserName, body.Password);
+    try
+    {
+        body.Data = JsonHelper.GetDictObjectFromJsonElementsDict(body.Data);
+        serverInstance.AddUser(body.ConnectionMethodGUID, body.FullName, body.Email, body.Data);
+    }
+    catch (Exception ex)
+    {
+        return ex.Message;
+    }
+
+    return "user added";
 });
 
 app.MapPost(@"/application/user/connect", ([FromBody] UserConnection body) =>

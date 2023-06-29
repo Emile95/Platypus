@@ -25,7 +25,6 @@ namespace Core
 
         private readonly PlatypusSocketsHandler _socketsHandler;
 
-
         public ServerInstance()
         {
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
@@ -104,7 +103,6 @@ namespace Core
 
         public ApplicationActionRunResult RunAction(ApplicationActionRunParameter runActionParameter)
         {
-            
             if (_applicationActionsHandler.HasActionWithGuid(runActionParameter.Guid) == false)
             {
                 string message = String.Format(Strings.ResourceManager.GetString("ApplicationActionNotFound"), runActionParameter.Guid);
@@ -114,8 +112,7 @@ namespace Core
                     Status = ApplicationActionRunResultStatus.Failed,
                 };
             }
-                
-            
+
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
             env.ApplicationRepository = _applicationRepository;
             env.ActionLoggers = new LoggerManager();
@@ -123,9 +120,9 @@ namespace Core
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }
 
-        public void AddPlatypusUser(string userName, string password)
+        public void AddUser(string credentialMethodGUID, string fullName, string email, Dictionary<string,object> data)
         {
-            _usersHandler.AddPlatypusUser(userName, password);
+            _usersHandler.AddUser(credentialMethodGUID, fullName, email, data);
         }
 
         public void CancelRunningApplicationAction(string guid)
