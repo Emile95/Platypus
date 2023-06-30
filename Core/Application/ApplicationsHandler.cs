@@ -47,10 +47,10 @@ namespace Core.Application
             _applications.Add(applicationGuid, application);
         }
 
-        public void InstallApplication(string dllFilePath)
+        public void InstallApplication(string applicationPath)
         {
             string newGuid = GuidGenerator.GenerateFromEnumerable(_applications.Keys);
-            PlatypusApplicationBase application = _applicationInstaller.InstallApplication(newGuid, dllFilePath);
+            PlatypusApplicationBase application = _applicationInstaller.InstallApplication(newGuid, applicationPath);
             LoadApplication(application, newGuid);
         }
 

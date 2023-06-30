@@ -42,7 +42,14 @@ app.MapGet(@"/action/runnings", () =>
 
 app.MapPost(@"/application/install", ([FromBody] InstallApplicationBody body) =>
 {
-    serverInstance.InstallApplication(body.DllFilePath);
+    try
+    {
+        serverInstance.InstallApplication(body.DllFilePath);
+    } catch (Exception ex)
+    {
+        return ex.Message;
+    }
+    return "application installed";
 });
 
 app.MapPost(@"/application/uninstall", ([FromBody] UninstallApplicationBody body) =>
@@ -54,7 +61,7 @@ app.MapPost(@"/application/uninstall", ([FromBody] UninstallApplicationBody body
     {
         return ex.Message;
     }
-    return "uninstalled";
+    return "application uninstalled";
 });
 
 app.MapPost(@"/application/user", ([FromBody] UserCreationBody body) =>

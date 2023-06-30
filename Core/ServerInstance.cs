@@ -82,9 +82,9 @@ namespace Core
             _applicationsHandler.LoadApplications();
         }
 
-        public void InstallApplication(string dllFilePath)
+        public void InstallApplication(string applicationPath)
         {
-            _applicationsHandler.InstallApplication(dllFilePath);
+            _applicationsHandler.InstallApplication(applicationPath);
         }
 
         public void UninstalApplication(string applicationGuid)

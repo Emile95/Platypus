@@ -6,6 +6,7 @@ using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Utils;
 using PlatypusApplicationFramework.Configuration.User;
+using Core.Exceptions;
 
 namespace Core.Application
 {
@@ -26,13 +27,16 @@ namespace Core.Application
             _userRepository = userRepository;
         }
 
-        public PlatypusApplicationBase InstallApplication(string newGuid, string dllFilePath)
+        public PlatypusApplicationBase InstallApplication(string newGuid, string applicationPath)
         {
+            FileInfo applicationFileInfo = new FileInfo(applicationPath);
+            if (applicationFileInfo.Extension != ".platypus")
+                throw new InvalidPlatypusApplicationPackageException(applicationFileInfo.Name, "wrong file extension");
+
             string newDllFilePath = _applicationRepository.SaveApplication(new ApplicationEntity()
             {
-                Guid = newGuid,
-                DllFilePath = dllFilePath
-            });
+                Guid = newGuid
+            }, applicationPath);
 
             PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(newDllFilePath);
 

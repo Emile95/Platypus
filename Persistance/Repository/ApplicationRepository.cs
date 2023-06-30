@@ -1,15 +1,27 @@
 ﻿using Persistance.Entity;
+using System.IO.Compression;
 
 namespace Persistance.Repository
 {
     public class ApplicationRepository
     {
-        public string SaveApplication(ApplicationEntity entity)
+        public string SaveApplication(ApplicationEntity entity, string compressedFilePath)
         {
             string newApplicationDirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(entity.Guid);
             Directory.CreateDirectory(newApplicationDirectoryPath);
-            string newApplicationDllFilePath = ApplicationPaths.GetApplicationDllFilePathByBasePath(newApplicationDirectoryPath); ;
-            File.Copy(entity.DllFilePath, newApplicationDllFilePath, true);
+
+            string temporaryDirectoryPath = Path.Combine(Path.GetTempPath(), entity.Guid);
+            Directory.CreateDirectory(temporaryDirectoryPath);
+
+            ZipFile.ExtractToDirectory(compressedFilePath, temporaryDirectoryPath);
+            string[] dllFiles = Directory.GetFiles(temporaryDirectoryPath, "*.dll");
+            if (dllFiles.Length == 0) return null;
+
+            string newApplicationDllFilePath = ApplicationPaths.GetApplicationDllFilePathByBasePath(newApplicationDirectoryPath);
+            File.Copy(dllFiles[0], newApplicationDllFilePath, true);
+
+            Directory.Delete(temporaryDirectoryPath, true);
+
             return newApplicationDllFilePath;
         }
 
