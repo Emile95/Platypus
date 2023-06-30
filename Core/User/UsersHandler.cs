@@ -24,27 +24,27 @@ namespace Core.User
             _userRepository = userRepository;
         }
 
-        public void AddCredentialMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
+        public void AddConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
         {
             IUserConnectionMethod credentialMethod = methodInfo.Invoke(application, new object[] { }) as IUserConnectionMethod;
-            AddCredentialMethod(credentialMethod, applicationGuid);
+            AddConnectionMethod(credentialMethod, applicationGuid);
         }
 
-        public void AddBuiltInCredentialMethod(IUserConnectionMethod credentialMethod, string guid)
+        public void AddBuiltInConnectionMethod(IUserConnectionMethod credentialMethod, string guid)
         {
             _userAccounts.Add(guid, new UsersOfConnectionMethod() { UserConnectionMethod = credentialMethod });
         }
 
-        public string AddCredentialMethod(IUserConnectionMethod credentialMethod, string applicationGuid)
+        public string AddConnectionMethod(IUserConnectionMethod credentialMethod, string applicationGuid)
         {
             string newGuid = credentialMethod.GetName() + applicationGuid;
             _userAccounts.Add(newGuid, new UsersOfConnectionMethod() { UserConnectionMethod = credentialMethod });
             return newGuid;
         }
 
-        public void RemoveCredentialMethod(string credentialMethodGuid)
+        public void RemoveConnectionMethod(string connectionMethodGuid)
         {
-            _userAccounts.Remove(credentialMethodGuid);
+            _userAccounts.Remove(connectionMethodGuid);
         }
 
         public void AddUser(string connectionMethodGuid, string fullName, string email, Dictionary<string,object> data)

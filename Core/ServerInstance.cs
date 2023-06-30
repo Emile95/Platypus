@@ -41,7 +41,7 @@ namespace Core
                 userRepository
              );
 
-            _usersHandler.AddBuiltInCredentialMethod(new PlatypusUserConnectionMethod(userRepository), BuiltInUserConnectionMethodGuid.PlatypusUser);
+            _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(userRepository), BuiltInUserConnectionMethodGuid.PlatypusUser);
 
             _applicationRepository = new ApplicationRepository();
 
@@ -93,7 +93,7 @@ namespace Core
             foreach(string actionGuid in details.ActionGuids)
                 _applicationActionsHandler.RemoveAction(actionGuid);
             foreach (string userConnectionMethodGuid in details.UserConnectionMethodGuids)
-                _usersHandler.RemoveCredentialMethod(userConnectionMethodGuid);
+                _usersHandler.RemoveConnectionMethod(userConnectionMethodGuid);
         }
 
         public void InitializeServerSocketHandlers()
