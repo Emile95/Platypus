@@ -17,6 +17,14 @@ namespace Persistance.Repository
             string[] dllFiles = Directory.GetFiles(temporaryDirectoryPath, "*.dll");
             if (dllFiles.Length == 0) return null;
 
+            string[] directoriesPath = Directory.GetDirectories(temporaryDirectoryPath);
+            if(directoriesPath.Length > 0)
+                foreach(string directoryPath in directoriesPath)
+                {
+                    DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
+                    Directory.Move(directoryPath, Path.Combine(newApplicationDirectoryPath, directoryInfo.Name));
+                }
+
             string newApplicationDllFilePath = ApplicationPaths.GetApplicationDllFilePathByBasePath(newApplicationDirectoryPath);
             File.Copy(dllFiles[0], newApplicationDllFilePath, true);
 
