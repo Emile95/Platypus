@@ -6,18 +6,22 @@ namespace Core.SocketHandler
     public class PlatypusSocketsHandler
     {
         private readonly List<PlatypusServerSocketHandler> _serverSocketsHandler;
+        private readonly ApplicationActionsHandler _applicationActionsHandler;
 
         public PlatypusSocketsHandler(
             ApplicationActionsHandler applicationActionsHandler
         )
         {
+            _applicationActionsHandler = applicationActionsHandler;
             _serverSocketsHandler = new List<PlatypusServerSocketHandler>();
-            _serverSocketsHandler.Add(new PlatypusServerSocketHandler("tcp", 2000, applicationActionsHandler));
+            
         }
 
-        public void InitializeSocketHandlers(string host = null)
+        public void InitializeSocketHandlers(ServerConfig serverConfig, string host = null)
         {
-            foreach(PlatypusServerSocketHandler serverSocketHandler in _serverSocketsHandler)
+            _serverSocketsHandler.Add(new PlatypusServerSocketHandler("tcp", serverConfig.TcpSocketPort, _applicationActionsHandler));
+
+            foreach (PlatypusServerSocketHandler serverSocketHandler in _serverSocketsHandler)
                 serverSocketHandler.Initialize(host);
         }
     }

@@ -7,6 +7,8 @@ using Core.Event;
 using Core.SocketHandler;
 using Core.User;
 using Logging;
+using Newtonsoft.Json;
+using Persistance;
 using Persistance.Repository;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.User;
@@ -16,6 +18,8 @@ namespace Core
 {
     public class ServerInstance
     {
+        private ServerConfig _config;
+
         private readonly ApplicationsHandler _applicationsHandler;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly EventsHandler _eventsHandlers;
@@ -75,7 +79,8 @@ namespace Core
 
         public void LoadConfiguration()
         {
-
+            string json = File.ReadAllText(ApplicationPaths.CONFIGFILEPATH);
+            _config = JsonConvert.DeserializeObject<ServerConfig>(json);
         }
 
         public void LoadApplications()
@@ -99,7 +104,7 @@ namespace Core
 
         public void InitializeServerSocketHandlers()
         {
-            _socketsHandler.InitializeSocketHandlers();
+            _socketsHandler.InitializeSocketHandlers(_config);
         }
 
         public ApplicationActionRunResult RunAction(ApplicationActionRunParameter runActionParameter)
