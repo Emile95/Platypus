@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Core {
+namespace Common.Ressource {
     using System;
     
     
@@ -22,24 +22,24 @@ namespace Core {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Strings {
+    public class Strings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Strings() {
+        public Strings() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Core.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Common.Ressource.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Core {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -59,47 +59,47 @@ namespace Core {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to action with guid {0} non existant.
         /// </summary>
-        internal static string ApplicationActionNotFound {
+        public static string ApplicationActionNotFound {
             get {
                 return ResourceManager.GetString("ApplicationActionNotFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Application run successfully.
         /// </summary>
-        internal static string ApplicationActionRunSuccess {
+        public static string ApplicationActionRunSuccess {
             get {
                 return ResourceManager.GetString("ApplicationActionRunSuccess", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to new action has been started.
         /// </summary>
-        internal static string NewApplicationActionStarted {
+        public static string NewApplicationActionStarted {
             get {
                 return ResourceManager.GetString("NewApplicationActionStarted", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default user for platypus application.
         /// </summary>
-        internal static string PlatypusUserConnectionMethodDescription {
+        public static string PlatypusUserConnectionMethodDescription {
             get {
                 return ResourceManager.GetString("PlatypusUserConnectionMethodDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Platypus User.
         /// </summary>
-        internal static string PlatypusUserConnectionMethodName {
+        public static string PlatypusUserConnectionMethodName {
             get {
                 return ResourceManager.GetString("PlatypusUserConnectionMethodName", resourceCulture);
             }

@@ -12,6 +12,7 @@ using PlatypusApplicationFramework.Core.Event;
 using Persistance.Entity;
 using Core.Exceptions;
 using Persistance;
+using Common.Ressource;
 
 namespace Core.ApplicationAction
 {
