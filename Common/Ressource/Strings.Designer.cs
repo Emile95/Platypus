@@ -22,7 +22,7 @@ namespace Common.Ressource {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Strings {
+    public class Strings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Common.Ressource {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Common.Ressource.Strings", typeof(Strings).Assembly);
@@ -51,7 +51,7 @@ namespace Common.Ressource {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to action has been canceled.
         /// </summary>
-        internal static string ApplicationActionCancelledException {
+        public static string ApplicationActionCancelledException {
             get {
                 return ResourceManager.GetString("ApplicationActionCancelledException", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to Action as failed.
         /// </summary>
-        internal static string ApplicationActionFailed {
+        public static string ApplicationActionFailed {
             get {
                 return ResourceManager.GetString("ApplicationActionFailed", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to the field &apos;{0}&apos; is required in the action parameter.
         /// </summary>
-        internal static string ApplicationActionFieldRequiredException {
+        public static string ApplicationActionFieldRequiredException {
             get {
                 return ResourceManager.GetString("ApplicationActionFieldRequiredException", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to action with guid {0} non existant.
         /// </summary>
-        internal static string ApplicationActionNotFound {
+        public static string ApplicationActionNotFound {
             get {
                 return ResourceManager.GetString("ApplicationActionNotFound", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to Application run successfully.
         /// </summary>
-        internal static string ApplicationActionRunSuccess {
+        public static string ApplicationActionRunSuccess {
             get {
                 return ResourceManager.GetString("ApplicationActionRunSuccess", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to error during event handler &apos;{0}&apos;, message : {1}.
         /// </summary>
-        internal static string ErrorDuringEventHandler {
+        public static string ErrorDuringEventHandler {
             get {
                 return ResourceManager.GetString("ErrorDuringEventHandler", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to error with package {0}, message : &apos;{1}&apos;.
         /// </summary>
-        internal static string ErrorWithPlatypusApplicationPackage {
+        public static string ErrorWithPlatypusApplicationPackage {
             get {
                 return ResourceManager.GetString("ErrorWithPlatypusApplicationPackage", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to new action has been started.
         /// </summary>
-        internal static string NewApplicationActionStarted {
+        public static string NewApplicationActionStarted {
             get {
                 return ResourceManager.GetString("NewApplicationActionStarted", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to there is no action with guid &apos;{0}&apos;.
         /// </summary>
-        internal static string NoApplicationActionWithGuid {
+        public static string NoApplicationActionWithGuid {
             get {
                 return ResourceManager.GetString("NoApplicationActionWithGuid", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to there is no application with guid &apos;{0}&apos;.
         /// </summary>
-        internal static string NoApplicationWithGuid {
+        public static string NoApplicationWithGuid {
             get {
                 return ResourceManager.GetString("NoApplicationWithGuid", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to there is no user connection method with the guid &apos;{0}&apos;.
         /// </summary>
-        internal static string NoUserConnectionMethodWithGuid {
+        public static string NoUserConnectionMethodWithGuid {
             get {
                 return ResourceManager.GetString("NoUserConnectionMethodWithGuid", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to the field &apos;{0}&apos; is required.
         /// </summary>
-        internal static string ParameterEditorFieldRequired {
+        public static string ParameterEditorFieldRequired {
             get {
                 return ResourceManager.GetString("ParameterEditorFieldRequired", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to parameter are required for the action &apos;{0}&apos;.
         /// </summary>
-        internal static string ParameterRequieredForApplicationAction {
+        public static string ParameterRequieredForApplicationAction {
             get {
                 return ResourceManager.GetString("ParameterRequieredForApplicationAction", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to Default user for platypus application.
         /// </summary>
-        internal static string PlatypusUserConnectionMethodDescription {
+        public static string PlatypusUserConnectionMethodDescription {
             get {
                 return ResourceManager.GetString("PlatypusUserConnectionMethodDescription", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to Platypus User.
         /// </summary>
-        internal static string PlatypusUserConnectionMethodName {
+        public static string PlatypusUserConnectionMethodName {
             get {
                 return ResourceManager.GetString("PlatypusUserConnectionMethodName", resourceCulture);
             }
