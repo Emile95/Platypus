@@ -22,21 +22,21 @@ namespace Common.Ressource {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Strings {
+    internal class Strings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public Strings() {
+        internal Strings() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Common.Ressource.Strings", typeof(Strings).Assembly);
@@ -51,7 +51,7 @@ namespace Common.Ressource {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -59,47 +59,92 @@ namespace Common.Ressource {
                 resourceCulture = value;
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to action has been canceled.
+        /// </summary>
+        internal static string ApplicationActionCancelledException {
+            get {
+                return ResourceManager.GetString("ApplicationActionCancelledException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Action as failed.
+        /// </summary>
+        internal static string ApplicationActionFailed {
+            get {
+                return ResourceManager.GetString("ApplicationActionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to the field &apos;{0}&apos; is required in the action parameter.
+        /// </summary>
+        internal static string ApplicationActionFieldRequiredException {
+            get {
+                return ResourceManager.GetString("ApplicationActionFieldRequiredException", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to action with guid {0} non existant.
         /// </summary>
-        public static string ApplicationActionNotFound {
+        internal static string ApplicationActionNotFound {
             get {
                 return ResourceManager.GetString("ApplicationActionNotFound", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Application run successfully.
         /// </summary>
-        public static string ApplicationActionRunSuccess {
+        internal static string ApplicationActionRunSuccess {
             get {
                 return ResourceManager.GetString("ApplicationActionRunSuccess", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to new action has been started.
         /// </summary>
-        public static string NewApplicationActionStarted {
+        internal static string NewApplicationActionStarted {
             get {
                 return ResourceManager.GetString("NewApplicationActionStarted", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to there is no action with guid &apos;{0}&apos;.
+        /// </summary>
+        internal static string NoApplicationActionWithGuidException {
+            get {
+                return ResourceManager.GetString("NoApplicationActionWithGuidException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to parameter are required for the action &apos;{0}&apos;.
+        /// </summary>
+        internal static string ParameterRequieredForApplicationActionException {
+            get {
+                return ResourceManager.GetString("ParameterRequieredForApplicationActionException", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Default user for platypus application.
         /// </summary>
-        public static string PlatypusUserConnectionMethodDescription {
+        internal static string PlatypusUserConnectionMethodDescription {
             get {
                 return ResourceManager.GetString("PlatypusUserConnectionMethodDescription", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Platypus User.
         /// </summary>
-        public static string PlatypusUserConnectionMethodName {
+        internal static string PlatypusUserConnectionMethodName {
             get {
                 return ResourceManager.GetString("PlatypusUserConnectionMethodName", resourceCulture);
             }

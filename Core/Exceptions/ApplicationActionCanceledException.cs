@@ -4,7 +4,7 @@
     {
         public string CancelMessage { get; set; }
         public ApplicationActionCanceledException(string cancelMessage)
-            : base("action has been canceled")
+            : base(Common.Utils.GetString("ApplicationActionCancelledException"))
         {
             CancelMessage = cancelMessage;
         }

@@ -5,7 +5,7 @@
         public string FailedMessage {get; set;}
 
         public ApplicationActionRunFailedException(string failedMessage)
-            : base("Action as failed")
+            : base(Common.Utils.GetString("ApplicationActionFailed"))
         {
             FailedMessage = failedMessage;
         }
