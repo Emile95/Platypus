@@ -65,7 +65,7 @@ namespace Core.ApplicationAction
             try
             {
                 applicationAction.ResolveActionParameter(env, runActionParameter.ActionParameters);
-            } catch (ParameterEditorFieldRequiredException ex)
+            } catch (Exception ex)
             {
                 return new ApplicationActionRunResult
                 {
