@@ -76,7 +76,8 @@ namespace Core.ApplicationAction
 
             if (runActionParameter.Async)
             {
-                string message = Strings.ResourceManager.GetString("NewApplicationActionStarted");
+                
+                string message = Common.Utils.GetString("NewApplicationActionStarted");
                 return new ApplicationActionRunResult()
                 {
                     Message = message,

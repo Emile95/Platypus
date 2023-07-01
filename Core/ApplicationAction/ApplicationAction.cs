@@ -90,7 +90,7 @@ namespace Core.ApplicationAction
 
                 object objectResult = methodInfo.Invoke(application, new object[] { env });
 
-                string message = Strings.ResourceManager.GetString("ApplicationActionRunSuccess");
+                string message = Common.Utils.GetString("ApplicationActionRunSuccess");
 
                 return new ApplicationActionRunResult()
                 {

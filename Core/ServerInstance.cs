@@ -1,5 +1,5 @@
 ﻿using Common.Logger;
-using Common.Ressource;
+using Common;
 using Core.Application;
 using Core.ApplicationAction;
 using Core.ApplicationAction.Run;
@@ -111,14 +111,13 @@ namespace Core
         {
             if (_applicationActionsHandler.HasActionWithGuid(runActionParameter.Guid) == false)
             {
-                string message = String.Format(Strings.ResourceManager.GetString("ApplicationActionNotFound"), runActionParameter.Guid);
+                string message = Common.Utils.GetString("ApplicationActionNotFound", runActionParameter.Guid);
                 return new ApplicationActionRunResult()
                 {
                     Message = message,
                     Status = ApplicationActionRunResultStatus.Failed,
                 };
             }
-
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
             env.ApplicationRepository = _applicationRepository;
             env.ActionLoggers = new LoggerManager();
