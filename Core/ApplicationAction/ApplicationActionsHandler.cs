@@ -12,7 +12,7 @@ using PlatypusApplicationFramework.Core.Event;
 using Persistance.Entity;
 using Core.Exceptions;
 using Persistance;
-using Common.Ressource;
+using PlatypusApplicationFramework.Configuration.Exceptions;
 
 namespace Core.ApplicationAction
 {
@@ -62,6 +62,18 @@ namespace Core.ApplicationAction
         {
             ApplicationAction applicationAction = _applicationActions[runActionParameter.Guid];
 
+            try
+            {
+                applicationAction.ResolveActionParameter(env, runActionParameter.ActionParameters);
+            } catch (ParameterEditorFieldRequiredException ex)
+            {
+                return new ApplicationActionRunResult
+                {
+                    Status = ApplicationActionRunResultStatus.Failed,
+                    Message = ex.Message,
+                };
+            }
+            
             ApplicationActionRunResult result = BeforeApplicationActionRun(applicationAction);
             if (result is not null) return result;
 

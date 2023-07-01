@@ -16,7 +16,7 @@ namespace Core.ApplicationAction.Run
         public void StartRun(ApplicationAction action, ApplicationActionRunParameter parameter, Action runCallBack)
         {
             Status = ApplicationActionRunInfoStatus.Running;
-            Task = new Task(() => RunAction(() => action.RunAction(Env, parameter), runCallBack));
+            Task = new Task(() => RunAction(() => action.Exec(Env), runCallBack));
             Task.Start();
 
             Result = new ApplicationActionRunResult();

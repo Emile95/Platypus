@@ -14,8 +14,7 @@ namespace Core.ApplicationAction
 {
     public class ApplicationAction
     {
-        private readonly Func<ApplicationActionEnvironmentBase, ApplicationActionRunResult> _action;
-
+        public Func<ApplicationActionEnvironmentBase, ApplicationActionRunResult> Exec { get; private set; }
         public string Guid { get; private set; }
         public string Name { get; private set; }
         public Type EnvironmentParameterType { get; private set; }
@@ -35,34 +34,28 @@ namespace Core.ApplicationAction
 
             ParameterRequired = actionDefinitionAttribute.ParameterRequired;
 
-            _action = (env) => BuildAction(application, env, methodInfo);
+            Exec = (env) => BuildAction(application, env, methodInfo);
         }
 
-        public ApplicationActionRunResult RunAction(ApplicationActionEnvironmentBase env, ApplicationActionRunParameter runActionParameter)
+        public void ResolveActionParameter(ApplicationActionEnvironmentBase env, Dictionary<string, object> parameters)
         {
             if (ParameterType != null)
             {
-                if (runActionParameter.ActionParameters == null)
+                if (parameters == null)
                 {
                     if (ParameterRequired)
                         throw new ApplicationActionParameterRequiredException(Name);
                 }
                 else
                 {
-                    try {
-                        ResolveActionParameter(env, runActionParameter.ActionParameters);
-                    } catch(ParameterEditorFieldRequiredException exception)
-                    {
-                        return new ApplicationActionRunResult()
-                        {
-                            Message = exception.Message,
-                            Status = ApplicationActionRunResultStatus.Failed
-                        };
-                    }
-                }
-            }
+                    object resolvedParam = ParameterEditorObjectResolver.ResolveByDictionnary(ParameterType, parameters);
 
-            return _action.Invoke(env);
+                    Type environmentType = env.GetType();
+                    PropertyInfo parameterPropertyInfo = environmentType.GetProperty("Parameter");
+
+                    parameterPropertyInfo.SetValue(env, resolvedParam);
+                }
+            }   
         }
 
         public ApplicationActionInfo GetInfo()
@@ -133,15 +126,7 @@ namespace Core.ApplicationAction
             }
         }
 
-        private void ResolveActionParameter(ApplicationActionEnvironmentBase env, Dictionary<string, object> parameters)
-        {
-            object resolvedParam = ParameterEditorObjectResolver.ResolveByDictionnary(ParameterType, parameters);
-
-            Type environmentType = env.GetType();
-            PropertyInfo parameterPropertyInfo = environmentType.GetProperty("Parameter");
-
-            parameterPropertyInfo.SetValue(env, resolvedParam);
-        }
+        
 
         public ApplicationActionEnvironmentBase CreateStartActionEnvironment()
         {
