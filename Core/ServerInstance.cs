@@ -1,5 +1,4 @@
 ﻿using Common.Logger;
-using Common;
 using Core.Application;
 using Core.ApplicationAction;
 using Core.ApplicationAction.Run;
