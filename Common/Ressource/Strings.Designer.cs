@@ -106,6 +106,24 @@ namespace Common.Ressource {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to error during event handler &apos;{0}&apos;, message : {1}.
+        /// </summary>
+        internal static string ErrorDuringEventHandler {
+            get {
+                return ResourceManager.GetString("ErrorDuringEventHandler", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to error with package {0}, message : &apos;{1}&apos;.
+        /// </summary>
+        internal static string ErrorWithPlatypusApplicationPackage {
+            get {
+                return ResourceManager.GetString("ErrorWithPlatypusApplicationPackage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to new action has been started.
         /// </summary>
         internal static string NewApplicationActionStarted {
@@ -117,18 +135,45 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to there is no action with guid &apos;{0}&apos;.
         /// </summary>
-        internal static string NoApplicationActionWithGuidException {
+        internal static string NoApplicationActionWithGuid {
             get {
-                return ResourceManager.GetString("NoApplicationActionWithGuidException", resourceCulture);
+                return ResourceManager.GetString("NoApplicationActionWithGuid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to there is no application with guid &apos;{0}&apos;.
+        /// </summary>
+        internal static string NoApplicationWithGuid {
+            get {
+                return ResourceManager.GetString("NoApplicationWithGuid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to there is no user connection method with the guid &apos;{0}&apos;.
+        /// </summary>
+        internal static string NoUserConnectionMethodWithGuid {
+            get {
+                return ResourceManager.GetString("NoUserConnectionMethodWithGuid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to the field &apos;{0}&apos; is required.
+        /// </summary>
+        internal static string ParameterEditorFieldRequired {
+            get {
+                return ResourceManager.GetString("ParameterEditorFieldRequired", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to parameter are required for the action &apos;{0}&apos;.
         /// </summary>
-        internal static string ParameterRequieredForApplicationActionException {
+        internal static string ParameterRequieredForApplicationAction {
             get {
-                return ResourceManager.GetString("ParameterRequieredForApplicationActionException", resourceCulture);
+                return ResourceManager.GetString("ParameterRequieredForApplicationAction", resourceCulture);
             }
         }
         

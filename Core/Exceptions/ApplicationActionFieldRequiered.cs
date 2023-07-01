@@ -3,7 +3,7 @@
     public class ApplicationActionFieldRequired : Exception
     {
         public ApplicationActionFieldRequired(string fieldName)
-            : base(Common.Utils.GetString("ApplicationActionFieldRequiredException", fieldName))
+            : base(Common.Utils.GetString("ApplicationActionFieldRequired", fieldName))
         { }
     }
 }

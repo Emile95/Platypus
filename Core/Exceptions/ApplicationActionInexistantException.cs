@@ -3,7 +3,7 @@
     public class ApplicationActionInexistantException : Exception
     {
         public ApplicationActionInexistantException(string actionGuid)
-            : base(Common.Utils.GetString("NoApplicationActionWithGuidException", actionGuid))
+            : base(Common.Utils.GetString("NoApplicationActionWithGuid", actionGuid))
         {}
     }
 }

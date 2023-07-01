@@ -3,7 +3,7 @@
     public class ApplicationInexistantException : Exception
     {
         public ApplicationInexistantException(string applicationGuid)
-            : base($"there is no application with guid '{applicationGuid}'")
+            : base(Common.Utils.GetString("NoApplicationWithGuid", applicationGuid))
         { }
     }
 }
