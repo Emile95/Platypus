@@ -19,4 +19,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SocketHandler\ClientRequest\" />
+  </ItemGroup>
+
 </Project>

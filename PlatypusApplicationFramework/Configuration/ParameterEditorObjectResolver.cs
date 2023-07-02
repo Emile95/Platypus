@@ -1,5 +1,5 @@
-﻿using PlatypusApplicationFramework.Configuration;
-using PlatypusApplicationFramework.Configuration.Exceptions;
+﻿using PlatypusAPI.Exceptions;
+using PlatypusApplicationFramework.Configuration;
 using System.Reflection;
 
 namespace PlatypusApplicationFramework.Confugration

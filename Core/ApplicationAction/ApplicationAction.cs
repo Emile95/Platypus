@@ -7,8 +7,6 @@ using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using PlatypusAPI.ApplicationAction;
 using PlatypusApplicationFramework.Confugration;
-using PlatypusApplicationFramework.Configuration.Exceptions;
-using Common.Ressource;
 
 namespace Core.ApplicationAction
 {

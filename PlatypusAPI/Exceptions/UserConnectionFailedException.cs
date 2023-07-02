@@ -1,8 +1,11 @@
-﻿namespace PlatypusAPI.Exceptions
+﻿using Common.Exceptions;
+
+namespace PlatypusAPI.Exceptions
 {
-    public class UserConnectionFailedException : Exception
+    [Serializable]
+    public class UserConnectionFailedException : PlatypusException
     {
         public UserConnectionFailedException(string message)
-            : base(message) { }
+            : base(PlatypusExceptionType.UserConnectionFailed, message) { }
     }
 }

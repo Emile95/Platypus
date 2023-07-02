@@ -1,8 +1,11 @@
-﻿namespace PlatypusAPI.Exceptions
+﻿using Common.Exceptions;
+
+namespace PlatypusAPI.Exceptions
 {
-    public class InvalidUserConnectionMethodGuidException : Exception
+    public class InvalidUserConnectionMethodGuidException : PlatypusException
     {
         public InvalidUserConnectionMethodGuidException(string providedGuid)
-            : base(Common.Utils.GetString("NoUserConnectionMethodWithGuid", providedGuid)) {}
+            : base(PlatypusExceptionType.InvalidUserConnectionMethodGuid, Common.Utils.GetString("NoUserConnectionMethodWithGuid", providedGuid)) 
+        {}
     }
 }

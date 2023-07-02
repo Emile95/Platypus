@@ -1,4 +1,4 @@
-﻿namespace Core.ApplicationAction.Run
+﻿namespace PlatypusAPI.ApplicationAction.Run
 {
     public class ApplicationActionRunParameter
     {
