@@ -38,7 +38,11 @@ namespace PlatypusAPI
         {
             string guid = GuidGenerator.GenerateFromEnumerable(_waitingStartApplicationAction.Keys);
 
-            WaitingApplicationRun waitingApplicationRun = new WaitingApplicationRun();
+            WaitingApplicationRun waitingApplicationRun = new WaitingApplicationRun()
+            {
+                Running = true
+            };
+
             _waitingStartApplicationAction.Add(guid, waitingApplicationRun);
 
             StartActionClientRequest startActionClientRequest = new StartActionClientRequest()

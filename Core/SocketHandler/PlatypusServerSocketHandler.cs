@@ -7,6 +7,7 @@ using PlatypusAPI.SocketData.ClientRequest;
 using PlatypusAPI.SocketData.ServerResponse;
 using PlatypusAPI.User;
 using Utils.GuidGeneratorHelper;
+using Utils.Json;
 
 namespace Core.Sockethandler
 {
