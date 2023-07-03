@@ -30,12 +30,11 @@ namespace PlatypusAPI
             PlatypusClientSocketHandler socketHandler = new PlatypusClientSocketHandler(protocol);
             socketHandler.Initialize(port);
 
-
             socketHandler.ServerResponseCallBacks[ServerResponseType.UserConnection].Add(ReceiveUserConnectionServerResponse);
 
             ClientRequestData requestData = new ClientRequestData()
             {
-                ClientRequestype = ClientRequestype.UserConnection,
+                ClientRequestType = ClientRequestType.UserConnection,
                 Data = Common.Utils.GetBytesFromObject(_userConnectionData)
             };
 

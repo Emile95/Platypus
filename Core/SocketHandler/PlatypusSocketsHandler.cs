@@ -1,29 +1,23 @@
-﻿using Core.ApplicationAction;
-using Core.Sockethandler;
-using Core.User;
+﻿using Core.Sockethandler;
 
 namespace Core.SocketHandler
 {
     public class PlatypusSocketsHandler
     {
+        private readonly ServerInstance _serverInstance;
         private readonly List<PlatypusServerSocketHandler> _serverSocketsHandler;
-        private readonly ApplicationActionsHandler _applicationActionsHandler;
-        private readonly UsersHandler _usersHandler;
 
         public PlatypusSocketsHandler(
-            ApplicationActionsHandler applicationActionsHandler,
-            UsersHandler usersHandler
+            ServerInstance serverInstance
         )
         {
-            _applicationActionsHandler = applicationActionsHandler;
-            _usersHandler = usersHandler;
+            _serverInstance = serverInstance;
             _serverSocketsHandler = new List<PlatypusServerSocketHandler>();
-            
         }
 
         public void InitializeSocketHandlers(ServerConfig serverConfig, string host = null)
         {
-            _serverSocketsHandler.Add(new PlatypusServerSocketHandler("tcp", serverConfig.TcpSocketPort, _applicationActionsHandler, _usersHandler));
+            _serverSocketsHandler.Add(new PlatypusServerSocketHandler(_serverInstance, "tcp", serverConfig.TcpSocketPort));
 
             foreach (PlatypusServerSocketHandler serverSocketHandler in _serverSocketsHandler)
                 serverSocketHandler.Initialize(host);

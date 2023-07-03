@@ -1,12 +1,10 @@
-﻿using Common.Exceptions;
+﻿using Common.SocketData.ServerResponse;
 using PlatypusAPI.User;
 
 namespace PlatypusAPI.SocketData.ServerResponse
 {
-    public class UserConnectionServerResponse
+    public class UserConnectionServerResponse : ServerResponseBase
     {
         public UserAccount UserAccount { get; set; }
-        public FactorisableExceptionType FactorisableExceptionType { get; set; }
-        public object[] FactorisableExceptionParameters { get; set; }
     }
 }

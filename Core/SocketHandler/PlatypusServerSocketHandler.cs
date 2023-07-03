@@ -3,8 +3,7 @@ using Common.SocketData.ClientRequest;
 using Common.SocketData.ServerResponse;
 using Common.SocketHandler;
 using Common.SocketHandler.State;
-using Core.ApplicationAction;
-using Core.User;
+using PlatypusAPI.SocketData.ClientRequest;
 using PlatypusAPI.SocketData.ServerResponse;
 using PlatypusAPI.User;
 using Utils.GuidGeneratorHelper;
@@ -13,19 +12,16 @@ namespace Core.Sockethandler
 {
     internal class PlatypusServerSocketHandler : ServerSocketHandler<string>
     {
-        private readonly ApplicationActionsHandler _applicationActionsHandler;
-        private readonly UsersHandler _usersHandler;
+        private readonly ServerInstance _serverInstance;
         private readonly int _port;
 
         public PlatypusServerSocketHandler(
+            ServerInstance serverInstance,
             string protocol,
-            int port,
-            ApplicationActionsHandler applicationActionsHandler,
-            UsersHandler usersHandler
+            int port
         ) : base(protocol)
         {
-            _applicationActionsHandler = applicationActionsHandler;
-            _usersHandler = usersHandler;
+            _serverInstance = serverInstance;
             _port = port;
         }
 
@@ -50,9 +46,10 @@ namespace Core.Sockethandler
 
             if (clientRequest == null) return;
 
-            switch(clientRequest.ClientRequestype)
+            switch(clientRequest.ClientRequestType)
             {
-                case ClientRequestype.UserConnection: ReceiveUserConnectionClientRequest(receivedState.ClientKey, clientRequest); break;
+                case ClientRequestType.UserConnection: ReceiveUserConnectionClientRequest(receivedState.ClientKey, clientRequest); break;
+                case ClientRequestType.StartApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
             }
         }
 
@@ -61,22 +58,47 @@ namespace Core.Sockethandler
             Initialize(_port, host);
         }
 
-        private void ReceiveUserConnectionClientRequest(string clientKey, ClientRequestData clientRequest)
+        private void ReceiveUserConnectionClientRequest(string clientKey, ClientRequestData clientRequestData)
+        {
+            HandleClientRequest<UserConnectionData, UserConnectionServerResponse>(
+                clientKey, clientRequestData, ServerResponseType.UserConnection,
+                (clientRequest, serverResponse) =>
+                {
+                    serverResponse.UserAccount = _serverInstance.UserConnect(clientRequest.Credential, clientRequest.ConnectionMethodGuid);
+                }
+            );
+        }
+
+        private void ReceiveStartApplicationActionClientRequest(string clientKey, ClientRequestData clientRequestData)
+        {
+            HandleClientRequest<StartActionClientRequest, StartActionServerResponse>(
+                clientKey, clientRequestData, ServerResponseType.ApplicationActionRunResult,
+                (clientRequest, serverResponse) =>
+                {
+                    serverResponse.StartActionKey = clientRequest.StartActionKey;
+                    serverResponse.Result = _serverInstance.RunAction(clientRequest.Parameters);
+                }
+            );
+        }
+
+        private void HandleClientRequest<RequestType, ResponseType>(string clientKey, ClientRequestData clientRequestData, ServerResponseType serverResponseType, Action<RequestType, ResponseType> action)
+            where ResponseType : ServerResponseBase, new()
+            where RequestType : class, new()
         {
             ServerResponseData serverResponseData = new ServerResponseData()
             {
-                ServerResponseType = ServerResponseType.UserConnection
+                ServerResponseType = serverResponseType
             };
-            UserConnectionServerResponse serverResponse = new UserConnectionServerResponse();
-            UserConnectionData userConnectionData = Common.Utils.GetObjectFromBytes<UserConnectionData>(clientRequest.Data);
+            ResponseType serverResponse = new ResponseType();
+            RequestType clientRequest = Common.Utils.GetObjectFromBytes<RequestType>(clientRequestData.Data);
             try
             {
-                serverResponse.UserAccount = _usersHandler.Connect(userConnectionData.Credential, userConnectionData.ConnectionMethodGuid);
+                action(clientRequest, serverResponse);
             }
             catch (FactorisableException e)
             {
                 serverResponse.FactorisableExceptionType = e.FactorisableExceptionType;
-                serverResponse.FactorisableExceptionParameters = e.GetParameters(); 
+                serverResponse.FactorisableExceptionParameters = e.GetParameters();
             }
             serverResponseData.Data = Common.Utils.GetBytesFromObject(serverResponse);
             SendToClient(clientKey, Common.Utils.GetBytesFromObject(serverResponseData));

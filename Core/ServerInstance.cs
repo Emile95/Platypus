@@ -70,10 +70,7 @@ namespace Core
             _loggerManager = new LoggerManager();
             _loggerManager.CreateLogger<PlatypusServerConsoleLogger>();
 
-            _socketsHandler = new PlatypusSocketsHandler(
-                _applicationActionsHandler,
-                _usersHandler
-            );
+            _socketsHandler = new PlatypusSocketsHandler(this);
         }
 
         public void LoadConfiguration()

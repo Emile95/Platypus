@@ -1,6 +1,6 @@
 ﻿namespace Common.SocketData.ClientRequest
 {
-    public enum ClientRequestype
+    public enum ClientRequestType
     {
         UserConnection,
         StartApplicationAction

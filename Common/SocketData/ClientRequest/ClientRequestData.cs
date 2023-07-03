@@ -2,7 +2,7 @@
 {
     public class ClientRequestData
     {
-        public ClientRequestype ClientRequestype { get; set; }
+        public ClientRequestType ClientRequestType { get; set; }
         public byte[] Data { get; set; }
     }
 }
