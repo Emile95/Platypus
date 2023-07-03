@@ -7,7 +7,7 @@ namespace Common
 {
     public static class Utils
     {
-        private static readonly BinaryFormatter _binaryFormatter = new BinaryFormatter();
+        //private static readonly BinaryFormatter _binaryFormatter = new BinaryFormatter();
 
         public static string GetString(string key, params object[] args)
         {

@@ -18,7 +18,8 @@ namespace PlatypusApplicationFramework.Confugration
 
                 if (dict.ContainsKey(parameterEditor.Name))
                 {
-                    propertyInfo.SetValue(newObject, dict[parameterEditor.Name]);
+                    object convertedValue = Convert.ChangeType(dict[parameterEditor.Name], propertyInfo.PropertyType);
+                    propertyInfo.SetValue(newObject, convertedValue);
                     continue;
                 }
 
