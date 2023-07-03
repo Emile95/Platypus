@@ -2,10 +2,19 @@
 
 namespace PlatypusAPI.Exceptions
 {
-    public class InvalidUserConnectionMethodGuidException : PlatypusException
+    public class InvalidUserConnectionMethodGuidException : FactorisableException
     {
+        public string UserConnectionMethodGuid { get; private set; }
+
         public InvalidUserConnectionMethodGuidException(string providedGuid)
-            : base(PlatypusExceptionType.InvalidUserConnectionMethodGuid, Common.Utils.GetString("NoUserConnectionMethodWithGuid", providedGuid)) 
-        {}
+            : base(FactorisableExceptionType.InvalidUserConnectionMethodGuid, Common.Utils.GetString("NoUserConnectionMethodWithGuid", providedGuid)) 
+        {
+            UserConnectionMethodGuid = providedGuid;
+        }
+
+        public override object[] GetParameters()
+        {
+            return new object[] { UserConnectionMethodGuid };
+        }
     }
 }

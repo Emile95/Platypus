@@ -73,10 +73,10 @@ namespace Core.Sockethandler
             {
                 serverResponse.UserAccount = _usersHandler.Connect(userConnectionData.Credential, userConnectionData.ConnectionMethodGuid);
             }
-            catch (PlatypusException e)
+            catch (FactorisableException e)
             {
-                serverResponse.ExceptionType = e.ExceptionType;
-                serverResponse.ExcetionStringParameter = e.Message;
+                serverResponse.FactorisableExceptionType = e.FactorisableExceptionType;
+                serverResponse.FactorisableExceptionParameters = e.GetParameters(); 
             }
             serverResponseData.Data = Common.Utils.GetBytesFromObject(serverResponse);
             SendToClient(clientKey, Common.Utils.GetBytesFromObject(serverResponseData));

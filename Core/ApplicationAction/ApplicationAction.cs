@@ -124,8 +124,6 @@ namespace Core.ApplicationAction
             }
         }
 
-        
-
         public ApplicationActionEnvironmentBase CreateStartActionEnvironment()
         {
             if (ParameterType == null)

@@ -1,6 +1,6 @@
 ﻿namespace Common.Exceptions
 {
-    public enum PlatypusExceptionType
+    public enum FactorisableExceptionType
     {
         None,
         UserConnectionFailed,

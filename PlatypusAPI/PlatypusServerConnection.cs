@@ -14,7 +14,7 @@ namespace PlatypusAPI
         private UserAccount _connectedUser;
 
         private bool _isConnecting;
-        private PlatypusException _exception;
+        private FactorisableException _exception;
 
         public void SetUserConnectionData(string connectionMethodGuid, Dictionary<string, object> credential)
         {
@@ -60,7 +60,7 @@ namespace PlatypusAPI
         {
             UserConnectionServerResponse response = Common.Utils.GetObjectFromBytes<UserConnectionServerResponse>(bytes);
             _connectedUser = response.UserAccount;
-            _exception = ExceptionFactory.CreateException(response.ExceptionType, response.ExcetionStringParameter);
+            _exception = ExceptionFactory.CreateException(response.FactorisableExceptionType, response.FactorisableExceptionParameters);
             _isConnecting = false;
         }
     }

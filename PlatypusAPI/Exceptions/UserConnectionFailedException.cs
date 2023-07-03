@@ -3,9 +3,14 @@
 namespace PlatypusAPI.Exceptions
 {
     [Serializable]
-    public class UserConnectionFailedException : PlatypusException
+    public class UserConnectionFailedException : FactorisableException
     {
         public UserConnectionFailedException(string message)
-            : base(PlatypusExceptionType.UserConnectionFailed, message) { }
+            : base(FactorisableExceptionType.UserConnectionFailed, message) { }
+
+        public override object[] GetParameters()
+        {
+            return new object[] { Message };
+        }
     }
 }
