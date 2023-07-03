@@ -1,10 +1,9 @@
 ﻿using Common.Exceptions;
-using Common.SocketData.ClientRequest;
-using Common.SocketData.ServerResponse;
+using Common.Sockets;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Exceptions;
-using PlatypusAPI.SocketData.ClientRequest;
-using PlatypusAPI.SocketData.ServerResponse;
+using PlatypusAPI.Sockets.ClientRequest;
+using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
 using Utils.GuidGeneratorHelper;
 
@@ -26,7 +25,7 @@ namespace PlatypusAPI
             ConnectedUser = connectedUser;
             _waitingStartApplicationAction = new Dictionary<string, WaitingApplicationRun>();
 
-            _socketHandler.ServerResponseCallBacks[ServerResponseType.ApplicationActionRunResult].Add(StartApplicationServerResponseCallBack);
+            _socketHandler.ServerResponseCallBacks[SocketDataType.StartApplicationAction].Add(StartApplicationServerResponseCallBack);
         }
 
         public void Disconnect()
@@ -51,9 +50,9 @@ namespace PlatypusAPI
                 Parameters = applicationActionRunparameter
             };
 
-            ClientRequestData clientRequestData = new ClientRequestData()
+            SocketData clientRequestData = new SocketData()
             {
-                ClientRequestType = ClientRequestType.StartApplicationAction,
+                SocketDataType = SocketDataType.StartApplicationAction,
                 Data = Common.Utils.GetBytesFromObject(startActionClientRequest)
             };
 

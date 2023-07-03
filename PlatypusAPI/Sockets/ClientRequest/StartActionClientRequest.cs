@@ -1,6 +1,6 @@
 ﻿using PlatypusAPI.ApplicationAction.Run;
 
-namespace PlatypusAPI.SocketData.ClientRequest
+namespace PlatypusAPI.Sockets.ClientRequest
 {
     public class StartActionClientRequest
     {

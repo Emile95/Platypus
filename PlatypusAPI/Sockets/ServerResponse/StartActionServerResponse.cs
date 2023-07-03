@@ -1,7 +1,7 @@
-﻿using Common.SocketData.ServerResponse;
+﻿using Common.Sockets.ServerResponse;
 using PlatypusAPI.ApplicationAction.Run;
 
-namespace PlatypusAPI.SocketData.ServerResponse
+namespace PlatypusAPI.Sockets.ServerResponse
 {
     public class StartActionServerResponse : ServerResponseBase
     {

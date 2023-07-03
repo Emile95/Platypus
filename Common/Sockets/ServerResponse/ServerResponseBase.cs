@@ -1,6 +1,6 @@
 ﻿using Common.Exceptions;
 
-namespace Common.SocketData.ServerResponse
+namespace Common.Sockets.ServerResponse
 {
     public abstract class ServerResponseBase
     {

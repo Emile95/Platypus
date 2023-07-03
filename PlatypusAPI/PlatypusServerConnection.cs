@@ -1,8 +1,7 @@
 ﻿using Common.Exceptions;
-using Common.SocketData.ClientRequest;
-using Common.SocketData.ServerResponse;
+using Common.Sockets;
 using PlatypusAPI.Exceptions;
-using PlatypusAPI.SocketData.ServerResponse;
+using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
 
 namespace PlatypusAPI
@@ -30,11 +29,11 @@ namespace PlatypusAPI
             PlatypusClientSocketHandler socketHandler = new PlatypusClientSocketHandler(protocol);
             socketHandler.Initialize(port);
 
-            socketHandler.ServerResponseCallBacks[ServerResponseType.UserConnection].Add(ReceiveUserConnectionServerResponse);
+            socketHandler.ServerResponseCallBacks[SocketDataType.UserConnection].Add(ReceiveUserConnectionServerResponse);
 
-            ClientRequestData requestData = new ClientRequestData()
+            SocketData requestData = new SocketData()
             {
-                ClientRequestType = ClientRequestType.UserConnection,
+                SocketDataType = SocketDataType.UserConnection,
                 Data = Common.Utils.GetBytesFromObject(_userConnectionData)
             };
 
@@ -47,7 +46,7 @@ namespace PlatypusAPI
             if (_exception != null)
                 throw _exception;
 
-            socketHandler.ServerResponseCallBacks[ServerResponseType.UserConnection].Clear();
+            socketHandler.ServerResponseCallBacks[SocketDataType.UserConnection].Clear();
 
             return new PlatypusServerApplication(
                 socketHandler,

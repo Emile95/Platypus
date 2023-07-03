@@ -1,7 +1,7 @@
-﻿using Common.SocketData.ServerResponse;
+﻿using Common.Sockets.ServerResponse;
 using PlatypusAPI.User;
 
-namespace PlatypusAPI.SocketData.ServerResponse
+namespace PlatypusAPI.Sockets.ServerResponse
 {
     public class UserConnectionServerResponse : ServerResponseBase
     {
