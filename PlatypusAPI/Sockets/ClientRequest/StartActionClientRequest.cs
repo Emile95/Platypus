@@ -1,10 +1,10 @@
-﻿using PlatypusAPI.ApplicationAction.Run;
+﻿using Common.Sockets.ClientRequest;
+using PlatypusAPI.ApplicationAction.Run;
 
 namespace PlatypusAPI.Sockets.ClientRequest
 {
-    public class StartActionClientRequest
+    public class StartActionClientRequest : ClientRequestBase
     {
-        public string StartActionKey { get; set; }
         public ApplicationActionRunParameter Parameters { get; set; }
     }
 }

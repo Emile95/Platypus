@@ -1,5 +1,7 @@
 ﻿using Common.Exceptions;
 using Common.Sockets;
+using Common.Sockets.ClientRequest;
+using Common.Sockets.ServerResponse;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.Sockets.ClientRequest;
@@ -14,7 +16,7 @@ namespace PlatypusAPI
         private readonly PlatypusClientSocketHandler _socketHandler;
         public UserAccount ConnectedUser { get; private set; }
 
-        private readonly Dictionary<string, WaitingApplicationRun> _waitingStartApplicationAction;
+        private readonly Dictionary<string, StartActionServerResponseWaiter> _startActionServerResponseWaiters;
 
         public PlatypusServerApplication(
             PlatypusClientSocketHandler socketHandler,
@@ -23,7 +25,7 @@ namespace PlatypusAPI
         {
             _socketHandler = socketHandler;
             ConnectedUser = connectedUser;
-            _waitingStartApplicationAction = new Dictionary<string, WaitingApplicationRun>();
+            _startActionServerResponseWaiters = new Dictionary<string, StartActionServerResponseWaiter>();
 
             _socketHandler.ServerResponseCallBacks[SocketDataType.StartApplicationAction].Add(StartApplicationServerResponseCallBack);
         }
@@ -35,56 +37,84 @@ namespace PlatypusAPI
 
         public ApplicationActionRunResult RunApplicationAction(ApplicationActionRunParameter applicationActionRunparameter)
         {
-            string guid = GuidGenerator.GenerateFromEnumerable(_waitingStartApplicationAction.Keys);
-
-            WaitingApplicationRun waitingApplicationRun = new WaitingApplicationRun()
-            {
-                Running = true
-            };
-
-            _waitingStartApplicationAction.Add(guid, waitingApplicationRun);
-
-            StartActionClientRequest startActionClientRequest = new StartActionClientRequest()
-            {
-                StartActionKey = guid,
-                Parameters = applicationActionRunparameter
-            };
-
-            SocketData clientRequestData = new SocketData()
-            {
-                SocketDataType = SocketDataType.StartApplicationAction,
-                Data = Common.Utils.GetBytesFromObject(startActionClientRequest)
-            };
-
-            _socketHandler.SendToServer(Common.Utils.GetBytesFromObject(clientRequestData));
-
-            while (waitingApplicationRun.Running)
-                Thread.Sleep(1000);
-
-            ApplicationActionRunResult result = waitingApplicationRun.Result;
-            _waitingStartApplicationAction.Remove(guid);
-
+            ApplicationActionRunResult result = null;
+            RunClientRequest<StartActionServerResponse, StartActionServerResponseWaiter, StartActionClientRequest>(
+                 _startActionServerResponseWaiters, SocketDataType.StartApplicationAction,
+                 (clientRequest) => {
+                     clientRequest.Parameters = applicationActionRunparameter;
+                 },
+                 (serverResponseWaiter) => {
+                     result = serverResponseWaiter.Result;
+                 }
+            );
             return result;
         }
 
         private void StartApplicationServerResponseCallBack(byte[] bytes)
         {
-            StartActionServerResponse serverResponse = Common.Utils.GetObjectFromBytes<StartActionServerResponse>(bytes);
-            
-            if (_waitingStartApplicationAction.ContainsKey(serverResponse.StartActionKey) == false) return;
-
-            WaitingApplicationRun waitingApplicationRun = _waitingStartApplicationAction[serverResponse.StartActionKey];
-
-            waitingApplicationRun.Exception = ExceptionFactory.CreateException(serverResponse.FactorisableExceptionType, serverResponse.FactorisableExceptionParameters);
-            waitingApplicationRun.Result = serverResponse.Result;
-            waitingApplicationRun.Running = false;
+            ServerResponseCallBack<StartActionServerResponse, StartActionServerResponseWaiter>(
+                _startActionServerResponseWaiters, bytes,
+                (serverResponseWaiter, serverResponse) => {
+                    serverResponseWaiter.Result = serverResponse.Result;
+                }
+            );
         }
 
-        private class WaitingApplicationRun
+        private void RunClientRequest<ServerResponseType, ServerResponseWaiterType, ClientRequestType>(Dictionary<string, ServerResponseWaiterType> serverResponseWaiters, SocketDataType socketDataType, Action<ClientRequestType> consumer, Action<ServerResponseWaiterType> callBack)
+            where ServerResponseType : ServerResponseBase
+            where ServerResponseWaiterType : ServerResponseWaiter, new()
+            where ClientRequestType : ClientRequestBase, new()
         {
-            public bool Running { get; set; }
-            public ApplicationActionRunResult Result { get; set; }
+            string guid = GuidGenerator.GenerateFromEnumerable(serverResponseWaiters.Keys);
+
+            ServerResponseWaiterType serverResponseWaiter = new ServerResponseWaiterType();
+
+            serverResponseWaiters.Add(guid, serverResponseWaiter);
+
+            ClientRequestType clientRequest = new ClientRequestType()
+            {
+                RequestKey = guid
+            };
+            consumer(clientRequest);
+
+            SocketData clientRequestData = new SocketData()
+            {
+                SocketDataType = socketDataType,
+                Data = Common.Utils.GetBytesFromObject(clientRequest)
+            };
+
+            _socketHandler.SendToServer(Common.Utils.GetBytesFromObject(clientRequestData));
+
+            while (serverResponseWaiter.Received == false)
+                Thread.Sleep(1000);
+
+            callBack(serverResponseWaiter);
+
+            serverResponseWaiters.Remove(guid);
+        }
+
+        private void ServerResponseCallBack<ServerResponseType, ServerResponseWaiterType>(Dictionary<string, ServerResponseWaiterType> serverResponseWaiters, byte[] bytes, Action<ServerResponseWaiterType, ServerResponseType> consumer)
+            where ServerResponseType : ServerResponseBase
+            where ServerResponseWaiterType : ServerResponseWaiter
+        {
+            
+            ServerResponseType serverResponse = Common.Utils.GetObjectFromBytes<ServerResponseType>(bytes);
+            if (_startActionServerResponseWaiters.ContainsKey(serverResponse.RequestKey) == false) return;
+            ServerResponseWaiterType serverResponseWaiter = serverResponseWaiters[serverResponse.RequestKey];
+            serverResponseWaiter.Exception = ExceptionFactory.CreateException(serverResponse.FactorisableExceptionType, serverResponse.FactorisableExceptionParameters);
+            serverResponseWaiter.Received = true;
+            consumer(serverResponseWaiter, serverResponse);
+        }
+
+        private abstract class ServerResponseWaiter
+        {
+            public bool Received { get; set; }
             public FactorisableException Exception { get; set; }
+        }
+
+        private class StartActionServerResponseWaiter : ServerResponseWaiter
+        {
+            public ApplicationActionRunResult Result { get; set; }
         }
     }
 }

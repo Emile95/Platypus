@@ -75,7 +75,7 @@ namespace Core.Sockethandler
                 clientKey, clientRequestData, SocketDataType.StartApplicationAction,
                 (clientRequest, serverResponse) =>
                 {
-                    serverResponse.StartActionKey = clientRequest.StartActionKey;
+                    serverResponse.RequestKey = clientRequest.RequestKey;
                     serverResponse.Result = _serverInstance.RunAction(clientRequest.Parameters);
                 }
             );
