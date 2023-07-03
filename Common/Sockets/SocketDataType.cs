@@ -3,6 +3,11 @@
     public enum SocketDataType
     {
         UserConnection,
-        StartApplicationAction
+        StartApplicationAction,
+        AddUser,
+        InstallApplication,
+        UnintallApplication,
+        CancelRunningAction,
+        GetRunningActions
     }
 }
