@@ -50,6 +50,7 @@ namespace Core.Sockethandler
             {
                 case SocketDataType.UserConnection: ReceiveUserConnectionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.StartApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
+                case SocketDataType.AddUser: ReceiveAddUserClientRequest(receivedState.ClientKey, clientRequest); break;
             }
         }
 
@@ -77,6 +78,23 @@ namespace Core.Sockethandler
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
                     serverResponse.Result = _serverInstance.RunAction(clientRequest.Parameters);
+                }
+            );
+        }
+
+        private void ReceiveAddUserClientRequest(string clientKey, SocketData clientRequestData)
+        {
+            HandleClientRequest<AddUserClientRequest, AddUserServerResponse>(
+                clientKey, clientRequestData, SocketDataType.AddUser,
+                (clientRequest, serverResponse) =>
+                {
+                    serverResponse.RequestKey = clientRequest.RequestKey;
+                    serverResponse.UserAccount = _serverInstance.AddUser(
+                        clientRequest.CredentialMethodGUID,
+                        clientRequest.FullName,
+                        clientRequest.Email,
+                        clientRequest.Data
+                    );   
                 }
             );
         }

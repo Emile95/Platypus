@@ -12,8 +12,10 @@ namespace PlatypusAPI
             : base(protocol) 
         {
             ServerResponseCallBacks = new Dictionary<SocketDataType, List<Action<byte[]>>>();
-            ServerResponseCallBacks.Add(SocketDataType.UserConnection, new List<Action<byte[]>>());
-            ServerResponseCallBacks.Add(SocketDataType.StartApplicationAction, new List<Action<byte[]>>());
+
+            foreach(SocketDataType socketDataType in Enum.GetValues(typeof(SocketDataType)))
+
+            ServerResponseCallBacks.Add(socketDataType, new List<Action<byte[]>>());
         }
 
         public override void OnConnect(ServerReceivedState state)

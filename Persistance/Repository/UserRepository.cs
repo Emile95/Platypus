@@ -10,7 +10,7 @@ namespace Persistance.Repository
             int lastID = Convert.ToInt32(File.ReadAllText(ApplicationPaths.LASTUSERIDFILEPATH));
             int newID = (lastID + 1);
             File.WriteAllText(ApplicationPaths.LASTUSERIDFILEPATH, newID.ToString());
-            entity.ID = lastID;
+            entity.ID = newID;
 
             string userDirectoryPath = ApplicationPaths.GetUserDirectoryPath(connectionMethodGuid, entity.ID);
 

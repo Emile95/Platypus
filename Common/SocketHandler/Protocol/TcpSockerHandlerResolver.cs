@@ -23,7 +23,11 @@ namespace Common.SocketHandler.Protocol
             for (int i = sendLengthBytes.Length; i < newSendLength; i++)
                 newBytes[i] = bytes[i - sendLengthBytes.Length];
 
-            socket.Send(newBytes);
+            try
+            {
+                socket.Send(newBytes);
+            } catch (Exception e) { }
+            
         }
 
         public override Socket CreateSocket()

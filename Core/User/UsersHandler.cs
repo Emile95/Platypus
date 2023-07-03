@@ -47,13 +47,13 @@ namespace Core.User
             _userAccounts.Remove(connectionMethodGuid);
         }
 
-        public void AddUser(string connectionMethodGuid, string fullName, string email, Dictionary<string,object> data)
+        public UserAccount AddUser(string connectionMethodGuid, string fullName, string email, Dictionary<string,object> data)
         {
             if (_userAccounts.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
 
             UsersOfConnectionMethod usersOfConnectionMethod = _userAccounts[connectionMethodGuid];
             Type[] genericTypes = usersOfConnectionMethod.UserConnectionMethod.GetType().BaseType.GetGenericArguments();
-            if (genericTypes.Length == 0) return;
+            if (genericTypes.Length == 0) return null;
 
             ParameterEditorObjectResolver.ValidateDictionnary(genericTypes[0], data);
 
@@ -64,11 +64,15 @@ namespace Core.User
                 Data = data
             });
 
-            usersOfConnectionMethod.Users.Add(new UserAccount() {
+            UserAccount userAccount = new UserAccount()
+            {
                 ID = userID,
                 FullName = fullName,
                 Email = email
-            });
+            };
+            usersOfConnectionMethod.Users.Add(userAccount);
+
+            return userAccount;
         }
 
         public UserAccount Connect(Dictionary<string, object> credential, string connectionMethodGuid)
