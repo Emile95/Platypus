@@ -11,6 +11,7 @@ using Persistance.Repository;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.User;
 using PlatypusApplicationFramework.Core.ApplicationAction;
+using PlatypusApplicationFramework.Core.Event;
 
 namespace Core
 {
@@ -20,7 +21,7 @@ namespace Core
 
         private readonly ApplicationsHandler _applicationsHandler;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
-        private readonly EventsHandler _eventsHandlers;
+        private readonly EventsHandler _eventsHandler;
         private readonly UsersHandler _usersHandler;
 
         private readonly ApplicationRepository _applicationRepository;
@@ -32,11 +33,11 @@ namespace Core
         {
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
 
-            _eventsHandlers = new EventsHandler();
+            _eventsHandler = new EventsHandler();
 
             _applicationActionsHandler = new ApplicationActionsHandler(
                 applicationActionRepository,
-                _eventsHandlers
+                _eventsHandler
             );
 
             UserRepository userRepository = new UserRepository();
@@ -57,14 +58,15 @@ namespace Core
             ApplicationResolver applicationResolver = new ApplicationResolver(
                 _applicationRepository,
                 _applicationActionsHandler,
-                _eventsHandlers,
+                _eventsHandler,
                 _usersHandler
             );
 
             _applicationsHandler = new ApplicationsHandler(
                 _applicationRepository,
                 applicationResolver,
-                applicationInstaller
+                applicationInstaller,
+                _eventsHandler
             );
 
             _loggerManager = new LoggerManager();
@@ -96,6 +98,8 @@ namespace Core
                 _applicationActionsHandler.RemoveAction(actionGuid);
             foreach (string userConnectionMethodGuid in details.UserConnectionMethodGuids)
                 _usersHandler.RemoveConnectionMethod(userConnectionMethodGuid);
+
+            _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterUninstallApplication, details.EventEnv, (exception) => throw exception);
         }
 
         public void InitializeServerSocketHandlers()

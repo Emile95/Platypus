@@ -1,4 +1,5 @@
-﻿using PlatypusApplicationFramework.Configuration.Application;
+﻿using Core.Exceptions;
+using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.Event;
 using PlatypusApplicationFramework.Core.Event;
 using System.Reflection;
@@ -23,7 +24,22 @@ namespace Core.Event
             _eventHandlers[eventHandlerAttribute.EventHandlerType].Add(eventhandler);
         }
 
-        public void RunEventHandlers(EventHandlerType type, EventHandlerEnvironment env)
+        public T RunEventHandlers<T>(EventHandlerType eventHandlerType, EventHandlerEnvironment eventEnv, Func<EventHandlerException, T> exceptionObjectCreator)
+            where T : class
+        {
+            try
+            {
+                RunEventHandlers(eventHandlerType, eventEnv);
+            }
+            catch (EventHandlerException ex)
+            {
+                return exceptionObjectCreator(ex);
+            }
+
+            return null;
+        }
+
+        private void RunEventHandlers(EventHandlerType type, EventHandlerEnvironment env)
         {
             foreach (EventHandler eventHandler in _eventHandlers[type])
                 eventHandler.RunEventHandler(env);

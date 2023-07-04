@@ -5,6 +5,8 @@ using Utils;
 using Utils.GuidGeneratorHelper;
 using Persistance;
 using Core.Exceptions;
+using Core.Event;
+using PlatypusApplicationFramework.Core.Event;
 
 namespace Core.Application
 {
@@ -13,12 +15,14 @@ namespace Core.Application
         private readonly ApplicationRepository _applicationRepository;
         private readonly ApplicationInstaller _applicationInstaller;
         private readonly ApplicationResolver _applicationResolver;
+        private readonly EventsHandler _eventsHandler;
         private readonly Dictionary<string, PlatypusApplicationBase> _applications;
 
         public ApplicationsHandler(
             ApplicationRepository applicationRepository,
             ApplicationResolver applicationResolver,
-            ApplicationInstaller applicationInstaller
+            ApplicationInstaller applicationInstaller,
+            EventsHandler eventsHandler
         )
         {
             _applicationRepository = applicationRepository;
@@ -26,6 +30,8 @@ namespace Core.Application
             _applicationResolver = applicationResolver;
 
             _applicationInstaller = applicationInstaller;
+
+            _eventsHandler = eventsHandler;
 
             _applications = new Dictionary<string, PlatypusApplicationBase>();
         }
@@ -50,8 +56,18 @@ namespace Core.Application
         public void InstallApplication(string applicationPath)
         {
             string newGuid = GuidGenerator.GenerateFromEnumerable(_applications.Keys);
+
+            InstallApplicationEventHandlerEnvironment eventEnv = new InstallApplicationEventHandlerEnvironment()
+            {
+                ApplicationGuid = newGuid
+            };
+
+            _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeInstallApplication, eventEnv, (exception) => throw exception);
+
             PlatypusApplicationBase application = _applicationInstaller.InstallApplication(newGuid, applicationPath);
             LoadApplication(application, newGuid);
+
+            _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterInstallApplication, eventEnv, (exception) => throw exception);
         }
 
         public UninstallApplicationDetails UninstallApplication(string applicationGuid)
@@ -59,9 +75,21 @@ namespace Core.Application
             if (_applications.ContainsKey(applicationGuid) == false)
                 throw new ApplicationInexistantException(applicationGuid);
 
+            UninstallApplicationEventHandlerEnvironment eventEnv = new UninstallApplicationEventHandlerEnvironment()
+            {
+                ApplicationGuid = applicationGuid
+            };
+
+            _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeUninstallApplication, eventEnv, (exception) => throw exception);
+
             PlatypusApplicationBase application = _applications[applicationGuid];
             _applications.Remove(applicationGuid);
-            return _applicationInstaller.UninstallApplication(application, applicationGuid);
+
+            UninstallApplicationDetails details = _applicationInstaller.UninstallApplication(application, applicationGuid);
+
+            details.EventEnv = eventEnv;
+
+            return details;
         }
     }
 }

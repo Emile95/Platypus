@@ -10,7 +10,6 @@ using Utils.GuidGeneratorHelper;
 using Core.Event;
 using PlatypusApplicationFramework.Core.Event;
 using Persistance.Entity;
-using Core.Exceptions;
 using Persistance;
 
 namespace Core.ApplicationAction
@@ -113,14 +112,14 @@ namespace Core.ApplicationAction
                 RunningActionGuid = guid
             };
 
-            RunEventHandlers<object>(EventHandlerType.BeforeCancelApplicationRun, eventEnv, (exception) => throw exception);
+            _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeCancelApplicationRun, eventEnv, (exception) => throw exception);
 
             ApplicationActionRun run = _applicationActionRuns[guid];
             _applicationActionRuns.Remove(guid);
 
             run.Cancel();
 
-            RunEventHandlers<object>(EventHandlerType.AfterCancelApplicationRun, eventEnv, (exception) => throw exception);
+            _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterCancelApplicationRun, eventEnv, (exception) => throw exception);
         }
 
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActionInfos()
@@ -173,7 +172,7 @@ namespace Core.ApplicationAction
             eventEnv.ApplicationActionResult = run.Result;
             eventEnv.ApplicationActionRunInfo = run.GetInfo();
 
-            RunEventHandlers<object>(EventHandlerType.AfterApplicationActionRun, eventEnv, (exception) => {
+            _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterApplicationActionRun, eventEnv, (exception) => {
                 if (run.Result.Status != ApplicationActionRunResultStatus.Failed)
                 {
                     run.Result.Status = ApplicationActionRunResultStatus.Failed;
@@ -197,28 +196,13 @@ namespace Core.ApplicationAction
         {
             eventEnv.ApplicationActionInfo = applicationAction.GetInfo();
 
-            RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv, (exception) => {
+            _eventsHandler.RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv, (exception) => {
                 return new ApplicationActionRunResult()
                 {
                     Status = ApplicationActionRunResultStatus.Failed,
                     Message = exception.Message,
                 };
             });
-
-            return null;
-        }
-
-        private T RunEventHandlers<T>(EventHandlerType eventHandlerType, EventHandlerEnvironment eventEnv, Func<EventHandlerException, T> exceptionObjectCreator)
-            where T : class
-        {
-            try
-            {
-                _eventsHandler.RunEventHandlers(eventHandlerType, eventEnv);
-            }
-            catch (EventHandlerException ex)
-            {
-                return exceptionObjectCreator(ex);
-            }
 
             return null;
         }

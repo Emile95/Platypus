@@ -5,6 +5,10 @@
         BeforeApplicationActionRun,
         AfterApplicationActionRun,
         BeforeCancelApplicationRun,
-        AfterCancelApplicationRun
+        AfterCancelApplicationRun,
+        BeforeInstallApplication,
+        AfterInstallApplication,
+        BeforeUninstallApplication,
+        AfterUninstallApplication
     }
 }
