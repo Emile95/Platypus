@@ -3,6 +3,7 @@
     public enum EventHandlerType
     {
         BeforeApplicationActionRun,
-        AfterApplicationActionRun
+        AfterApplicationActionRun,
+        BeforeCancelApplicationRun
     }
 }

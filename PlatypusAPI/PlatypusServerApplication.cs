@@ -31,7 +31,7 @@ namespace PlatypusAPI
             _getRunningApplicationActionsServerResponseWaiters = new Dictionary<string, GetRunningApplicationActionsServerResponseWaiter>();
             _cancelRunningApplicationActionServerResponseWaiters = new Dictionary<string, ServerResponseWaiter>();
 
-            _socketHandler.ServerResponseCallBacks[SocketDataType.StartApplicationAction].Add(StartApplicationServerResponseCallBack);
+            _socketHandler.ServerResponseCallBacks[SocketDataType.RunApplicationAction].Add(StartApplicationServerResponseCallBack);
             _socketHandler.ServerResponseCallBacks[SocketDataType.AddUser].Add(AddUserServerResponseCallBack);
             _socketHandler.ServerResponseCallBacks[SocketDataType.GetRunningActions].Add(GetRunningApplicationActionsServerResponseCallBack);
             _socketHandler.ServerResponseCallBacks[SocketDataType.CancelRunningAction].Add(CancelRunningApplicationActionServerResponseCallBack);

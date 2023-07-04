@@ -12,8 +12,9 @@ namespace Core.Event
         public EventsHandler()
         {
             _eventHandlers = new Dictionary<EventHandlerType, List<EventHandler>>();
-            _eventHandlers.Add(EventHandlerType.BeforeApplicationActionRun, new List<EventHandler>());
-            _eventHandlers.Add(EventHandlerType.AfterApplicationActionRun, new List<EventHandler>());
+
+            foreach (EventHandlerType eventHandlerType in Enum.GetValues(typeof(EventHandlerType)))
+                _eventHandlers.Add(eventHandlerType, new List<EventHandler>());
         }
 
         public void AddEventHandler(PlatypusApplicationBase application, EventHandlerAttribute eventHandlerAttribute, MethodInfo methodInfo)

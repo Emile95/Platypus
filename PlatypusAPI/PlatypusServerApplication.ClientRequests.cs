@@ -14,7 +14,7 @@ namespace PlatypusAPI
         {
             ApplicationActionRunResult result = null;
             RunClientRequest<StartActionServerResponse, StartActionServerResponseWaiter, StartActionClientRequest>(
-                 _startActionServerResponseWaiters, SocketDataType.StartApplicationAction,
+                 _startActionServerResponseWaiters, SocketDataType.RunApplicationAction,
                  (clientRequest) => {
                      clientRequest.Parameters = applicationActionRunparameter;
                  },

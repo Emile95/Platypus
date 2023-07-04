@@ -4,6 +4,7 @@ using Common.SocketHandler.State;
 using Common.Sockets;
 using Common.Sockets.ClientRequest;
 using Common.Sockets.ServerResponse;
+using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Sockets.ClientRequest;
 using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
@@ -50,7 +51,7 @@ namespace Core.Sockethandler
             switch(clientRequest.SocketDataType)
             {
                 case SocketDataType.UserConnection: ReceiveUserConnectionClientRequest(receivedState.ClientKey, clientRequest); break;
-                case SocketDataType.StartApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
+                case SocketDataType.RunApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.AddUser: ReceiveAddUserClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.GetRunningActions: ReceiveGetRunningApplicationActionsClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.CancelRunningAction: ReceiveCancelRunningApplicationActionRunClientRequest(receivedState.ClientKey, clientRequest); break;
@@ -76,7 +77,7 @@ namespace Core.Sockethandler
         private void ReceiveStartApplicationActionClientRequest(string clientKey, SocketData clientRequestData)
         {
             HandleClientRequest<StartActionClientRequest, StartActionServerResponse>(
-                clientKey, clientRequestData, SocketDataType.StartApplicationAction,
+                clientKey, clientRequestData, SocketDataType.RunApplicationAction,
                 (clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
@@ -109,7 +110,11 @@ namespace Core.Sockethandler
                 (clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
-                    serverResponse.ApplicationActionRunInfos = _serverInstance.GetRunningApplicationActions().ToList();
+                    IEnumerable<ApplicationActionRunInfo> result = _serverInstance.GetRunningApplicationActions();
+                    if (result.Count() != 0)
+                        serverResponse.ApplicationActionRunInfos = result.ToList();
+                    else
+                        serverResponse.ApplicationActionRunInfos = new List<ApplicationActionRunInfo>();
                 }
             );
         }

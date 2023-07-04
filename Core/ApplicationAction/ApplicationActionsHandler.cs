@@ -72,8 +72,11 @@ namespace Core.ApplicationAction
                     Message = ex.Message,
                 };
             }
-            
-            ApplicationActionRunResult result = BeforeApplicationActionRun(applicationAction);
+
+            ActionRunEventHandlerEnvironment actionRunEventHandlerEnvironment = new ActionRunEventHandlerEnvironment();
+            actionRunEventHandlerEnvironment.ApplicationActionInfo = applicationAction.GetInfo();
+
+            ApplicationActionRunResult result = BeforeApplicationActionRun(applicationAction, actionRunEventHandlerEnvironment);
             if (result is not null) return result;
 
             ApplicationActionRun applicationActionRun = CreateApplicationActionRun(runActionParameter, env);
@@ -82,7 +85,7 @@ namespace Core.ApplicationAction
             env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
 
             applicationActionRun.StartRun(applicationAction, runActionParameter, () => {
-                ApplicationActionRunCallBack(applicationAction, applicationActionRun);
+                ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);
             });
 
             if (runActionParameter.Async)
@@ -103,9 +106,20 @@ namespace Core.ApplicationAction
 
         public void CancelRunningAction(string guid)
         {
-            if (_applicationActionRuns.ContainsKey(guid) == false)return;
+            if (_applicationActionRuns.ContainsKey(guid) == false) return;
+
+            CancelRunningActionsEventHandlerEnvironment eventEnv = new CancelRunningActionsEventHandlerEnvironment()
+            {
+                RunningActionGuid = guid
+            };
+
+            RunEventHandlers<object>(EventHandlerType.BeforeCancelApplicationRun, eventEnv, (exception) => {
+                throw exception;
+            });
+
             ApplicationActionRun run = _applicationActionRuns[guid];
             _applicationActionRuns.Remove(guid);
+
             run.Cancel();
         }
 
@@ -149,17 +163,24 @@ namespace Core.ApplicationAction
             return applicationActionRun;
         }
 
-        private void ApplicationActionRunCallBack(ApplicationAction applicationAction, ApplicationActionRun run)
+        private void ApplicationActionRunCallBack(ApplicationActionRun run, ActionRunEventHandlerEnvironment eventEnv)
         {
             if (run.Env.ActionCancelled)
                 return;
 
             _applicationActionRuns.Remove(run.Guid);
 
-            ActionRunEventHandlerEnvironment eventEnv = new ActionRunEventHandlerEnvironment();
             eventEnv.ApplicationActionResult = run.Result;
-            eventEnv.ApplicationActionInfo = applicationAction.GetInfo();
             eventEnv.ApplicationActionRunInfo = run.GetInfo();
+
+            RunEventHandlers<object>(EventHandlerType.AfterApplicationActionRun, eventEnv, (exception) => {
+                if (run.Result.Status != ApplicationActionRunResultStatus.Failed)
+                {
+                    run.Result.Status = ApplicationActionRunResultStatus.Failed;
+                    run.Result.Message = exception.Message;
+                }
+                return null;
+            });
 
             try
             {
@@ -185,21 +206,31 @@ namespace Core.ApplicationAction
             );
         }
 
-        private ApplicationActionRunResult BeforeApplicationActionRun(ApplicationAction applicationAction)
+        private ApplicationActionRunResult BeforeApplicationActionRun(ApplicationAction applicationAction, ActionRunEventHandlerEnvironment eventEnv)
         {
-            ActionRunEventHandlerEnvironment eventEnv = new ActionRunEventHandlerEnvironment();
             eventEnv.ApplicationActionInfo = applicationAction.GetInfo();
-            try
-            {
-                _eventsHandler.RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv);
-            }
-            catch (EventHandlerException ex)
-            {
+
+            RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv, (exception) => {
                 return new ApplicationActionRunResult()
                 {
                     Status = ApplicationActionRunResultStatus.Failed,
-                    Message = ex.Message,
+                    Message = exception.Message,
                 };
+            });
+
+            return null;
+        }
+
+        private T RunEventHandlers<T>(EventHandlerType eventHandlerType, EventHandlerEnvironment eventEnv, Func<EventHandlerException, T> exceptionObjectCreator)
+            where T : class
+        {
+            try
+            {
+                _eventsHandler.RunEventHandlers(eventHandlerType, eventEnv);
+            }
+            catch (EventHandlerException ex)
+            {
+                return exceptionObjectCreator(ex);
             }
 
             return null;
