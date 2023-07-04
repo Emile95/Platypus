@@ -117,13 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ApplicationActionCancelledException" xml:space="preserve">
+  <data name="ApplicationActionCancelled" xml:space="preserve">
     <value>action has been canceled</value>
   </data>
   <data name="ApplicationActionFailed" xml:space="preserve">
     <value>Action as failed</value>
   </data>
-  <data name="ApplicationActionFieldRequiredException" xml:space="preserve">
+  <data name="ApplicationActionFieldRequired" xml:space="preserve">
     <value>the field '{0}' is required in the action parameter</value>
   </data>
   <data name="ApplicationActionNotFound" xml:space="preserve">

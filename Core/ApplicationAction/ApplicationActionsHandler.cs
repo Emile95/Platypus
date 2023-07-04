@@ -103,9 +103,10 @@ namespace Core.ApplicationAction
 
         public void CancelRunningAction(string guid)
         {
-            if (_applicationActionRuns.ContainsKey(guid) == false)
-                return;
-            _applicationActionRuns[guid].Cancel();
+            if (_applicationActionRuns.ContainsKey(guid) == false)return;
+            ApplicationActionRun run = _applicationActionRuns[guid];
+            _applicationActionRuns.Remove(guid);
+            run.Cancel();
         }
 
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActionInfos()
@@ -150,10 +151,10 @@ namespace Core.ApplicationAction
 
         private void ApplicationActionRunCallBack(ApplicationAction applicationAction, ApplicationActionRun run)
         {
-            _applicationActionRuns.Remove(run.Guid);
-
             if (run.Env.ActionCancelled)
                 return;
+
+            _applicationActionRuns.Remove(run.Guid);
 
             ActionRunEventHandlerEnvironment eventEnv = new ActionRunEventHandlerEnvironment();
             eventEnv.ApplicationActionResult = run.Result;

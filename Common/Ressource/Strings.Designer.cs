@@ -63,9 +63,9 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to action has been canceled.
         /// </summary>
-        public static string ApplicationActionCancelledException {
+        public static string ApplicationActionCancelled {
             get {
-                return ResourceManager.GetString("ApplicationActionCancelledException", resourceCulture);
+                return ResourceManager.GetString("ApplicationActionCancelled", resourceCulture);
             }
         }
         
@@ -81,9 +81,9 @@ namespace Common.Ressource {
         /// <summary>
         ///   Looks up a localized string similar to the field &apos;{0}&apos; is required in the action parameter.
         /// </summary>
-        public static string ApplicationActionFieldRequiredException {
+        public static string ApplicationActionFieldRequired {
             get {
-                return ResourceManager.GetString("ApplicationActionFieldRequiredException", resourceCulture);
+                return ResourceManager.GetString("ApplicationActionFieldRequired", resourceCulture);
             }
         }
         

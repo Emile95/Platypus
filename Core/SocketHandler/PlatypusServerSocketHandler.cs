@@ -53,6 +53,7 @@ namespace Core.Sockethandler
                 case SocketDataType.StartApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.AddUser: ReceiveAddUserClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.GetRunningActions: ReceiveGetRunningApplicationActionsClientRequest(receivedState.ClientKey, clientRequest); break;
+                case SocketDataType.CancelRunningAction: ReceiveCancelRunningApplicationActionRunClientRequest(receivedState.ClientKey, clientRequest); break;
             }
         }
 
@@ -109,6 +110,18 @@ namespace Core.Sockethandler
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
                     serverResponse.ApplicationActionRunInfos = _serverInstance.GetRunningApplicationActions().ToList();
+                }
+            );
+        }
+
+        private void ReceiveCancelRunningApplicationActionRunClientRequest(string clientKey, SocketData clientRequestData)
+        {
+            HandleClientRequest<CancelRunningApplicationRunClientRequest, AddUserServerResponse>(
+                clientKey, clientRequestData, SocketDataType.CancelRunningAction,
+                (clientRequest, serverResponse) =>
+                {
+                    serverResponse.RequestKey = clientRequest.RequestKey;
+                    _serverInstance.CancelRunningApplicationAction(clientRequest.ApplicationRunGuid);
                 }
             );
         }
