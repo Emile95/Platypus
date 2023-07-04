@@ -2,16 +2,13 @@
 using Common.Sockets;
 using Common.Sockets.ClientRequest;
 using Common.Sockets.ServerResponse;
-using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Exceptions;
-using PlatypusAPI.Sockets.ClientRequest;
-using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
 using Utils.GuidGeneratorHelper;
 
 namespace PlatypusAPI
 {
-    public class PlatypusServerApplication
+    public partial class PlatypusServerApplication
     {
         private readonly PlatypusClientSocketHandler _socketHandler;
         public UserAccount ConnectedUser { get; private set; }
@@ -43,98 +40,6 @@ namespace PlatypusAPI
         public void Disconnect()
         {
 
-        }
-
-        public ApplicationActionRunResult RunApplicationAction(ApplicationActionRunParameter applicationActionRunparameter)
-        {
-            ApplicationActionRunResult result = null;
-            RunClientRequest<StartActionServerResponse, StartActionServerResponseWaiter, StartActionClientRequest>(
-                 _startActionServerResponseWaiters, SocketDataType.StartApplicationAction,
-                 (clientRequest) => {
-                     clientRequest.Parameters = applicationActionRunparameter;
-                 },
-                 (serverResponseWaiter) => {
-                     result = serverResponseWaiter.Result;
-                 }
-            );
-            return result;
-        }
-
-        public UserAccount AddUser(string credentialMethodGUID, string fullName, string email, Dictionary<string, object> data)
-        {
-            UserAccount userAccount = null;
-            RunClientRequest<AddUserServerResponse, AddUserServerResponseWaiter, AddUserClientRequest>(
-                 _addUserServerResponseWaiters, SocketDataType.AddUser,
-                 (clientRequest) => {
-                     clientRequest.CredentialMethodGUID = credentialMethodGUID;
-                     clientRequest.FullName = fullName;
-                     clientRequest.Email = email;
-                     clientRequest.Data = data;
-                 },
-                 (serverResponseWaiter) => {
-                     userAccount = serverResponseWaiter.UserAccount;
-                 }
-            );
-            return userAccount;
-        }
-
-        public List<ApplicationActionRunInfo> GetRunningApplicationActions()
-        {
-            List<ApplicationActionRunInfo> result = new List<ApplicationActionRunInfo>();
-            RunClientRequest<GetRunningApplicationActionsServerResponse, GetRunningApplicationActionsServerResponseWaiter, ClientRequestBase>(
-                 _getRunningApplicationActionsServerResponseWaiters, SocketDataType.GetRunningActions, null,
-                 (serverResponseWaiter) => {
-                     result = serverResponseWaiter.ApplicationActionRunInfos;
-                 }
-            );
-            return result;
-        }
-
-        public void CancelRunningApplicationAction(string applicationRunGuid)
-        {
-            RunClientRequest<ServerResponseBase, ServerResponseWaiter, CancelRunningApplicationRunClientRequest>(
-                 _cancelRunningApplicationActionServerResponseWaiters, SocketDataType.CancelRunningAction,
-                 (clientRequest) => {
-                     clientRequest.ApplicationRunGuid = applicationRunGuid;
-                 }
-            );
-        }
-
-        private void StartApplicationServerResponseCallBack(byte[] bytes)
-        {
-            ServerResponseCallBack<StartActionServerResponse, StartActionServerResponseWaiter>(
-                _startActionServerResponseWaiters, bytes,
-                (serverResponseWaiter, serverResponse) => {
-                    serverResponseWaiter.Result = serverResponse.Result;
-                }
-            );
-        }
-
-        private void AddUserServerResponseCallBack(byte[] bytes)
-        {
-            ServerResponseCallBack<AddUserServerResponse, AddUserServerResponseWaiter>(
-                _addUserServerResponseWaiters, bytes,
-                (serverResponseWaiter, serverResponse) => {
-                    serverResponseWaiter.UserAccount = serverResponse.UserAccount;
-                }
-            );
-        }
-
-        private void GetRunningApplicationActionsServerResponseCallBack(byte[] bytes)
-        {
-            ServerResponseCallBack<GetRunningApplicationActionsServerResponse, GetRunningApplicationActionsServerResponseWaiter>(
-                _getRunningApplicationActionsServerResponseWaiters, bytes,
-                (serverResponseWaiter, serverResponse) => {
-                    serverResponseWaiter.ApplicationActionRunInfos = serverResponse.ApplicationActionRunInfos;
-                }
-            );
-        }
-
-        private void CancelRunningApplicationActionServerResponseCallBack(byte[] bytes)
-        {
-            ServerResponseCallBack<ServerResponseBase, ServerResponseWaiter>(
-                _cancelRunningApplicationActionServerResponseWaiters, bytes
-            );
         }
 
         private void RunClientRequest<ServerResponseType, ServerResponseWaiterType, ClientRequestType>(Dictionary<string, ServerResponseWaiterType> serverResponseWaiters, SocketDataType socketDataType, Action<ClientRequestType> consumer = null, Action<ServerResponseWaiterType> callBack = null)
@@ -191,21 +96,6 @@ namespace PlatypusAPI
         {
             public bool Received { get; set; }
             public FactorisableException Exception { get; set; }
-        }
-
-        private class StartActionServerResponseWaiter : ServerResponseWaiter
-        {
-            public ApplicationActionRunResult Result { get; set; }
-        }
-
-        private class AddUserServerResponseWaiter : ServerResponseWaiter
-        {
-            public UserAccount UserAccount { get; set; }
-        }
-
-        private class GetRunningApplicationActionsServerResponseWaiter : ServerResponseWaiter
-        {
-            public List<ApplicationActionRunInfo> ApplicationActionRunInfos { get; set; }
         }
     }
 }
