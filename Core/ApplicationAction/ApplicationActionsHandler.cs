@@ -113,14 +113,14 @@ namespace Core.ApplicationAction
                 RunningActionGuid = guid
             };
 
-            RunEventHandlers<object>(EventHandlerType.BeforeCancelApplicationRun, eventEnv, (exception) => {
-                throw exception;
-            });
+            RunEventHandlers<object>(EventHandlerType.BeforeCancelApplicationRun, eventEnv, (exception) => throw exception);
 
             ApplicationActionRun run = _applicationActionRuns[guid];
             _applicationActionRuns.Remove(guid);
 
             run.Cancel();
+
+            RunEventHandlers<object>(EventHandlerType.AfterCancelApplicationRun, eventEnv, (exception) => throw exception);
         }
 
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActionInfos()

@@ -4,6 +4,7 @@
     {
         BeforeApplicationActionRun,
         AfterApplicationActionRun,
-        BeforeCancelApplicationRun
+        BeforeCancelApplicationRun,
+        AfterCancelApplicationRun
     }
 }
