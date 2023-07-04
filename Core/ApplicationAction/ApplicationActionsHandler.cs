@@ -108,7 +108,7 @@ namespace Core.ApplicationAction
         {
             if (_applicationActionRuns.ContainsKey(guid) == false) return;
 
-            CancelRunningActionsEventHandlerEnvironment eventEnv = new CancelRunningActionsEventHandlerEnvironment()
+            CancelRunningActionEventHandlerEnvironment eventEnv = new CancelRunningActionEventHandlerEnvironment()
             {
                 RunningActionGuid = guid
             };
