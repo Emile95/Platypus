@@ -164,8 +164,7 @@ namespace PlatypusAPI
 
             _socketHandler.SendToServer(Common.Utils.GetBytesFromObject(clientRequestData));
 
-            while (serverResponseWaiter.Received == false)
-                Thread.Sleep(1000);
+            while (serverResponseWaiter.Received == false) ;
 
             if(callBack != null)
                 callBack(serverResponseWaiter);
