@@ -5,8 +5,6 @@
         UserConnection,
         StartApplicationAction,
         AddUser,
-        InstallApplication,
-        UnintallApplication,
         CancelRunningAction,
         GetRunningActions
     }
