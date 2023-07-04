@@ -182,19 +182,6 @@ namespace Core.ApplicationAction
                 return null;
             });
 
-            try
-            {
-                _eventsHandler.RunEventHandlers(EventHandlerType.AfterApplicationActionRun, eventEnv);
-            }
-            catch (EventHandlerException ex)
-            {
-                if (run.Result.Status != ApplicationActionRunResultStatus.Failed)
-                {
-                    run.Result.Status = ApplicationActionRunResultStatus.Failed;
-                    run.Result.Message = ex.Message;
-                }
-            }
-
             _applicationActionRepository.SaveActionRunResult(
                 run.ActionGuid,
                 run.RunNumber,
