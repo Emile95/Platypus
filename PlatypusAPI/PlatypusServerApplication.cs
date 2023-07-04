@@ -18,6 +18,7 @@ namespace PlatypusAPI
 
         private readonly Dictionary<string, StartActionServerResponseWaiter> _startActionServerResponseWaiters;
         private readonly Dictionary<string, AddUserServerResponseWaiter> _addUserServerResponseWaiters;
+        private readonly Dictionary<string, GetRunningApplicationActionsWaiter> _getRunningApplicationActionsServerResponseWaiters;
 
         public PlatypusServerApplication(
             PlatypusClientSocketHandler socketHandler,
@@ -26,11 +27,14 @@ namespace PlatypusAPI
         {
             _socketHandler = socketHandler;
             ConnectedUser = connectedUser;
+
             _startActionServerResponseWaiters = new Dictionary<string, StartActionServerResponseWaiter>();
             _addUserServerResponseWaiters = new Dictionary<string, AddUserServerResponseWaiter>();
+            _getRunningApplicationActionsServerResponseWaiters = new Dictionary<string, GetRunningApplicationActionsWaiter>();
 
             _socketHandler.ServerResponseCallBacks[SocketDataType.StartApplicationAction].Add(StartApplicationServerResponseCallBack);
             _socketHandler.ServerResponseCallBacks[SocketDataType.AddUser].Add(AddUserServerResponseCallBack);
+            _socketHandler.ServerResponseCallBacks[SocketDataType.GetRunningActions].Add(GetRunningApplicationActionsServerResponseCallBack);
         }
 
         public void Disconnect()
@@ -71,6 +75,18 @@ namespace PlatypusAPI
             return userAccount;
         }
 
+        public List<ApplicationActionRunInfo> GetRunningApplicationActions()
+        {
+            List<ApplicationActionRunInfo> result = new List<ApplicationActionRunInfo>();
+            RunClientRequest<GetRunningApplicationActionsServerResponse, GetRunningApplicationActionsWaiter, ClientRequestBase>(
+                 _getRunningApplicationActionsServerResponseWaiters, SocketDataType.GetRunningActions, null,
+                 (serverResponseWaiter) => {
+                     result = serverResponseWaiter.ApplicationActionRunInfos;
+                 }
+            );
+            return result;
+        }
+
         private void StartApplicationServerResponseCallBack(byte[] bytes)
         {
             ServerResponseCallBack<StartActionServerResponse, StartActionServerResponseWaiter>(
@@ -91,6 +107,16 @@ namespace PlatypusAPI
             );
         }
 
+        private void GetRunningApplicationActionsServerResponseCallBack(byte[] bytes)
+        {
+            ServerResponseCallBack<GetRunningApplicationActionsServerResponse, GetRunningApplicationActionsWaiter>(
+                _getRunningApplicationActionsServerResponseWaiters, bytes,
+                (serverResponseWaiter, serverResponse) => {
+                    serverResponseWaiter.ApplicationActionRunInfos = serverResponse.ApplicationActionRunInfos;
+                }
+            );
+        }
+
         private void RunClientRequest<ServerResponseType, ServerResponseWaiterType, ClientRequestType>(Dictionary<string, ServerResponseWaiterType> serverResponseWaiters, SocketDataType socketDataType, Action<ClientRequestType> consumer, Action<ServerResponseWaiterType> callBack = null)
             where ServerResponseType : ServerResponseBase
             where ServerResponseWaiterType : ServerResponseWaiter, new()
@@ -106,7 +132,9 @@ namespace PlatypusAPI
             {
                 RequestKey = guid
             };
-            consumer(clientRequest);
+
+            if(consumer != null)
+                consumer(clientRequest);
 
             SocketData clientRequestData = new SocketData()
             {
@@ -154,6 +182,11 @@ namespace PlatypusAPI
         private class AddUserServerResponseWaiter : ServerResponseWaiter
         {
             public UserAccount UserAccount { get; set; }
+        }
+
+        private class GetRunningApplicationActionsWaiter : ServerResponseWaiter
+        {
+            public List<ApplicationActionRunInfo> ApplicationActionRunInfos { get; set; }
         }
     }
 }

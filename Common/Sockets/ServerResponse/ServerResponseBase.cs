@@ -2,7 +2,7 @@
 
 namespace Common.Sockets.ServerResponse
 {
-    public abstract class ServerResponseBase
+    public class ServerResponseBase
     {
         public string RequestKey { get; set; }
         public FactorisableExceptionType FactorisableExceptionType { get; set; }

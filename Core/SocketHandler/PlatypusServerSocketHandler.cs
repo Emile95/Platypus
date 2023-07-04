@@ -2,6 +2,7 @@
 using Common.SocketHandler;
 using Common.SocketHandler.State;
 using Common.Sockets;
+using Common.Sockets.ClientRequest;
 using Common.Sockets.ServerResponse;
 using PlatypusAPI.Sockets.ClientRequest;
 using PlatypusAPI.Sockets.ServerResponse;
@@ -51,6 +52,7 @@ namespace Core.Sockethandler
                 case SocketDataType.UserConnection: ReceiveUserConnectionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.StartApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.AddUser: ReceiveAddUserClientRequest(receivedState.ClientKey, clientRequest); break;
+                case SocketDataType.GetRunningActions: ReceiveGetRunningApplicationActionsClientRequest(receivedState.ClientKey, clientRequest); break;
             }
         }
 
@@ -95,6 +97,18 @@ namespace Core.Sockethandler
                         clientRequest.Email,
                         clientRequest.Data
                     );   
+                }
+            );
+        }
+
+        private void ReceiveGetRunningApplicationActionsClientRequest(string clientKey, SocketData clientRequestData)
+        {
+            HandleClientRequest<ClientRequestBase, GetRunningApplicationActionsServerResponse>(
+                clientKey, clientRequestData, SocketDataType.GetRunningActions,
+                (clientRequest, serverResponse) =>
+                {
+                    serverResponse.RequestKey = clientRequest.RequestKey;
+                    serverResponse.ApplicationActionRunInfos = _serverInstance.GetRunningApplicationActions().ToList();
                 }
             );
         }
