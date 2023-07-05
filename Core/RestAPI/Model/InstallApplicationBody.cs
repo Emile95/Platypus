@@ -1,4 +1,4 @@
-﻿namespace EntryPoint.Model
+﻿namespace Core.RestAPI.Model
 {
     public class InstallApplicationBody
     {

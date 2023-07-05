@@ -2,6 +2,7 @@
 using Core.Application;
 using Core.ApplicationAction;
 using Core.Event;
+using Core.RestAPI;
 using Core.SocketHandler;
 using Core.User;
 using Logging;
@@ -27,6 +28,7 @@ namespace Core
         private readonly ApplicationRepository _applicationRepository;
         private readonly LoggerManager _loggerManager;
 
+        private readonly RestAPIHandler _restAPIHandler;
         private readonly PlatypusSocketsHandler _socketsHandler;
 
         public ServerInstance()
@@ -72,6 +74,7 @@ namespace Core
             _loggerManager = new LoggerManager();
             _loggerManager.CreateLogger<PlatypusServerConsoleLogger>();
 
+            _restAPIHandler = new RestAPIHandler(this);
             _socketsHandler = new PlatypusSocketsHandler(this);
         }
 
@@ -104,7 +107,12 @@ namespace Core
 
         public void InitializeServerSocketHandlers()
         {
-            _socketsHandler.InitializeSocketHandlers(_config);
+            _socketsHandler.Initialize(_config);
+        }
+
+        public void InitializeRestAPIHandler(string[] args)
+        {
+            _restAPIHandler.Initialize(args, _config.HttpPort);
         }
 
         public ApplicationActionRunResult RunAction(ApplicationActionRunParameter runActionParameter)

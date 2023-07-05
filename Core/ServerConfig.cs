@@ -6,5 +6,8 @@ namespace Core
     {
         [JsonPropertyName("tcpSocketPort")]
         public int TcpSocketPort { get; set; }
+
+        [JsonPropertyName("httpPort")]
+        public int HttpPort { get; set; }
     }
 }

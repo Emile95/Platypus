@@ -12,7 +12,6 @@ namespace Core.User
     public class UsersHandler
     {
         private readonly Dictionary<string, UsersOfConnectionMethod> _userAccounts;
-
         private readonly UserRepository _userRepository;
 
         public UsersHandler(
@@ -20,7 +19,6 @@ namespace Core.User
         )
         {
             _userAccounts = new Dictionary<string, UsersOfConnectionMethod>();
-
             _userRepository = userRepository;
         }
 

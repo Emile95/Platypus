@@ -1,3 +1,4 @@
 ﻿{
-  "tcpSocketPort" : 2000
+  "tcpSocketPort": 2000,
+  "httpPort": 7212
 }

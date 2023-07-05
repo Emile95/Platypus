@@ -15,7 +15,7 @@ namespace Core.SocketHandler
             _serverSocketsHandler = new List<PlatypusServerSocketHandler>();
         }
 
-        public void InitializeSocketHandlers(ServerConfig serverConfig, string host = null)
+        public void Initialize(ServerConfig serverConfig, string host = null)
         {
             _serverSocketsHandler.Add(new PlatypusServerSocketHandler(_serverInstance, "tcp", serverConfig.TcpSocketPort));
 
