@@ -133,9 +133,9 @@ namespace Core
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }
 
-        public UserAccount AddUser(string credentialMethodGUID, string fullName, string email, Dictionary<string,object> data)
+        public UserAccount AddUser(string connectionMethodGuid, string fullName, string email, Dictionary<string,object> data)
         {
-            return _usersHandler.AddUser(credentialMethodGUID, fullName, email, data);
+            return _usersHandler.AddUser(connectionMethodGuid, fullName, email, data);
         }
 
         public void CancelRunningApplicationAction(string guid)
