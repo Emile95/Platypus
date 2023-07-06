@@ -60,7 +60,7 @@ namespace Core.User
                 FullName = userCreationParameter.FullName,
                 Email = userCreationParameter.Email,
                 Data = userCreationParameter.Data,
-                UserPermissionBits = (int)userCreationParameter.UserPermissionFlags
+                UserPermissionBits = (int)CreateUserPermissionFlasgWithList(userCreationParameter.UserPermissionFlags)
             });
 
             UserAccount userAccount = new UserAccount()
@@ -74,12 +74,21 @@ namespace Core.User
             return userAccount;
         }
 
+        private UserPermissionFlag CreateUserPermissionFlasgWithList(List<UserPermissionFlag> userPermissionFlags)
+        {
+            UserPermissionFlag flags = 0;
+            foreach (UserPermissionFlag userPermissionFlag in userPermissionFlags)
+                flags |= userPermissionFlag;
+            return flags;
+        }
+
         public UserAccount Connect(Dictionary<string, object> credential, string connectionMethodGuid)
         {
             if(_userAccounts.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
             string loginAttemtMessage = "";
             UserAccount userAccount = null;
-            bool success = _userAccounts[connectionMethodGuid].UserConnectionMethod.Login(credential, ref loginAttemtMessage, ref userAccount);
+            List<UserEntity> usersOfConnectionMethod = _userRepository.GetUsersByConnectionMethod(connectionMethodGuid);
+            bool success = _userAccounts[connectionMethodGuid].UserConnectionMethod.Login(usersOfConnectionMethod, credential, ref loginAttemtMessage, ref userAccount);
             if (success) return userAccount;
             throw new UserConnectionFailedException(loginAttemtMessage);
         }

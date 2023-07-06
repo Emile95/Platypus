@@ -1,4 +1,5 @@
-﻿using PlatypusAPI.User;
+﻿using Persistance.Entity;
+using PlatypusAPI.User;
 using PlatypusApplicationFramework.Confugration;
 
 namespace PlatypusApplicationFramework.Configuration.User
@@ -6,19 +7,28 @@ namespace PlatypusApplicationFramework.Configuration.User
     public abstract class UserConnectionMethod<CredentialType> : IUserConnectionMethod
         where CredentialType : class, new()
     {
-        public bool Login(Dictionary<string, object> credential, ref string loginAttemptMessage, ref UserAccount userAccount)
+        public bool Login(List<UserEntity> usersOfConnectionMethod, Dictionary<string, object> credential, ref string loginAttemptMessage, ref UserAccount userAccount)
         {
             CredentialType resolvedCredential = ParameterEditorObjectResolver.ResolveByDictionnary<CredentialType>(credential);
 
             UserConnectEnvironment<CredentialType> env = new UserConnectEnvironment<CredentialType>()
             {
-                Credential = resolvedCredential
+                Credential = resolvedCredential,
+                UsersOfConnectionMethod = usersOfConnectionMethod
             };
 
             bool loginSucceeded = LoginImplementation(env);
 
             loginAttemptMessage = env.LoginAttemptMessage;
-            userAccount = env.UserAccount;
+
+            if(env.CorrespondingUser != null)
+                userAccount = new UserAccount()
+                {
+                    ID = env.CorrespondingUser.ID,
+                    FullName = env.CorrespondingUser.FullName,
+                    Email = env.CorrespondingUser.Email,
+                    UserPermissionFlags = (UserPermissionFlag)env.CorrespondingUser.UserPermissionBits
+                };
 
             return loginSucceeded;
         }

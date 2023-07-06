@@ -93,7 +93,7 @@ namespace Core.Application
 
             IUserConnectionMethod connectionMethod = methodInfo.Invoke(application, new object[] { }) as IUserConnectionMethod;
             string connectionMethodName = connectionMethod.GetName();
-            _userRepository.SaveUserCredentialMethod(new UserCredentialMethodEntity()
+            _userRepository.SaveUserConnectionMethod(new UserConnectionMethodEntity()
             {
                 Description = connectionMethod.GetDescription(),
                 Name = connectionMethodName,

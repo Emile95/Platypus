@@ -1,7 +1,8 @@
 ﻿namespace PlatypusAPI.User
 {
-    public enum UserPermissionFlags
+    public enum UserPermissionFlag
     {
+        None,
         InstallAndUninstallApplication,
         AddUser
     }

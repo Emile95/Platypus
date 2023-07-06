@@ -47,7 +47,7 @@ namespace Core
                 userRepository
              );
 
-            _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(userRepository), BuiltInUserConnectionMethodGuid.PlatypusUser);
+            _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
 
             _applicationRepository = new ApplicationRepository();
 

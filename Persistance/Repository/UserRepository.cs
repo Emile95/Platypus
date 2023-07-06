@@ -42,7 +42,22 @@ namespace Persistance.Repository
             return null;
         }
 
-        public void SaveUserCredentialMethod(UserCredentialMethodEntity entity)
+        public List<UserEntity> GetUsersByConnectionMethod(string connectionMethodGuid)
+        {
+            List<UserEntity> users = new List<UserEntity>();
+            string credentialMethodDirectoryPath = Path.Combine(ApplicationPaths.USERSDIRECTORYPATH, connectionMethodGuid);
+            string[] userDirectoryPaths = Directory.GetDirectories(credentialMethodDirectoryPath);
+            foreach(string userDirectoryPath in userDirectoryPaths)
+            {
+                string userFilePath = Path.Combine(userDirectoryPath, ApplicationPaths.USERFILENAME);
+                string json = File.ReadAllText(userFilePath);
+                users.Add(JsonConvert.DeserializeObject<UserEntity>(json));
+            }
+
+            return users;
+        }
+
+        public void SaveUserConnectionMethod(UserConnectionMethodEntity entity)
         {
             string credentialMethodDirectoryPath = Path.Combine(ApplicationPaths.USERSDIRECTORYPATH, entity.Guid);
             if (Directory.Exists(credentialMethodDirectoryPath) == false)

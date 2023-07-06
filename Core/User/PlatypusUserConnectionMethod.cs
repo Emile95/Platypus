@@ -1,22 +1,11 @@
 ﻿using Common.Ressource;
 using Persistance.Entity;
-using Persistance.Repository;
-using PlatypusAPI.User;
 using PlatypusApplicationFramework.Configuration.User;
 
 namespace Core.User
 {
     public class PlatypusUserConnectionMethod : UserConnectionMethod<PlatypusUserCredential>
     {
-        private readonly UserRepository _userRepository;
-
-        public PlatypusUserConnectionMethod(
-            UserRepository userRepository
-        )
-        {
-            _userRepository = userRepository;
-        }
-
         public override string GetName()
         {
             return Strings.PlatypusUserConnectionMethodName;
@@ -29,25 +18,21 @@ namespace Core.User
 
         protected override bool LoginImplementation(UserConnectEnvironment<PlatypusUserCredential> env)
         {
-            UserEntity userEntity = _userRepository.GetUserByData(
-                BuiltInUserConnectionMethodGuid.PlatypusUser,
-                (userEntity) => {
-
-                    return userEntity.Data["UserName"].Equals(env.Credential.UserName) &&
-                           userEntity.Data["Password"].Equals(env.Credential.Password);
-                }
-            );
+            UserEntity foundUser = null;
+            foreach(UserEntity user in env.UsersOfConnectionMethod)
+            {
+                if(user.Data["UserName"].Equals(env.Credential.UserName) &&
+                   user.Data["Password"].Equals(env.Credential.Password))
+                    foundUser = user;
+            }
             
-            if(userEntity == null)
+            if(foundUser == null)
             {
                 env.LoginAttemptMessage = "bad credential";
                 return false;
             }
 
-            env.UserAccount = new UserAccount()
-            {
-                ID = userEntity.ID,
-            };
+            env.CorrespondingUser = foundUser;
 
             return true;
         }
