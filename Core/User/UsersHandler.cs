@@ -45,28 +45,29 @@ namespace Core.User
             _userAccounts.Remove(connectionMethodGuid);
         }
 
-        public UserAccount AddUser(string connectionMethodGuid, string fullName, string email, Dictionary<string,object> data)
+        public UserAccount AddUser(UserCreationParameter userCreationParameter)
         {
-            if (_userAccounts.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
+            if (_userAccounts.ContainsKey(userCreationParameter.ConnectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(userCreationParameter.ConnectionMethodGuid);
 
-            UsersOfConnectionMethod usersOfConnectionMethod = _userAccounts[connectionMethodGuid];
+            UsersOfConnectionMethod usersOfConnectionMethod = _userAccounts[userCreationParameter.ConnectionMethodGuid];
             Type[] genericTypes = usersOfConnectionMethod.UserConnectionMethod.GetType().BaseType.GetGenericArguments();
             if (genericTypes.Length == 0) return null;
 
-            ParameterEditorObjectResolver.ValidateDictionnary(genericTypes[0], data);
+            ParameterEditorObjectResolver.ValidateDictionnary(genericTypes[0], userCreationParameter.Data);
 
-            int userID = _userRepository.SaveUser(connectionMethodGuid, new UserEntity()
+            int userID = _userRepository.SaveUser(userCreationParameter.ConnectionMethodGuid, new UserEntity()
             {
-                FullName = fullName,
-                Email = email,
-                Data = data
+                FullName = userCreationParameter.FullName,
+                Email = userCreationParameter.Email,
+                Data = userCreationParameter.Data,
+                UserPermissionBits = (int)userCreationParameter.UserPermissionFlags
             });
 
             UserAccount userAccount = new UserAccount()
             {
                 ID = userID,
-                FullName = fullName,
-                Email = email
+                FullName = userCreationParameter.FullName,
+                Email = userCreationParameter.Email
             };
             usersOfConnectionMethod.Users.Add(userAccount);
 
@@ -82,6 +83,5 @@ namespace Core.User
             if (success) return userAccount;
             throw new UserConnectionFailedException(loginAttemtMessage);
         }
-
     }
 }

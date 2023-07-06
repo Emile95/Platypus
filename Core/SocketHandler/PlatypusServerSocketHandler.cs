@@ -94,10 +94,14 @@ namespace Core.Sockethandler
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
                     serverResponse.UserAccount = _serverInstance.AddUser(
-                        clientRequest.CredentialMethodGUID,
-                        clientRequest.FullName,
-                        clientRequest.Email,
-                        clientRequest.Data
+                        new UserCreationParameter()
+                        {
+                            ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
+                            Email = clientRequest.Email,
+                            Data = clientRequest.Data,
+                            FullName = clientRequest.FullName,
+                            UserPermissionFlags = clientRequest.UserPermissionFlags
+                        }
                     );   
                 }
             );

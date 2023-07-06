@@ -25,16 +25,16 @@ namespace PlatypusAPI
             return result;
         }
 
-        public UserAccount AddUser(string credentialMethodGUID, string fullName, string email, Dictionary<string, object> data)
+        public UserAccount AddUser(UserCreationParameter userCreationParameter)
         {
             UserAccount userAccount = null;
             RunClientRequest<AddUserServerResponse, AddUserServerResponseWaiter, AddUserClientRequest>(
                  _addUserServerResponseWaiters, SocketDataType.AddUser,
                  (clientRequest) => {
-                     clientRequest.CredentialMethodGUID = credentialMethodGUID;
-                     clientRequest.FullName = fullName;
-                     clientRequest.Email = email;
-                     clientRequest.Data = data;
+                     clientRequest.ConnectionMethodGuid = userCreationParameter.ConnectionMethodGuid;
+                     clientRequest.FullName = userCreationParameter.FullName;
+                     clientRequest.Email = userCreationParameter.Email;
+                     clientRequest.Data = userCreationParameter.Data;
                  },
                  (serverResponseWaiter) => {
                      userAccount = serverResponseWaiter.UserAccount;

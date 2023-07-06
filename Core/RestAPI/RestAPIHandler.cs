@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PlatypusAPI.ApplicationAction.Run;
+using PlatypusAPI.User;
 using Utils.Json;
 
 namespace Core.RestAPI
@@ -76,12 +77,12 @@ namespace Core.RestAPI
                 return "application uninstalled";
             });
 
-            app.MapPost(@"/application/user", ([FromBody] UserCreationBody body) =>
+            app.MapPost(@"/application/user", ([FromBody] UserCreationParameter body) =>
             {
                 try
                 {
                     body.Data = JsonHelper.GetDictObjectFromJsonElementsDict(body.Data);
-                    _serverInstance.AddUser(body.ConnectionMethodGUID, body.FullName, body.Email, body.Data);
+                    _serverInstance.AddUser(body);
                 }
                 catch (Exception ex)
                 {
