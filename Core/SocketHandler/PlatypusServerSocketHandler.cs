@@ -65,13 +65,15 @@ namespace Core.Sockethandler
 
         private void ReceiveUserConnectionClientRequest(string clientKey, SocketData clientRequestData)
         {
-            HandleClientRequest<UserConnectionData, UserConnectionServerResponse>(
+            bool exceptionThrowed = HandleClientRequest<UserConnectionData, UserConnectionServerResponse>(
                 clientKey, clientRequestData, SocketDataType.UserConnection,
                 (clientRequest, serverResponse) =>
                 {
                     serverResponse.UserAccount = _serverInstance.UserConnect(clientRequest.Credential, clientRequest.ConnectionMethodGuid);
                 }
             );
+            if (exceptionThrowed)
+                _clientSockets.Remove(clientKey);
         }
 
         private void ReceiveStartApplicationActionClientRequest(string clientKey, SocketData clientRequestData)
@@ -135,10 +137,11 @@ namespace Core.Sockethandler
             );
         }
 
-        private void HandleClientRequest<RequestType, ResponseType>(string clientKey, SocketData clientRequestData, SocketDataType serverResponseType, Action<RequestType, ResponseType> action)
+        private bool HandleClientRequest<RequestType, ResponseType>(string clientKey, SocketData clientRequestData, SocketDataType serverResponseType, Action<RequestType, ResponseType> action)
             where ResponseType : ServerResponseBase, new()
             where RequestType : class, new()
         {
+            bool exceptionThrowed = false;
             SocketData serverResponseData = new SocketData()
             {
                 SocketDataType = serverResponseType
@@ -153,9 +156,11 @@ namespace Core.Sockethandler
             {
                 serverResponse.FactorisableExceptionType = e.FactorisableExceptionType;
                 serverResponse.FactorisableExceptionParameters = e.GetParameters();
+                exceptionThrowed = true;
             }
             serverResponseData.Data = Common.Utils.GetBytesFromObject(serverResponse);
             SendToClient(clientKey, Common.Utils.GetBytesFromObject(serverResponseData));
+            return exceptionThrowed;
         }
     }
 }

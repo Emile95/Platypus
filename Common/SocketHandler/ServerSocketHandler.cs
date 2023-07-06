@@ -7,7 +7,7 @@ namespace Common.SocketHandler
     public abstract class ServerSocketHandler<ClientSocketKeyType> : BaseSocketHandler<ClientReceivedState<ClientSocketKeyType>>, ISocketHandlerInitiator, IServerSocketEventHandler<ClientSocketKeyType>
         where ClientSocketKeyType : class
     {
-        private readonly Dictionary<ClientSocketKeyType, Socket> _clientSockets;
+        protected readonly Dictionary<ClientSocketKeyType, Socket> _clientSockets;
 
         public ServerSocketHandler(string protocol)
             : base(protocol)
