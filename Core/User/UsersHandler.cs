@@ -74,14 +74,6 @@ namespace Core.User
             return userAccount;
         }
 
-        private UserPermissionFlag CreateUserPermissionFlasgWithList(List<UserPermissionFlag> userPermissionFlags)
-        {
-            UserPermissionFlag flags = 0;
-            foreach (UserPermissionFlag userPermissionFlag in userPermissionFlags)
-                flags |= userPermissionFlag;
-            return flags;
-        }
-
         public UserAccount Connect(Dictionary<string, object> credential, string connectionMethodGuid)
         {
             if(_userAccounts.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
@@ -91,6 +83,14 @@ namespace Core.User
             bool success = _userAccounts[connectionMethodGuid].UserConnectionMethod.Login(usersOfConnectionMethod, credential, ref loginAttemtMessage, ref userAccount);
             if (success) return userAccount;
             throw new UserConnectionFailedException(loginAttemtMessage);
+        }
+
+        private UserPermissionFlag CreateUserPermissionFlasgWithList(List<UserPermissionFlag> userPermissionFlags)
+        {
+            UserPermissionFlag flags = 0;
+            foreach (UserPermissionFlag userPermissionFlag in userPermissionFlags)
+                flags |= userPermissionFlag;
+            return flags;
         }
     }
 }
