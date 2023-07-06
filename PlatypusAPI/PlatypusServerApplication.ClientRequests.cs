@@ -1,6 +1,6 @@
 ﻿using Common.Sockets;
-using Common.Sockets.ClientRequest;
-using Common.Sockets.ServerResponse;
+using PaltypusAPI.Sockets.ClientRequest;
+using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Sockets.ClientRequest;
 using PlatypusAPI.Sockets.ServerResponse;
@@ -35,6 +35,7 @@ namespace PlatypusAPI
                      clientRequest.FullName = userCreationParameter.FullName;
                      clientRequest.Email = userCreationParameter.Email;
                      clientRequest.Data = userCreationParameter.Data;
+                     clientRequest.UserPermissionFlags = userCreationParameter.UserPermissionFlags;
                  },
                  (serverResponseWaiter) => {
                      userAccount = serverResponseWaiter.UserAccount;

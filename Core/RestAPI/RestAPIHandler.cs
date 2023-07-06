@@ -1,5 +1,6 @@
 ﻿using Core.RestAPI.Model;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,12 +15,13 @@ namespace Core.RestAPI
     {
         private readonly ServerInstance _serverInstance;
         private readonly Dictionary<string, UserAccount> _tokens;
+
+        private string _userTokenRequestHeader = "user-token";
         public RestAPIHandler(ServerInstance serverInstance)
         {
             _serverInstance = serverInstance;
             _tokens = new Dictionary<string, UserAccount>();
         }
-
         public void Initialize(string[] args, int httpPort)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +38,13 @@ namespace Core.RestAPI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            /*app.MapPost(@"/action", (requestDelegate) =>
+            {
+                requestDelegate.Request.Headers[]
+                runActionParameter.ActionParameters = JsonHelper.GetDictObjectFromJsonElementsDict(runActionParameter.ActionParameters);
+                return _serverInstance.RunAction(runActionParameter);
+            });
 
             app.MapPost(@"/action", ([FromBody] ApplicationActionRunParameter runActionParameter) =>
             {
@@ -109,6 +118,7 @@ namespace Core.RestAPI
                     return e.Message;
                 }
             });
+            */
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -121,5 +131,13 @@ namespace Core.RestAPI
 
             app.Run($"https://localhost:{httpPort}");
         }
+
+        /*private void MapPost<BodyType>(WebApplication app, string pattern, Func<BodyType, object> action)
+            where BodyType : class
+        {
+            app.MapPost(pattern, (requestDelegate) => {
+
+            });
+        }*/
     }
 }

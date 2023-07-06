@@ -168,7 +168,7 @@ namespace Core
             if (userAccount.UserPermissionFlags.HasFlag(UserPermissionFlag.Admin)) return;
 
             if (userAccount.UserPermissionFlags.HasFlag(userPermissionFlag) == false)
-                throw new UserPermissionException(userAccount, userPermissionFlag);
+                throw new UserPermissionException(userAccount);
         }
     }
 }

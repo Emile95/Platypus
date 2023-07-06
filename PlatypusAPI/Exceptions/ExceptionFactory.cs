@@ -1,4 +1,5 @@
 ﻿using Common.Exceptions;
+using PlatypusAPI.User;
 
 namespace PlatypusAPI.Exceptions
 {
@@ -11,6 +12,7 @@ namespace PlatypusAPI.Exceptions
                 case FactorisableExceptionType.UserConnectionFailed: return new UserConnectionFailedException(parameters[0] as string);
                 case FactorisableExceptionType.InvalidUserConnectionMethodGuid: return new InvalidUserConnectionMethodGuidException(parameters[0] as string);
                 case FactorisableExceptionType.ParameterEditorFieldRequired: return new ParameterEditorFieldRequiredException(parameters[0] as string);
+                case FactorisableExceptionType.UserNotPermitted: return new UserPermissionException(parameters[0] as UserAccount);
             }
 
             return null;

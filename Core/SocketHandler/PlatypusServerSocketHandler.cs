@@ -2,8 +2,6 @@
 using Common.SocketHandler;
 using Common.SocketHandler.State;
 using Common.Sockets;
-using Common.Sockets.ClientRequest;
-using Common.Sockets.ServerResponse;
 using PaltypusAPI.Sockets.ClientRequest;
 using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.ApplicationAction.Run;
@@ -39,6 +37,7 @@ namespace Core.Sockethandler
         public override void OnAccept(ClientReceivedState<string> receivedState)
         {
             Console.WriteLine($"new client connected, key='{receivedState.ClientKey}'");
+            _connectedUserOnSockets.Add(receivedState.ClientKey, null);
         }
 
         public override void OnLostSocket(ClientReceivedState<string> receivedState)

@@ -72,7 +72,10 @@ namespace PlatypusAPI
 
             while (serverResponseWaiter.Received == false) ;
 
-            if(callBack != null)
+            if (serverResponseWaiter.Exception != null)
+                throw serverResponseWaiter.Exception;
+
+            if (callBack != null)
                 callBack(serverResponseWaiter);
 
             serverResponseWaiters.Remove(guid);

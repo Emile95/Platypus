@@ -6,8 +6,8 @@ namespace PlatypusAPI.Exceptions
     public class UserPermissionException : FactorisableException
     {
         public UserAccount UserAccount { get; set; }
-        public UserPermissionException(UserAccount userAccount, UserPermissionFlag userPermissionFlag)
-            : base(FactorisableExceptionType.UserNotPermitted, Common.Utils.GetString("UserNotPermitted", userPermissionFlag.ToString()))
+        public UserPermissionException(UserAccount userAccount)
+            : base(FactorisableExceptionType.UserNotPermitted, Common.Utils.GetString("UserNotPermitted"))
         {
             UserAccount = userAccount;
         }

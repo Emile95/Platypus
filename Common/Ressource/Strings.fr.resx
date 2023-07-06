@@ -163,6 +163,6 @@
     <value>Platypus User</value>
   </data>
   <data name="UserNotPermitted" xml:space="preserve">
-    <value>This user has no permission to do action of type '{0}'</value>
+    <value>Operation denied to user</value>
   </data>
 </root>

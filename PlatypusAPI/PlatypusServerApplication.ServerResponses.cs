@@ -1,4 +1,4 @@
-﻿using Common.Sockets.ServerResponse;
+﻿using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
