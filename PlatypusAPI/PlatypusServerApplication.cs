@@ -1,7 +1,7 @@
 ﻿using Common.Exceptions;
 using Common.Sockets;
-using Common.Sockets.ClientRequest;
-using Common.Sockets.ServerResponse;
+using PaltypusAPI.Sockets.ClientRequest;
+using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
 using Utils.GuidGeneratorHelper;
@@ -55,7 +55,8 @@ namespace PlatypusAPI
 
             ClientRequestType clientRequest = new ClientRequestType()
             {
-                RequestKey = guid
+                RequestKey = guid,
+                UserAccount = ConnectedUser
             };
 
             if(consumer != null)

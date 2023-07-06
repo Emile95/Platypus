@@ -1,4 +1,4 @@
-﻿using Common.Sockets.ServerResponse;
+﻿using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
 
 namespace PlatypusAPI.Sockets.ServerResponse

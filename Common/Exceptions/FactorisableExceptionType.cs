@@ -5,6 +5,7 @@
         None,
         UserConnectionFailed,
         ParameterEditorFieldRequired,
-        InvalidUserConnectionMethodGuid
+        InvalidUserConnectionMethodGuid,
+        UserNotPermitted
     }
 }

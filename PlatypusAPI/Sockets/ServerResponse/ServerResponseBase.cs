@@ -1,6 +1,6 @@
 ﻿using Common.Exceptions;
 
-namespace Common.Sockets.ServerResponse
+namespace PaltypusAPI.Sockets.ServerResponse
 {
     public class ServerResponseBase
     {

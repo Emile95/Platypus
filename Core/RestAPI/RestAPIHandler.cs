@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.User;
+using Utils.GuidGeneratorHelper;
 using Utils.Json;
 
 namespace Core.RestAPI
@@ -12,10 +13,11 @@ namespace Core.RestAPI
     public class RestAPIHandler
     {
         private readonly ServerInstance _serverInstance;
-
+        private readonly Dictionary<string, UserAccount> _tokens;
         public RestAPIHandler(ServerInstance serverInstance)
         {
             _serverInstance = serverInstance;
+            _tokens = new Dictionary<string, UserAccount>();
         }
 
         public void Initialize(string[] args, int httpPort)
@@ -97,7 +99,10 @@ namespace Core.RestAPI
                 body.Credential = JsonHelper.GetDictObjectFromJsonElementsDict(body.Credential);
                 try
                 {
-                    return (object)_serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
+                    UserAccount userAccount = _serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
+                    string newToken = GuidGenerator.GenerateFromEnumerable(_tokens.Keys);
+                    _tokens.Add(newToken, userAccount);
+                    return newToken;
                 }
                 catch (Exception e)
                 {

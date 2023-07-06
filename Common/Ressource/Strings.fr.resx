@@ -117,19 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ApplicationActionNotFound" xml:space="preserve">
+  <data name="ApplicationActionCancelled" xml:space="preserve">
+    <value>action has been canceled</value>
+  </data>
+  <data name="ApplicationActionFailed" xml:space="preserve">
+    <value>Action as failed</value>
+  </data>
+  <data name="ApplicationActionFieldRequired" xml:space="preserve">
+    <value>the field '{0}' is required in the action parameter</value>
+  </data>
+  <data name="ApplicationActionNotFound1" xml:space="preserve">
     <value>action with guid {0} non existant</value>
   </data>
-  <data name="ApplicationActionRunSuccess" xml:space="preserve">
+  <data name="ApplicationActionRunSuccess1" xml:space="preserve">
     <value>Application run successfully</value>
   </data>
-  <data name="NewApplicationActionStarted" xml:space="preserve">
+  <data name="ErrorDuringEventHandler" xml:space="preserve">
+    <value>error during event handler '{0}', message : {1}</value>
+  </data>
+  <data name="ErrorWithPlatypusApplicationPackage" xml:space="preserve">
+    <value>error with package {0}, message : '{1}'</value>
+  </data>
+  <data name="NewApplicationActionStarted1" xml:space="preserve">
     <value>new action has been started</value>
   </data>
-  <data name="PlatypusUserConnectionMethodDescription" xml:space="preserve">
+  <data name="NoApplicationActionWithGuid" xml:space="preserve">
+    <value>there is no action with guid '{0}'</value>
+  </data>
+  <data name="NoApplicationWithGuid" xml:space="preserve">
+    <value>there is no application with guid '{0}'</value>
+  </data>
+  <data name="NoUserConnectionMethodWithGuid" xml:space="preserve">
+    <value>there is no user connection method with the guid '{0}'</value>
+  </data>
+  <data name="ParameterEditorFieldRequired" xml:space="preserve">
+    <value>the field '{0}' is required</value>
+  </data>
+  <data name="ParameterRequieredForApplicationAction" xml:space="preserve">
+    <value>parameter are required for the action '{0}'</value>
+  </data>
+  <data name="PlatypusUserConnectionMethodDescription1" xml:space="preserve">
     <value>Default user for platypus application</value>
   </data>
-  <data name="PlatypusUserConnectionMethodName" xml:space="preserve">
+  <data name="PlatypusUserConnectionMethodName1" xml:space="preserve">
     <value>Platypus User</value>
+  </data>
+  <data name="UserNotPermitted" xml:space="preserve">
+    <value>This user has no permission to do action of type '{0}'</value>
   </data>
 </root>

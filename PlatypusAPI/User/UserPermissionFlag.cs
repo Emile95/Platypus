@@ -3,7 +3,11 @@
     public enum UserPermissionFlag
     {
         None,
+        Admin,
         InstallAndUninstallApplication,
-        AddUser
+        AddUser,
+        CancelRunningAction,
+        GetRunningActions,
+        RunAction
     }
 }

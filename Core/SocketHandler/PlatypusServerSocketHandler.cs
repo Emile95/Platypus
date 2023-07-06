@@ -4,6 +4,8 @@ using Common.SocketHandler.State;
 using Common.Sockets;
 using Common.Sockets.ClientRequest;
 using Common.Sockets.ServerResponse;
+using PaltypusAPI.Sockets.ClientRequest;
+using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Sockets.ClientRequest;
 using PlatypusAPI.Sockets.ServerResponse;
@@ -16,6 +18,7 @@ namespace Core.Sockethandler
     {
         private readonly ServerInstance _serverInstance;
         private readonly int _port;
+        private readonly Dictionary<string, UserAccount> _connectedUserOnSockets;
 
         public PlatypusServerSocketHandler(
             ServerInstance serverInstance,
@@ -25,6 +28,7 @@ namespace Core.Sockethandler
         {
             _serverInstance = serverInstance;
             _port = port;
+            _connectedUserOnSockets = new Dictionary<string, UserAccount>();
         }
 
         protected override string GenerateClientKey(List<string> currentKeys)
@@ -67,9 +71,10 @@ namespace Core.Sockethandler
         {
             bool exceptionThrowed = HandleClientRequest<UserConnectionData, UserConnectionServerResponse>(
                 clientKey, clientRequestData, SocketDataType.UserConnection,
-                (clientRequest, serverResponse) =>
+                (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.UserAccount = _serverInstance.UserConnect(clientRequest.Credential, clientRequest.ConnectionMethodGuid);
+                    _connectedUserOnSockets[clientKey] = serverResponse.UserAccount;
                 }
             );
             if (exceptionThrowed)
@@ -80,10 +85,10 @@ namespace Core.Sockethandler
         {
             HandleClientRequest<StartActionClientRequest, StartActionServerResponse>(
                 clientKey, clientRequestData, SocketDataType.RunApplicationAction,
-                (clientRequest, serverResponse) =>
+                (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
-                    serverResponse.Result = _serverInstance.RunAction(clientRequest.Parameters);
+                    serverResponse.Result = _serverInstance.RunAction(clientRequest.UserAccount, clientRequest.Parameters);
                 }
             );
         }
@@ -92,10 +97,11 @@ namespace Core.Sockethandler
         {
             HandleClientRequest<AddUserClientRequest, AddUserServerResponse>(
                 clientKey, clientRequestData, SocketDataType.AddUser,
-                (clientRequest, serverResponse) =>
+                (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
                     serverResponse.UserAccount = _serverInstance.AddUser(
+                        clientRequest.UserAccount,
                         new UserCreationParameter()
                         {
                             ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
@@ -113,10 +119,10 @@ namespace Core.Sockethandler
         {
             HandleClientRequest<ClientRequestBase, GetRunningApplicationActionsServerResponse>(
                 clientKey, clientRequestData, SocketDataType.GetRunningActions,
-                (clientRequest, serverResponse) =>
+                (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
-                    IEnumerable<ApplicationActionRunInfo> result = _serverInstance.GetRunningApplicationActions();
+                    IEnumerable<ApplicationActionRunInfo> result = _serverInstance.GetRunningApplicationActions(clientRequest.UserAccount);
                     if (result.Count() != 0)
                         serverResponse.ApplicationActionRunInfos = result.ToList();
                     else
@@ -129,18 +135,20 @@ namespace Core.Sockethandler
         {
             HandleClientRequest<CancelRunningApplicationRunClientRequest, AddUserServerResponse>(
                 clientKey, clientRequestData, SocketDataType.CancelRunningAction,
-                (clientRequest, serverResponse) =>
+                (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
-                    _serverInstance.CancelRunningApplicationAction(clientRequest.ApplicationRunGuid);
+                    _serverInstance.CancelRunningApplicationAction(clientRequest.UserAccount, clientRequest.ApplicationRunGuid);
                 }
             );
         }
 
-        private bool HandleClientRequest<RequestType, ResponseType>(string clientKey, SocketData clientRequestData, SocketDataType serverResponseType, Action<RequestType, ResponseType> action)
+        private bool HandleClientRequest<RequestType, ResponseType>(string clientKey, SocketData clientRequestData, SocketDataType serverResponseType, Action<UserAccount, RequestType, ResponseType> action)
             where ResponseType : ServerResponseBase, new()
             where RequestType : class, new()
         {
+            UserAccount userMakingRequest = _connectedUserOnSockets[clientKey];
+            
             bool exceptionThrowed = false;
             SocketData serverResponseData = new SocketData()
             {
@@ -150,7 +158,7 @@ namespace Core.Sockethandler
             RequestType clientRequest = Common.Utils.GetObjectFromBytes<RequestType>(clientRequestData.Data);
             try
             {
-                action(clientRequest, serverResponse);
+                action(userMakingRequest, clientRequest, serverResponse);
             }
             catch (FactorisableException e)
             {

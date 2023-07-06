@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Persistance;
 using Persistance.Repository;
 using PlatypusAPI.ApplicationAction.Run;
+using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Core.Event;
@@ -89,22 +90,6 @@ namespace Core
             _applicationsHandler.LoadApplications();
         }
 
-        public void InstallApplication(string applicationPath)
-        {
-            _applicationsHandler.InstallApplication(applicationPath);
-        }
-
-        public void UninstalApplication(string applicationGuid)
-        {
-            UninstallApplicationDetails details = _applicationsHandler.UninstallApplication(applicationGuid);
-            foreach(string actionGuid in details.ActionGuids)
-                _applicationActionsHandler.RemoveAction(actionGuid);
-            foreach (string userConnectionMethodGuid in details.UserConnectionMethodGuids)
-                _usersHandler.RemoveConnectionMethod(userConnectionMethodGuid);
-
-            _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterUninstallApplication, details.EventEnv, (exception) => throw exception);
-        }
-
         public void InitializeServerSocketHandlers()
         {
             _socketsHandler.Initialize(_config);
@@ -115,8 +100,35 @@ namespace Core
             _restAPIHandler.Initialize(args, _config.HttpPort);
         }
 
-        public ApplicationActionRunResult RunAction(ApplicationActionRunParameter runActionParameter)
+        public UserAccount UserConnect(Dictionary<string, object> credential, string connectionMethodGuid)
         {
+            return _usersHandler.Connect(credential, connectionMethodGuid);
+        }
+
+        public void InstallApplication(UserAccount userAccount, string applicationPath)
+        {
+            ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
+
+            _applicationsHandler.InstallApplication(applicationPath);
+        }
+
+        public void UninstalApplication(UserAccount userAccount, string applicationGuid)
+        {
+            ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
+
+            UninstallApplicationDetails details = _applicationsHandler.UninstallApplication(applicationGuid);
+            foreach(string actionGuid in details.ActionGuids)
+                _applicationActionsHandler.RemoveAction(actionGuid);
+            foreach (string userConnectionMethodGuid in details.UserConnectionMethodGuids)
+                _usersHandler.RemoveConnectionMethod(userConnectionMethodGuid);
+
+            _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterUninstallApplication, details.EventEnv, (exception) => throw exception);
+        }
+
+        public ApplicationActionRunResult RunAction(UserAccount userAccount, ApplicationActionRunParameter runActionParameter)
+        {
+            ValidateUserForPermission(userAccount, UserPermissionFlag.RunAction);
+
             if (_applicationActionsHandler.HasActionWithGuid(runActionParameter.Guid) == false)
             {
                 string message = Common.Utils.GetString("ApplicationActionNotFound", runActionParameter.Guid);
@@ -133,24 +145,30 @@ namespace Core
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }
 
-        public UserAccount AddUser(UserCreationParameter userCreationParameter)
+        public UserAccount AddUser(UserAccount userAccount, UserCreationParameter userCreationParameter)
         {
+            ValidateUserForPermission(userAccount, UserPermissionFlag.AddUser);
             return _usersHandler.AddUser(userCreationParameter);
         }
 
-        public void CancelRunningApplicationAction(string guid)
+        public void CancelRunningApplicationAction(UserAccount userAccount, string guid)
         {
+            ValidateUserForPermission(userAccount, UserPermissionFlag.CancelRunningAction);
             _applicationActionsHandler.CancelRunningAction(guid);
         }
 
-        public UserAccount UserConnect(Dictionary<string, object> credential, string connectionMethodGuid)
+        public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions(UserAccount userAccount)
         {
-            return _usersHandler.Connect(credential, connectionMethodGuid);
+            ValidateUserForPermission(userAccount, UserPermissionFlag.GetRunningActions);
+            return _applicationActionsHandler.GetRunningApplicationActionInfos();
         }
 
-        public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions()
+        private void ValidateUserForPermission(UserAccount userAccount, UserPermissionFlag userPermissionFlag)
         {
-            return _applicationActionsHandler.GetRunningApplicationActionInfos();
+            if (userAccount.UserPermissionFlags.HasFlag(UserPermissionFlag.Admin)) return;
+
+            if (userAccount.UserPermissionFlags.HasFlag(userPermissionFlag) == false)
+                throw new UserPermissionException(userAccount, userPermissionFlag);
         }
     }
 }

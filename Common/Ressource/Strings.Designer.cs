@@ -194,5 +194,14 @@ namespace Common.Ressource {
                 return ResourceManager.GetString("PlatypusUserConnectionMethodName", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This user has no permission to do action of type &apos;{0}&apos;.
+        /// </summary>
+        public static string UserNotPermitted {
+            get {
+                return ResourceManager.GetString("UserNotPermitted", resourceCulture);
+            }
+        }
     }
 }

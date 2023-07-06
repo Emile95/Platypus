@@ -1,4 +1,4 @@
-﻿using Common.Sockets.ClientRequest;
+﻿using PaltypusAPI.Sockets.ClientRequest;
 
 namespace PlatypusAPI.Sockets.ClientRequest
 {
