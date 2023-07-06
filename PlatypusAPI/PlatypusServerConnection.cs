@@ -27,7 +27,7 @@ namespace PlatypusAPI
         public PlatypusServerApplication Connect(string protocol = "tcp", string host = null, int port = 2000)
         {
             PlatypusClientSocketHandler socketHandler = new PlatypusClientSocketHandler(protocol);
-            socketHandler.Initialize(port);
+            socketHandler.Initialize(port, host);
 
             socketHandler.ServerResponseCallBacks[SocketDataType.UserConnection].Add(ReceiveUserConnectionServerResponse);
 
@@ -40,8 +40,7 @@ namespace PlatypusAPI
             _isConnecting = true;
             socketHandler.SendToServer(Common.Utils.GetBytesFromObject(requestData));
 
-            while (_isConnecting)
-                Thread.Sleep(1000);
+            while (_isConnecting);
 
             if (_exception != null)
                 throw _exception;
