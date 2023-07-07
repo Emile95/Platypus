@@ -98,7 +98,7 @@ namespace Core
 
         public void InitializeRestAPIHandler(string[] args)
         {
-            _restAPIHandler.Initialize(args, _config.HttpPort);
+            _restAPIHandler.Initialize(args, _config.HttpPort, _config.RestAPIUserTokenTimeout);
         }
 
         public UserAccount UserConnect(Dictionary<string, object> credential, string connectionMethodGuid)

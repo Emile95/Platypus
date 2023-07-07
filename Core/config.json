@@ -1,4 +1,5 @@
 ﻿{
   "tcpSocketPort": 2000,
-  "httpPort": 7212
+  "httpPort": 7212,
+  "restAPIUserTokenTimeout" : 5
 }

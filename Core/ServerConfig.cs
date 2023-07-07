@@ -9,5 +9,8 @@ namespace Core
 
         [JsonPropertyName("httpPort")]
         public int HttpPort { get; set; }
+
+        [JsonPropertyName("restAPIUserTokenTimeout")]
+        public double RestAPIUserTokenTimeout { get; set; }
     }
 }
