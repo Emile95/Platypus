@@ -38,99 +38,42 @@ namespace Core.RestAPI
                 app.UseHsts();
             }
 
+            MapPost<UserConnection>(app, @"/user/connect", false, (headers, userAccount, body) => {
+                UserAccount connectedUserAccount = _serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
+                string newToken = GuidGenerator.GenerateFromEnumerable(_tokens.Keys);
+                _tokens.Add(newToken, connectedUserAccount);
+                headers.Add(_userTokenRequestHeader, newToken);
+                return "connection successfull";
+            });
+
             MapPost<ApplicationActionRunParameter>(app, @"/action", true, (headers, userAccount, body) => {
                 return _serverInstance.RunAction(userAccount, body);
             });
 
-            MapPost<UserConnection>(app, @"/user/connect", false, (headers, userAccount, body) => {
-                try
-                {
-                    UserAccount connectedUserAccount = _serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
-                    string newToken = GuidGenerator.GenerateFromEnumerable(_tokens.Keys);
-                    _tokens.Add(newToken, connectedUserAccount);
-                    headers.Add(_userTokenRequestHeader, newToken);
-                    return "orion";
-                }
-                catch (Exception e)
-                {
-                    return e.Message;
-                }
+            MapPost<CancelRunningActionBody>(app, @"/action/cancel", false, (headers, userAccount, body) => {
+                _serverInstance.CancelRunningApplicationAction(userAccount, body.Guid);
+                return "run cancelled";
             });
 
-            /*
-            app.MapPost(@"/action", ([FromBody] ApplicationActionRunParameter runActionParameter) =>
-            {
-                runActionParameter.ActionParameters = JsonHelper.GetDictObjectFromJsonElementsDict(runActionParameter.ActionParameters);
-                return _serverInstance.RunAction(runActionParameter);
-            });
-
-            app.MapPost(@"/action/cancel", ([FromBody] CancelRunningActionBody body) =>
-            {
-                _serverInstance.CancelRunningApplicationAction(body.Guid);
-            });
-
-            app.MapGet(@"/action/runnings", () =>
-            {
-                return _serverInstance.GetRunningApplicationActions();
-            });
-
-            app.MapPost(@"/application/install", ([FromBody] InstallApplicationBody body) =>
-            {
-                try
-                {
-                    _serverInstance.InstallApplication(body.DllFilePath);
-                }
-                catch (Exception ex)
-                {
-                    return ex.Message;
-                }
+            MapPost<InstallApplicationBody>(app, @"/application/install", false, (headers, userAccount, body) => {
+                _serverInstance.InstallApplication(userAccount, body.DllFilePath);
                 return "application installed";
             });
 
-            app.MapPost(@"/application/uninstall", ([FromBody] UninstallApplicationBody body) =>
-            {
-                try
-                {
-                    _serverInstance.UninstalApplication(body.ApplicationGuid);
-                }
-                catch (Exception ex)
-                {
-                    return ex.Message;
-                }
+            MapPost<UninstallApplicationBody>(app, @"/application/uninstall", false, (headers, userAccount, body) => {
+                _serverInstance.UninstalApplication(userAccount, body.ApplicationGuid);
                 return "application uninstalled";
             });
 
-            app.MapPost(@"/application/user", ([FromBody] UserCreationParameter body) =>
-            {
-                try
-                {
-                    body.Data = JsonHelper.GetDictObjectFromJsonElementsDict(body.Data);
-                    _serverInstance.AddUser(body);
-                }
-                catch (Exception ex)
-                {
-                    return ex.Message;
-                }
-
+            MapPost<UserCreationParameter>(app, @"/user", false, (headers, userAccount, body) => {
+                _serverInstance.AddUser(userAccount,body);
                 return "user added";
             });
 
-            app.MapPost(@"/application/user/connect", ([FromBody] UserConnection body) =>
+            MapGet(app, @"/action/runnings", (userAccount) =>
             {
-                body.Credential = JsonHelper.GetDictObjectFromJsonElementsDict(body.Credential);
-                try
-                {
-                    UserAccount userAccount = _serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
-                    string newToken = GuidGenerator.GenerateFromEnumerable(_tokens.Keys);
-                    _tokens.Add(newToken, userAccount);
-                    return newToken;
-                }
-                catch (Exception e)
-                {
-                    return e.Message;
-                }
+                return _serverInstance.GetRunningApplicationActions(userAccount);
             });
-            */
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -149,20 +92,53 @@ namespace Core.RestAPI
         {
             app.MapPost(pattern, (requestDelegate) => {
                 return Task.Run(async () => {
-                    UserAccount userAccount = null;
-                    if(needUser)
+                    object responseObject = null;
+                    try
+                    {
+                        UserAccount userAccount = null;
+                        if (needUser)
+                        {
+                            string userToken = (string)requestDelegate.Request.Headers["user-token"];
+                            if (_tokens.ContainsKey(userToken) == false) return;
+                            userAccount = _tokens[userToken];
+                        }
+
+                        StreamReader reader = new StreamReader(requestDelegate.Request.Body);
+                        string json = await reader.ReadToEndAsync();
+                        BodyType body = JsonConvert.DeserializeObject<BodyType>(json);
+
+                        responseObject = action(requestDelegate.Response.Headers, userAccount, body);
+                        
+                    } catch (Exception ex)
+                    {
+                        responseObject = ex.Message;
+                    }
+
+                    await requestDelegate.Response.WriteAsJsonAsync(responseObject);
+                });
+            });
+        }
+
+        private void MapGet(WebApplication app, string pattern, Func<UserAccount, object> action)
+        {
+            app.MapGet(pattern, (requestDelegate) => {
+                return Task.Run(async () => {
+                    object responseObject = null;
+                    try
                     {
                         string userToken = (string)requestDelegate.Request.Headers["user-token"];
                         if (_tokens.ContainsKey(userToken) == false) return;
-                        userAccount = _tokens[userToken];
+                        UserAccount userAccount = _tokens[userToken];
+
+                        responseObject = action(userAccount);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        responseObject = ex.Message;
                     }
 
-                    StreamReader reader = new StreamReader(requestDelegate.Request.Body);
-                    string json = await reader.ReadToEndAsync();
-                    BodyType body = JsonConvert.DeserializeObject<BodyType>(json);
-
-                    object obj = action(requestDelegate.Response.Headers, userAccount, body);
-                    await requestDelegate.Response.WriteAsJsonAsync(obj);
+                    await requestDelegate.Response.WriteAsJsonAsync(responseObject);
                 });
             });
         }
