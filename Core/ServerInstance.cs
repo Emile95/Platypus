@@ -9,6 +9,7 @@ using Logging;
 using Newtonsoft.Json;
 using Persistance;
 using Persistance.Repository;
+using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
@@ -161,6 +162,12 @@ namespace Core
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.GetRunningActions);
             return _applicationActionsHandler.GetRunningApplicationActionInfos();
+        }
+
+        public IEnumerable<ApplicationActionInfo> GetApplicationActionInfos(UserAccount userAccount)
+        {
+            ValidateUserForPermission(userAccount, UserPermissionFlag.GetActionsInfo);
+            return _applicationActionsHandler.GetApplicationActionInfos();
         }
 
         private void ValidateUserForPermission(UserAccount userAccount, UserPermissionFlag userPermissionFlag)

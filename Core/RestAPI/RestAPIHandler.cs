@@ -75,6 +75,11 @@ namespace Core.RestAPI
                 return _serverInstance.GetRunningApplicationActions(userAccount);
             });
 
+            MapGet(app, @"/action", (userAccount) =>
+            {
+                return _serverInstance.GetApplicationActionInfos(userAccount);
+            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

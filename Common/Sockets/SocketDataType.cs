@@ -6,6 +6,7 @@
         RunApplicationAction,
         AddUser,
         CancelRunningAction,
-        GetRunningActions
+        GetRunningActions,
+        GetActionInfos
     }
 }

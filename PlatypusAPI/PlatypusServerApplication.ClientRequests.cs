@@ -1,6 +1,7 @@
 ﻿using Common.Sockets;
 using PaltypusAPI.Sockets.ClientRequest;
 using PaltypusAPI.Sockets.ServerResponse;
+using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Sockets.ClientRequest;
 using PlatypusAPI.Sockets.ServerResponse;
@@ -51,6 +52,18 @@ namespace PlatypusAPI
                  _getRunningApplicationActionsServerResponseWaiters, SocketDataType.GetRunningActions, null,
                  (serverResponseWaiter) => {
                      result = serverResponseWaiter.ApplicationActionRunInfos;
+                 }
+            );
+            return result;
+        }
+
+        public List<ApplicationActionInfo> GetApplicationActionInfos()
+        {
+            List<ApplicationActionInfo> result = new List<ApplicationActionInfo>();
+            RunClientRequest<GetApplicationActionInfosServerResponse, GetApplicationActionInfosServerResponseWaiter, ClientRequestBase>(
+                 _getApplicationActionInfosServerResponseWaiter, SocketDataType.GetActionInfos, null,
+                 (serverResponseWaiter) => {
+                     result = serverResponseWaiter.ApplicationActionInfos;
                  }
             );
             return result;

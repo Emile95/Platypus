@@ -4,6 +4,7 @@ using Common.SocketHandler.State;
 using Common.Sockets;
 using PaltypusAPI.Sockets.ClientRequest;
 using PaltypusAPI.Sockets.ServerResponse;
+using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Sockets.ClientRequest;
 using PlatypusAPI.Sockets.ServerResponse;
@@ -57,6 +58,7 @@ namespace Core.Sockethandler
                 case SocketDataType.RunApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.AddUser: ReceiveAddUserClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.GetRunningActions: ReceiveGetRunningApplicationActionsClientRequest(receivedState.ClientKey, clientRequest); break;
+                case SocketDataType.GetActionInfos: ReceiveGetApplicationActionInfosClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.CancelRunningAction: ReceiveCancelRunningApplicationActionRunClientRequest(receivedState.ClientKey, clientRequest); break;
             }
         }
@@ -126,6 +128,22 @@ namespace Core.Sockethandler
                         serverResponse.ApplicationActionRunInfos = result.ToList();
                     else
                         serverResponse.ApplicationActionRunInfos = new List<ApplicationActionRunInfo>();
+                }
+            );
+        }
+
+        private void ReceiveGetApplicationActionInfosClientRequest(string clientKey, SocketData clientRequestData)
+        {
+            HandleClientRequest<ClientRequestBase, GetApplicationActionInfosServerResponse>(
+                clientKey, clientRequestData, SocketDataType.GetActionInfos,
+                (userAccount, clientRequest, serverResponse) =>
+                {
+                    serverResponse.RequestKey = clientRequest.RequestKey;
+                    IEnumerable<ApplicationActionInfo> result = _serverInstance.GetApplicationActionInfos(clientRequest.UserAccount);
+                    if (result.Count() != 0)
+                        serverResponse.ApplicationActionInfos = result.ToList();
+                    else
+                        serverResponse.ApplicationActionInfos = new List<ApplicationActionInfo>();
                 }
             );
         }

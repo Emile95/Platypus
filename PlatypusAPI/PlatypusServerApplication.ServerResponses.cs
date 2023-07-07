@@ -1,4 +1,5 @@
 ﻿using PaltypusAPI.Sockets.ServerResponse;
+using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
@@ -37,6 +38,16 @@ namespace PlatypusAPI
             );
         }
 
+        private void GetApplicationActionInfosServerResponseCallBack(byte[] bytes)
+        {
+            ServerResponseCallBack<GetApplicationActionInfosServerResponse, GetApplicationActionInfosServerResponseWaiter>(
+                _getApplicationActionInfosServerResponseWaiter, bytes,
+                (serverResponseWaiter, serverResponse) => {
+                    serverResponseWaiter.ApplicationActionInfos = serverResponse.ApplicationActionInfos;
+                }
+            );
+        }
+
         private void CancelRunningApplicationActionServerResponseCallBack(byte[] bytes)
         {
             ServerResponseCallBack<ServerResponseBase, ServerResponseWaiter>(
@@ -57,6 +68,11 @@ namespace PlatypusAPI
         private class GetRunningApplicationActionsServerResponseWaiter : ServerResponseWaiter
         {
             public List<ApplicationActionRunInfo> ApplicationActionRunInfos { get; set; }
+        }
+
+        private class GetApplicationActionInfosServerResponseWaiter : ServerResponseWaiter
+        {
+            public List<ApplicationActionInfo> ApplicationActionInfos { get; set; }
         }
     }
 }

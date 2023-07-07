@@ -7,6 +7,7 @@
         InstallAndUninstallApplication,
         AddUser,
         CancelRunningAction,
+        GetActionsInfo,
         GetRunningActions,
         RunAction
     }

@@ -11,6 +11,7 @@ using Core.Event;
 using PlatypusApplicationFramework.Core.Event;
 using Persistance.Entity;
 using Persistance;
+using PlatypusAPI.ApplicationAction;
 
 namespace Core.ApplicationAction
 {
@@ -126,6 +127,11 @@ namespace Core.ApplicationAction
         {
             return _applicationActionRuns.Values.Select(x => x.GetInfo());
                 
+        }
+
+        public IEnumerable<ApplicationActionInfo> GetApplicationActionInfos()
+        {
+            return _applicationActions.Values.Select(x => x.GetInfo());
         }
 
         public ApplicationActionEnvironmentBase CreateStartActionEnvironment(string actionName)
