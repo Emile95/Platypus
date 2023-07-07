@@ -1,11 +1,14 @@
 ﻿using Core.RestAPI.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.User;
+using System.Buffers;
+using System.IO.Pipelines;
+using System.Runtime.Serialization.Formatters.Binary;
 using Utils.GuidGeneratorHelper;
 using Utils.Json;
 
@@ -39,13 +42,26 @@ namespace Core.RestAPI
                 app.UseHsts();
             }
 
-            /*app.MapPost(@"/action", (requestDelegate) =>
-            {
-                requestDelegate.Request.Headers[]
-                runActionParameter.ActionParameters = JsonHelper.GetDictObjectFromJsonElementsDict(runActionParameter.ActionParameters);
-                return _serverInstance.RunAction(runActionParameter);
+            MapPost<ApplicationActionRunParameter>(app, @"/action", true, (headers, userAccount, body) => {
+                return _serverInstance.RunAction(userAccount, body);
             });
 
+            MapPost<UserConnection>(app, @"/user/connect", false, (headers, userAccount, body) => {
+                try
+                {
+                    UserAccount connectedUserAccount = _serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
+                    string newToken = GuidGenerator.GenerateFromEnumerable(_tokens.Keys);
+                    _tokens.Add(newToken, connectedUserAccount);
+                    headers.Add(_userTokenRequestHeader, newToken);
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    return e.Message;
+                }
+            });
+
+            /*
             app.MapPost(@"/action", ([FromBody] ApplicationActionRunParameter runActionParameter) =>
             {
                 runActionParameter.ActionParameters = JsonHelper.GetDictObjectFromJsonElementsDict(runActionParameter.ActionParameters);
@@ -132,12 +148,29 @@ namespace Core.RestAPI
             app.Run($"https://localhost:{httpPort}");
         }
 
-        /*private void MapPost<BodyType>(WebApplication app, string pattern, Func<BodyType, object> action)
+        private void MapPost<BodyType>(WebApplication app, string pattern, bool needUser, Func<IHeaderDictionary, UserAccount, BodyType, object> action)
             where BodyType : class
         {
             app.MapPost(pattern, (requestDelegate) => {
+                return Task.Run(async () => {
+                    UserAccount userAccount = null;
+                    if(needUser)
+                    {
+                        string userToken = (string)requestDelegate.Request.Headers["user-token"];
+                        if (_tokens.ContainsKey(userToken) == false) return;
+                        userAccount = _tokens[userToken];
+                        int x = 5;
+                    }
 
+                    StreamReader reader = new StreamReader(requestDelegate.Request.Body);
+                    string json = await reader.ReadToEndAsync();
+                    BodyType body = JsonConvert.DeserializeObject<BodyType>(json);
+
+                    object obj = action(requestDelegate.Response.Headers, userAccount, body);
+                    StreamWriter writer = new StreamWriter(requestDelegate.Response.Body);
+                    await writer.WriteAsync(JsonConvert.SerializeObject(obj));
+                });
             });
-        }*/
+        }
     }
 }
