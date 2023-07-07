@@ -6,11 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.User;
-using System.Buffers;
-using System.IO.Pipelines;
-using System.Runtime.Serialization.Formatters.Binary;
 using Utils.GuidGeneratorHelper;
-using Utils.Json;
 
 namespace Core.RestAPI
 {
@@ -53,7 +49,7 @@ namespace Core.RestAPI
                     string newToken = GuidGenerator.GenerateFromEnumerable(_tokens.Keys);
                     _tokens.Add(newToken, connectedUserAccount);
                     headers.Add(_userTokenRequestHeader, newToken);
-                    return null;
+                    return "orion";
                 }
                 catch (Exception e)
                 {
@@ -159,7 +155,6 @@ namespace Core.RestAPI
                         string userToken = (string)requestDelegate.Request.Headers["user-token"];
                         if (_tokens.ContainsKey(userToken) == false) return;
                         userAccount = _tokens[userToken];
-                        int x = 5;
                     }
 
                     StreamReader reader = new StreamReader(requestDelegate.Request.Body);
@@ -167,8 +162,7 @@ namespace Core.RestAPI
                     BodyType body = JsonConvert.DeserializeObject<BodyType>(json);
 
                     object obj = action(requestDelegate.Response.Headers, userAccount, body);
-                    StreamWriter writer = new StreamWriter(requestDelegate.Response.Body);
-                    await writer.WriteAsync(JsonConvert.SerializeObject(obj));
+                    await requestDelegate.Response.WriteAsJsonAsync(obj);
                 });
             });
         }
