@@ -105,6 +105,34 @@ namespace PlatypusApplicationFramework.Confugration
 
                 if (dict.ContainsKey(parameterEditor.Name) == false && parameterEditor.IsRequired)
                     throw new ParameterEditorFieldRequiredException(parameterEditor.Name);
+
+                if (propertyInfo.PropertyType.IsValueType == false &&
+                    propertyInfo.PropertyType.IsEquivalentTo(typeof(string)) == false &&
+                    propertyInfo.PropertyType.IsAssignableTo(typeof(object)) &&
+                    propertyInfo.PropertyType.IsAssignableTo(typeof(IList)) == false)
+                {
+                    if (dict[parameterEditor.Name] == null) continue;
+                    string jsonObject = JsonConvert.SerializeObject(dict[parameterEditor.Name]);
+                    ValidateDictionnary(propertyInfo.PropertyType, JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonObject));
+                    continue;
+                }
+
+                if (propertyInfo.PropertyType.IsAssignableTo(typeof(IList)))
+                {
+                    if (dict[parameterEditor.Name] == null) continue;
+                    IList list = (IList)dict[parameterEditor.Name];
+                    if (list.Count == 0) continue;
+
+                    Type genericArg = propertyInfo.PropertyType.GetGenericArguments()[0];
+
+                    foreach (object member in list)
+                    {
+                        string jsonObject = JsonConvert.SerializeObject(member);
+                        ResolveByDictionnary(genericArg, JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonObject));
+                    }
+
+                    continue;
+                }
             }
         }
     }
