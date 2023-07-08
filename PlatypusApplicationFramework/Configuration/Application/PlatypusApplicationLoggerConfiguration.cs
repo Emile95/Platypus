@@ -33,7 +33,7 @@ namespace PlatypusApplicationFramework.Configuration.Application
             [DataMember]
             [ParameterEditor(
                 Name = "Format",
-                DefaultValue = "{loggingLevel} - {dateTime} : {message}"
+                DefaultValue = "{dateTime} - {loggingLevel} : {message}"
             )]
             public string Format { get; set; }
 

@@ -35,7 +35,7 @@ namespace Common.Logger.FileLogger
 
         private void ArchiveLogFile()
         {
-            string newFileName = $"{DateTime.Now}{_logFileExtension}";
+            string newFileName = $"{DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss")}{_logFileExtension}";
             File.Copy(_currentfilePath, Path.Combine(_directoryPath, newFileName));
             File.Delete(_currentfilePath);
         }
