@@ -99,7 +99,7 @@
                 foreach(LoggerBase logger in loggers)
                 {
                     ILoggingSensivity loggingSensivity = logger as ILoggingSensivity;
-                    if (loggingSensivity.MinimumLoggingLevel >= level && loggingSensivity.MaximumLoggingLevel <= level)
+                    if (loggingSensivity.MinimumLoggingLevel <= level && loggingSensivity.MaximumLoggingLevel >= level)
                         consumer.Invoke(logger);
                 }
             }

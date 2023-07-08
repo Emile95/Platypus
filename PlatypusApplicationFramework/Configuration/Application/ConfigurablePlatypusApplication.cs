@@ -90,7 +90,7 @@ namespace PlatypusApplicationFramework.Configuration.Application
                         fileLoggerConfiguration.FileRotation.MaxSize,
                         fileLoggerConfiguration.Format,
                         fileLoggerConfiguration.MinimumLoggingLevel,
-                        fileLoggerConfiguration.MinimumLoggingLevel
+                        fileLoggerConfiguration.MaximumLoggingLevel
                     );
             }
 
