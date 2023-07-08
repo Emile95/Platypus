@@ -1,5 +1,7 @@
-﻿using PlatypusAPI.Exceptions;
+﻿using Newtonsoft.Json;
+using PlatypusAPI.Exceptions;
 using PlatypusApplicationFramework.Configuration;
+using System.Collections;
 using System.Reflection;
 
 namespace PlatypusApplicationFramework.Confugration
@@ -18,6 +20,36 @@ namespace PlatypusApplicationFramework.Confugration
 
                 if (dict.ContainsKey(parameterEditor.Name))
                 {
+                    if(propertyInfo.PropertyType.IsValueType == false &&
+                       propertyInfo.PropertyType.IsEquivalentTo(typeof(string)) == false &&
+                       propertyInfo.PropertyType.IsAssignableTo(typeof(object)) &&
+                       propertyInfo.PropertyType.IsAssignableTo(typeof(IList)) == false)
+                    {
+                        string jsonObject = JsonConvert.SerializeObject(dict[parameterEditor.Name]);
+                        object newValue = ResolveByDictionnary(propertyInfo.PropertyType, JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonObject));
+                        propertyInfo.SetValue(newObject, newValue);
+                        continue;
+                    }
+
+                    if (propertyInfo.PropertyType.IsAssignableTo(typeof(IList)))
+                    {
+                        object newList = Activator.CreateInstance(propertyInfo.PropertyType);
+                        Type genericArg = propertyInfo.PropertyType.GetGenericArguments()[0];
+
+                        IList list = (IList)dict[parameterEditor.Name];
+                        foreach (object member in list)
+                        {
+                            string jsonObject = JsonConvert.SerializeObject(member);
+                            object newValue = ResolveByDictionnary(genericArg, JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonObject));
+                            MethodInfo addMethodInfo = newList.GetType().GetMethod("Add");
+                            addMethodInfo.Invoke(newList, new object[] { newValue });
+                        }
+
+                        propertyInfo.SetValue(newObject, newList);
+
+                        continue;
+                    }
+
                     object convertedValue = Convert.ChangeType(dict[parameterEditor.Name], propertyInfo.PropertyType);
                     propertyInfo.SetValue(newObject, convertedValue);
                     continue;

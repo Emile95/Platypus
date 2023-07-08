@@ -70,25 +70,25 @@ namespace Core.RestAPI
                 return _serverInstance.RunAction(userAccount, body);
             });
 
-            MapPost<CancelRunningActionBody>(app, @"/action/cancel", false, (headers, userAccount, body) =>
+            MapPost<CancelRunningActionBody>(app, @"/action/cancel", true, (headers, userAccount, body) =>
             {
                 _serverInstance.CancelRunningApplicationAction(userAccount, body.Guid);
                 return "run cancelled";
             });
 
-            MapPost<InstallApplicationBody>(app, @"/application/install", false, (headers, userAccount, body) =>
+            MapPost<InstallApplicationBody>(app, @"/application/install", true, (headers, userAccount, body) =>
             {
                 _serverInstance.InstallApplication(userAccount, body.DllFilePath);
                 return "application installed";
             });
 
-            MapPost<UninstallApplicationBody>(app, @"/application/uninstall", false, (headers, userAccount, body) =>
+            MapPost<UninstallApplicationBody>(app, @"/application/uninstall", true, (headers, userAccount, body) =>
             {
                 _serverInstance.UninstalApplication(userAccount, body.ApplicationGuid);
                 return "application uninstalled";
             });
 
-            MapPost<UserCreationParameter>(app, @"/user", false, (headers, userAccount, body) =>
+            MapPost<UserCreationParameter>(app, @"/user", true, (headers, userAccount, body) =>
             {
                 _serverInstance.AddUser(userAccount, body);
                 return "user added";

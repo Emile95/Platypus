@@ -2,7 +2,7 @@
 
 namespace Common.Logger.FileLogger
 {
-    public abstract class FileLogger : LoggerBase
+    public class FileLogger : LoggerBase
     {
         private readonly string _filePath;
 
@@ -14,6 +14,11 @@ namespace Common.Logger.FileLogger
         public override void Log(string line)
         {
             File.WriteAllText(_filePath, line);
+        }
+
+        public override void Log(LoggingLevel level, string line)
+        {
+            Log(line);
         }
     }
 }

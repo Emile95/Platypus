@@ -1,6 +1,6 @@
 ﻿namespace Logging
 {
-    public class LoggerManager
+    public class LoggerManager : LoggerBase
     {
         protected readonly Dictionary<Type, List<LoggerBase>> _loggersWithoutSensivity;
         protected readonly Dictionary<Type, List<LoggerBase>> _loggerWithSensivity;
@@ -43,7 +43,7 @@
             return fittingLoggers;
         }
 
-        public virtual void Log(string line)
+        public override void Log(string line)
         {
             foreach(List<LoggerBase> loggers in _loggersWithoutSensivity.Values)
                 foreach(LoggerBase logger in loggers)
@@ -54,16 +54,9 @@
                     logger.Log(line);
         }
 
-        public virtual void Log(LoggingLevel level, string line, bool includeUnsensivitiveLoggers = true)
+        public override void Log(LoggingLevel level, string line)
         {
             ConsumeLoggerByLogLevel(level, (logger) => logger.Log(line));
-
-            if (includeUnsensivitiveLoggers)
-            {
-                foreach(List<LoggerBase> loggers in _loggersWithoutSensivity.Values)
-                    foreach (LoggerBase logger in loggers)
-                        logger.Log(line);
-            }
         }
 
         public virtual void Log<LoggerType>(string line)
