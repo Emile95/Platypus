@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Logging;
+using System.Runtime.Serialization;
 
 namespace PlatypusApplicationFramework.Configuration.Application
 {
@@ -28,6 +29,27 @@ namespace PlatypusApplicationFramework.Configuration.Application
                 DefaultValue = null
             )]
             public string FileName { get; set; }
+
+            [DataMember]
+            [ParameterEditor(
+                Name = "Format",
+                DefaultValue = "{loggingLevel} - {dateTime} : {message}"
+            )]
+            public string Format { get; set; }
+
+            [DataMember]
+            [ParameterEditor(
+                Name = "MinimumLoggingLevel",
+                DefaultValue = LoggingLevel.Info
+            )]
+            public LoggingLevel MinimumLoggingLevel { get; set; }
+
+            [DataMember]
+            [ParameterEditor(
+                Name = "MaximumLoggingLevel",
+                DefaultValue = LoggingLevel.Fatal
+            )]
+            public LoggingLevel MaximumLoggingLevel { get; set; }
 
             [DataMember]
             [ParameterEditor(

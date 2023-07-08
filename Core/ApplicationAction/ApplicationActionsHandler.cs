@@ -2,7 +2,6 @@
 using Persistance.Repository;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusApplicationFramework.Core.ApplicationAction;
-using PlatypusApplicationFramework.Core.ApplicationAction.Logger;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
@@ -82,7 +81,6 @@ namespace Core.ApplicationAction
             ApplicationActionRun applicationActionRun = CreateApplicationActionRun(runActionParameter, env);
 
             string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, applicationActionRun.RunNumber);
-            env.ActionLoggers.CreateLogger<ApplicationActionRunFileLogger>(configFilePath);
 
             applicationActionRun.StartRun(applicationAction, runActionParameter, () => {
                 ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);

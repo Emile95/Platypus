@@ -141,7 +141,6 @@ namespace Core
             }
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
             env.ApplicationRepository = _applicationRepository;
-            env.ActionLoggers = new LoggerManager();
 
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }

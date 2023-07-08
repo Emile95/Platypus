@@ -5,6 +5,7 @@ using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using PlatypusApplicationFramework.Confugration;
 using Logging;
 using Common.Logger.FileLogger;
+using PlatypusApplicationFramework.Core.Application.Logger;
 
 namespace PlatypusApplicationFramework.Configuration.Application
 {
@@ -78,7 +79,14 @@ namespace PlatypusApplicationFramework.Configuration.Application
             if(loggerConfiguration.FileLoggers != null || loggerConfiguration.FileLoggers.Count > 0)
             {
                 foreach(var fileLoggerConfiguration in loggerConfiguration.FileLoggers)
-                    logger.CreateLogger<FileLogger>(Path.Combine(fileLoggerConfiguration.DirectoryPath, fileLoggerConfiguration.FileName));
+                    logger.CreateLogger<PlatypusApplicationFileLogger>(
+                        fileLoggerConfiguration.DirectoryPath,
+                        fileLoggerConfiguration.FileName,
+                        fileLoggerConfiguration.FileRotation.MaxSize,
+                        fileLoggerConfiguration.Format,
+                        fileLoggerConfiguration.MinimumLoggingLevel,
+                        fileLoggerConfiguration.MinimumLoggingLevel
+                    );
             }
 
             return logger;
