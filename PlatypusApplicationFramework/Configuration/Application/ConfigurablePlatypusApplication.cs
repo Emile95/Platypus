@@ -40,14 +40,7 @@ namespace PlatypusApplicationFramework.Configuration.Application
         public void LoadConfigurationJsonObject(string jsonObject)
         {
             Configuration = JsonConvert.DeserializeObject<ConfigurationType>(jsonObject);
-
-            if(Configuration is IConfigurationWithLogger)
-            {
-                IConfigurationWithLogger configurationWithLogger = Configuration as IConfigurationWithLogger;
-                PlatypusApplicationLoggerConfiguration loggerConfiguration = configurationWithLogger.GetLogger();
-                if(loggerConfiguration != null)
-                    Logger = CreateLoggerWithConfiguration(loggerConfiguration);
-            }
+            CheckIfLoadLogger();
         }
 
         [ActionDefinition(
@@ -60,7 +53,8 @@ namespace PlatypusApplicationFramework.Configuration.Application
             if(ValidateConfiguration(env.Parameter))
                 Configuration = env.Parameter;
 
-            
+            CheckIfLoadLogger();
+
             string jsonObject = JsonConvert.SerializeObject(Configuration);
             env.ApplicationRepository.SaveApplicationConfigurationByBasePath(ApplicationDirectoryPath, jsonObject);
 
@@ -71,6 +65,17 @@ namespace PlatypusApplicationFramework.Configuration.Application
 
         protected virtual bool ValidateConfiguration(ConfigurationType configuration) { return true; }
         protected virtual void OnConfigurationUpdate(ConfigurationType previousConfiguration) { }
+
+        private void CheckIfLoadLogger()
+        {
+            if (Configuration is IConfigurationWithLogger)
+            {
+                IConfigurationWithLogger configurationWithLogger = Configuration as IConfigurationWithLogger;
+                PlatypusApplicationLoggerConfiguration loggerConfiguration = configurationWithLogger.GetLogger();
+                if (loggerConfiguration != null)
+                    Logger = CreateLoggerWithConfiguration(loggerConfiguration);
+            }
+        }
 
         private LoggerBase CreateLoggerWithConfiguration(PlatypusApplicationLoggerConfiguration loggerConfiguration)
         {

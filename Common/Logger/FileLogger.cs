@@ -20,11 +20,17 @@ namespace Common.Logger.FileLogger
 
         public override void Log(string line)
         {
+            if (File.Exists(_currentfilePath) == false)
+            {
+                File.WriteAllText(_currentfilePath, line + Environment.NewLine);
+                return;
+            }
+
             FileInfo fileInfo = new FileInfo(_currentfilePath);
             if((fileInfo.Length + line.Length) >= maximumFileSizeInBytes)
                 ArchiveLogFile();
 
-            File.WriteAllText(_currentfilePath, line);
+            File.AppendAllText(_currentfilePath, line + Environment.NewLine);
         }
 
         private void ArchiveLogFile()

@@ -21,8 +21,8 @@ namespace PlatypusApplicationFramework.Core.Application.Logger
         public override void Log(LoggingLevel level, string line)
         {
             string completLine = _format.Replace("{dateTime}", DateTime.Now.ToString());
-            completLine = _format.Replace("{loggingLevel}", level.ToString());
-            completLine = _format.Replace("{message}", line);
+            completLine = completLine.Replace("{loggingLevel}", level.ToString());
+            completLine = completLine.Replace("{message}", line);
             Log(completLine);
         }
     }

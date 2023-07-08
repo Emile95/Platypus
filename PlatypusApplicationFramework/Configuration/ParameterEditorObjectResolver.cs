@@ -50,6 +50,13 @@ namespace PlatypusApplicationFramework.Confugration
                         continue;
                     }
 
+                    if(propertyInfo.PropertyType.IsEnum)
+                    {
+                        dict[parameterEditor.Name] = Enum.Parse(propertyInfo.PropertyType, dict[parameterEditor.Name].ToString());
+                        propertyInfo.SetValue(newObject, dict[parameterEditor.Name]);
+                        continue;
+                    }
+
                     object convertedValue = Convert.ChangeType(dict[parameterEditor.Name], propertyInfo.PropertyType);
                     propertyInfo.SetValue(newObject, convertedValue);
                     continue;

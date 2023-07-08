@@ -56,7 +56,7 @@
 
         public override void Log(LoggingLevel level, string line)
         {
-            ConsumeLoggerByLogLevel(level, (logger) => logger.Log(line));
+            ConsumeLoggerByLogLevel(level, (logger) => logger.Log(level, line));
         }
 
         public virtual void Log<LoggerType>(string line)
@@ -99,7 +99,7 @@
                 foreach(LoggerBase logger in loggers)
                 {
                     ILoggingSensivity loggingSensivity = logger as ILoggingSensivity;
-                    if (loggingSensivity.MinimumLoggingLevel <= level && loggingSensivity.MaximumLoggingLevel >= level)
+                    if (loggingSensivity.MinimumLoggingLevel >= level && loggingSensivity.MaximumLoggingLevel <= level)
                         consumer.Invoke(logger);
                 }
             }
