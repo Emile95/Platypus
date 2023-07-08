@@ -60,7 +60,8 @@ namespace Core.ApplicationAction
             return new ApplicationActionInfo()
             {
                 Name = this.Name,
-                Guid = this.Guid
+                Guid = this.Guid,
+                ParentApplicationGuid = GetParentApplicationGuid()
             };
         }
 
@@ -129,6 +130,11 @@ namespace Core.ApplicationAction
                 return new ApplicationActionEnvironmentBase();
 
             return (ApplicationActionEnvironmentBase)Activator.CreateInstance(EnvironmentParameterType);
+        }
+
+        private string GetParentApplicationGuid()
+        {
+            return Guid.Replace(Name, "");
         }
     }
 }
