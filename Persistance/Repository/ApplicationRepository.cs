@@ -43,6 +43,9 @@ namespace Persistance.Repository
         public List<ApplicationEntity> LoadApplications()
         {
             List<ApplicationEntity> applicationEntities = new List<ApplicationEntity>();
+
+            if (Directory.Exists(ApplicationPaths.APPLICATIONSDIRECTORYPATHS) == false) return applicationEntities;
+
             string[] applicationDirectoriesPath = Directory.GetDirectories(ApplicationPaths.APPLICATIONSDIRECTORYPATHS);
             foreach (string applicationDirectoryPath in applicationDirectoriesPath)
             {
