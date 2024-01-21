@@ -94,12 +94,12 @@ namespace Core.RestAPI
                 return "user added";
             });
 
-            MapGet(app, @"/action/runnings", (userAccount) =>
+            MapGet(app, @"/action/runnings", true, (userAccount) =>
             {
                 return _serverInstance.GetRunningApplicationActions(userAccount);
             });
 
-            MapGet(app, @"/action", (userAccount) =>
+            MapGet(app, @"/action", true, (userAccount) =>
             {
                 return _serverInstance.GetApplicationActionInfos(userAccount);
             });
@@ -129,8 +129,11 @@ namespace Core.RestAPI
                         UserAccount userAccount = null;
                         if (needUser)
                         {
-                            string userToken = (string)requestDelegate.Request.Headers["user-token"];
-                            if (_tokens.ContainsKey(userToken) == false) return;
+                            string userToken = (string)requestDelegate.Request.Headers[_userTokenRequestHeader];
+
+                            if (userToken == null) throw new Exception($"need '{_userTokenRequestHeader}' in the request header");
+                            if (_tokens.ContainsKey(userToken) == false) throw new Exception($"invalid '{_userTokenRequestHeader}' in the request header");
+
                             userAccount = _tokens[userToken].UserAccount;
                         }
 
@@ -151,7 +154,7 @@ namespace Core.RestAPI
             });
         }
 
-        private void MapGet(WebApplication app, string pattern, Func<UserAccount, object> action)
+        private void MapGet(WebApplication app, string pattern, bool needUser, Func<UserAccount, object> action)
         {
             app.MapGet(pattern, (requestDelegate) =>
             {
@@ -160,9 +163,17 @@ namespace Core.RestAPI
                     object responseObject = null;
                     try
                     {
-                        string userToken = (string)requestDelegate.Request.Headers["user-token"];
-                        if (_tokens.ContainsKey(userToken) == false) return;
-                        UserAccount userAccount = _tokens[userToken].UserAccount;
+                        UserAccount userAccount = null;
+
+                        if (needUser)
+                        {
+                            string userToken = (string)requestDelegate.Request.Headers[_userTokenRequestHeader];
+
+                            if (userToken == null) throw new Exception($"need '{_userTokenRequestHeader}' in the request header");
+                            if (_tokens.ContainsKey(userToken) == false) throw new Exception($"invalid '{_userTokenRequestHeader}' in the request header");
+
+                            userAccount = _tokens[userToken].UserAccount;
+                        }
 
                         responseObject = action(userAccount);
 
