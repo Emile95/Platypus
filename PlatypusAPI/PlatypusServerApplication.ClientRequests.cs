@@ -26,17 +26,37 @@ namespace PlatypusAPI
             return result;
         }
 
-        public UserAccount AddUser(UserCreationParameter userCreationParameter)
+        public UserAccount AddUser(UserCreationParameter parameter)
         {
             UserAccount userAccount = null;
             RunClientRequest<AddUserServerResponse, AddUserServerResponseWaiter, AddUserClientRequest>(
                  _addUserServerResponseWaiters, SocketDataType.AddUser,
                  (clientRequest) => {
-                     clientRequest.ConnectionMethodGuid = userCreationParameter.ConnectionMethodGuid;
-                     clientRequest.FullName = userCreationParameter.FullName;
-                     clientRequest.Email = userCreationParameter.Email;
-                     clientRequest.Data = userCreationParameter.Data;
-                     clientRequest.UserPermissionFlags = userCreationParameter.UserPermissionFlags;
+                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
+                     clientRequest.FullName = parameter.FullName;
+                     clientRequest.Email = parameter.Email;
+                     clientRequest.Data = parameter.Data;
+                     clientRequest.UserPermissionFlags = parameter.UserPermissionFlags;
+                 },
+                 (serverResponseWaiter) => {
+                     userAccount = serverResponseWaiter.UserAccount;
+                 }
+            );
+            return userAccount;
+        }
+
+        public UserAccount UpdateUser(UserUpdateParameter parameter)
+        {
+            UserAccount userAccount = null;
+            RunClientRequest<UpdateUserServerResponse, UpdateUserServerResponseWaiter, UpdateUserClientRequest>(
+                 _updateUserServerResponseWaiters, SocketDataType.UpdateUser,
+                 (clientRequest) => {
+                     clientRequest.UserID = parameter.ID;
+                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
+                     clientRequest.FullName = parameter.FullName;
+                     clientRequest.Email = parameter.Email;
+                     clientRequest.Data = parameter.Data;
+                     clientRequest.UserPermissionFlags = parameter.UserPermissionFlags;
                  },
                  (serverResponseWaiter) => {
                      userAccount = serverResponseWaiter.UserAccount;

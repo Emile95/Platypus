@@ -5,7 +5,7 @@
     {
         Admin = 0,
         InstallAndUninstallApplication = 1,
-        AddUser = 2,
+        UserCRUD = 2,
         CancelRunningAction = 4,
         GetActionsInfo = 8,
         GetRunningActions = 16,

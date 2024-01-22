@@ -94,6 +94,12 @@ namespace Core.RestAPI
                 return "user added";
             });
 
+            MapPut<UserUpdateParameter>(app, @"/user", true, (headers, userAccount, body) =>
+            {
+                _serverInstance.UpdateUser(userAccount, body);
+                return "user updated";
+            });
+
             MapGet(app, @"/action/runnings", true, (userAccount) =>
             {
                 return _serverInstance.GetRunningApplicationActions(userAccount);
@@ -153,6 +159,45 @@ namespace Core.RestAPI
                 });
             });
         }
+
+        private void MapPut<BodyType>(WebApplication app, string pattern, bool needUser, Func<IHeaderDictionary, UserAccount, BodyType, object> action)
+            where BodyType : class
+        {
+            app.MapPut(pattern, (requestDelegate) =>
+            {
+                return Task.Run(async () =>
+                {
+                    object responseObject = null;
+                    try
+                    {
+                        UserAccount userAccount = null;
+                        if (needUser)
+                        {
+                            string userToken = (string)requestDelegate.Request.Headers[_userTokenRequestHeader];
+
+                            if (userToken == null) throw new Exception($"need '{_userTokenRequestHeader}' in the request header");
+                            if (_tokens.ContainsKey(userToken) == false) throw new Exception($"invalid '{_userTokenRequestHeader}' in the request header");
+
+                            userAccount = _tokens[userToken].UserAccount;
+                        }
+
+                        StreamReader reader = new StreamReader(requestDelegate.Request.Body);
+                        string json = await reader.ReadToEndAsync();
+                        BodyType body = JsonConvert.DeserializeObject<BodyType>(json);
+
+                        responseObject = action(requestDelegate.Response.Headers, userAccount, body);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        responseObject = ex.Message;
+                    }
+
+                    await requestDelegate.Response.WriteAsJsonAsync(responseObject);
+                });
+            });
+        }
+
 
         private void MapGet(WebApplication app, string pattern, bool needUser, Func<UserAccount, object> action)
         {

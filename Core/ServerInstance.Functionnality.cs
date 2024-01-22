@@ -53,10 +53,16 @@ namespace Core
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }
 
-        public UserAccount AddUser(UserAccount userAccount, UserCreationParameter userCreationParameter)
+        public UserAccount AddUser(UserAccount userAccount, UserCreationParameter parameter)
         {
-            ValidateUserForPermission(userAccount, UserPermissionFlag.AddUser);
-            return _usersHandler.AddUser(userCreationParameter);
+            ValidateUserForPermission(userAccount, UserPermissionFlag.UserCRUD);
+            return _usersHandler.AddUser(parameter);
+        }
+
+        public UserAccount UpdateUser(UserAccount userAccount, UserUpdateParameter parameter)
+        {
+            ValidateUserForPermission(userAccount, UserPermissionFlag.UserCRUD);
+            return _usersHandler.UpdateUser(parameter);
         }
 
         public void CancelRunningApplicationAction(UserAccount userAccount, string guid)

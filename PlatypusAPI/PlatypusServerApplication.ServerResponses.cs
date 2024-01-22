@@ -28,6 +28,16 @@ namespace PlatypusAPI
             );
         }
 
+        private void UpdateUserServerResponseCallBack(byte[] bytes)
+        {
+            ServerResponseCallBack<UpdateUserServerResponse, UpdateUserServerResponseWaiter>(
+                _updateUserServerResponseWaiters, bytes,
+                (serverResponseWaiter, serverResponse) => {
+                    serverResponseWaiter.UserAccount = serverResponse.UserAccount;
+                }
+            );
+        }
+
         private void GetRunningApplicationActionsServerResponseCallBack(byte[] bytes)
         {
             ServerResponseCallBack<GetRunningApplicationActionsServerResponse, GetRunningApplicationActionsServerResponseWaiter>(
@@ -61,6 +71,11 @@ namespace PlatypusAPI
         }
 
         private class AddUserServerResponseWaiter : ServerResponseWaiter
+        {
+            public UserAccount UserAccount { get; set; }
+        }
+
+        private class UpdateUserServerResponseWaiter : ServerResponseWaiter
         {
             public UserAccount UserAccount { get; set; }
         }

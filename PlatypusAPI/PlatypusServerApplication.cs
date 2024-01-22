@@ -15,6 +15,7 @@ namespace PlatypusAPI
 
         private readonly Dictionary<string, StartActionServerResponseWaiter> _startActionServerResponseWaiters;
         private readonly Dictionary<string, AddUserServerResponseWaiter> _addUserServerResponseWaiters;
+        private readonly Dictionary<string, UpdateUserServerResponseWaiter> _updateUserServerResponseWaiters;
         private readonly Dictionary<string, GetRunningApplicationActionsServerResponseWaiter> _getRunningApplicationActionsServerResponseWaiters;
         private readonly Dictionary<string, GetApplicationActionInfosServerResponseWaiter> _getApplicationActionInfosServerResponseWaiter;
         private readonly Dictionary<string, ServerResponseWaiter> _cancelRunningApplicationActionServerResponseWaiters;
@@ -29,12 +30,14 @@ namespace PlatypusAPI
 
             _startActionServerResponseWaiters = new Dictionary<string, StartActionServerResponseWaiter>();
             _addUserServerResponseWaiters = new Dictionary<string, AddUserServerResponseWaiter>();
+            _updateUserServerResponseWaiters = new Dictionary<string, UpdateUserServerResponseWaiter>();
             _getRunningApplicationActionsServerResponseWaiters = new Dictionary<string, GetRunningApplicationActionsServerResponseWaiter>();
             _getApplicationActionInfosServerResponseWaiter = new Dictionary<string, GetApplicationActionInfosServerResponseWaiter>();
             _cancelRunningApplicationActionServerResponseWaiters = new Dictionary<string, ServerResponseWaiter>();
 
             _socketHandler.ServerResponseCallBacks[SocketDataType.RunApplicationAction].Add(StartApplicationServerResponseCallBack);
             _socketHandler.ServerResponseCallBacks[SocketDataType.AddUser].Add(AddUserServerResponseCallBack);
+            _socketHandler.ServerResponseCallBacks[SocketDataType.UpdateUser].Add(UpdateUserServerResponseCallBack);
             _socketHandler.ServerResponseCallBacks[SocketDataType.GetRunningActions].Add(GetRunningApplicationActionsServerResponseCallBack);
             _socketHandler.ServerResponseCallBacks[SocketDataType.GetActionInfos].Add(GetApplicationActionInfosServerResponseCallBack);
             _socketHandler.ServerResponseCallBacks[SocketDataType.CancelRunningAction].Add(CancelRunningApplicationActionServerResponseCallBack);

@@ -1,11 +1,14 @@
-﻿using Persistance.Entity;
+﻿using Microsoft.AspNetCore.Components;
+using Persistance.Entity;
 using Persistance.Repository;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.User;
 using PlatypusApplicationFramework.Confugration;
+using System.Data.Common;
 using System.Reflection;
+using System.Reflection.Metadata;
 
 namespace Core.User
 {
@@ -46,30 +49,57 @@ namespace Core.User
                 _connectionMethods.Remove(connectionMethodGuid);
         }
 
-        public UserAccount AddUser(UserCreationParameter userCreationParameter)
+        public UserAccount AddUser(UserCreationParameter parameter)
         {
-            if (_connectionMethods.ContainsKey(userCreationParameter.ConnectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(userCreationParameter.ConnectionMethodGuid);
+            UserEntity userEntity = new UserEntity()
+            {
+                FullName = parameter.FullName,
+                Email = parameter.Email,
+                Data = parameter.Data,
+                UserPermissionBits = (int)CreateUserPermissionFlasgWithList(parameter.UserPermissionFlags)
+            };
 
-            IUserConnectionMethod connectionMethods = _connectionMethods[userCreationParameter.ConnectionMethodGuid];
+            return SaveUser(parameter.ConnectionMethodGuid, userEntity, true);
+        }
+
+        public UserAccount UpdateUser(UserUpdateParameter parameter)
+        {
+            UserEntity userEntity = new UserEntity()
+            {
+                ID = parameter.ID,
+                FullName = parameter.FullName,
+                Email = parameter.Email,
+                Data = parameter.Data,
+                UserPermissionBits = (int)CreateUserPermissionFlasgWithList(parameter.UserPermissionFlags)
+            };
+
+            return SaveUser(parameter.ConnectionMethodGuid, userEntity, false);
+        }
+
+        public UserAccount SaveUser(string connectionMethod, UserEntity userEntity, bool isNew)
+        {
+            if (_connectionMethods.ContainsKey(connectionMethod) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethod);
+
+            IUserConnectionMethod connectionMethods = _connectionMethods[connectionMethod];
             Type[] genericTypes = connectionMethods.GetType().BaseType.GetGenericArguments();
             if (genericTypes.Length == 0) return null;
 
-            ParameterEditorObjectResolver.ValidateDictionnary(genericTypes[0], userCreationParameter.Data);
-
-            int userID = _userRepository.SaveUser(userCreationParameter.ConnectionMethodGuid, new UserEntity()
-            {
-                FullName = userCreationParameter.FullName,
-                Email = userCreationParameter.Email,
-                Data = userCreationParameter.Data,
-                UserPermissionBits = (int)CreateUserPermissionFlasgWithList(userCreationParameter.UserPermissionFlags)
-            });
+            ParameterEditorObjectResolver.ValidateDictionnary(genericTypes[0], userEntity.Data);
 
             UserAccount userAccount = new UserAccount()
             {
-                ID = userID,
-                FullName = userCreationParameter.FullName,
-                Email = userCreationParameter.Email
+                ID = userEntity.ID,
+                FullName = userEntity.FullName,
+                Email = userEntity.Email
             };
+
+            if (isNew)
+            {
+                _userRepository.AddUser(connectionMethod, userEntity);
+                return userAccount;
+            }
+
+            _userRepository.SaveUser(connectionMethod, userEntity);
 
             return userAccount;
         }

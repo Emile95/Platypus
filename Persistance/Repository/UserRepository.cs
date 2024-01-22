@@ -5,24 +5,29 @@ namespace Persistance.Repository
 {
     public class UserRepository : MemberOfApplicationRepository
     {
-        public int SaveUser(string connectionMethodGuid, UserEntity entity)
+        public int AddUser(string connectionMethodGuid, UserEntity entity)
         {
             int lastID = Convert.ToInt32(File.ReadAllText(ApplicationPaths.LASTUSERIDFILEPATH));
             int newID = (lastID + 1);
             File.WriteAllText(ApplicationPaths.LASTUSERIDFILEPATH, newID.ToString());
             entity.ID = newID;
 
+            SaveUser(connectionMethodGuid, entity);
+
+            return entity.ID;
+        }
+
+        public void SaveUser(string connectionMethodGuid, UserEntity entity)
+        {
             string userDirectoryPath = ApplicationPaths.GetUserDirectoryPath(connectionMethodGuid, entity.ID);
 
-            if(Directory.Exists(userDirectoryPath) == false)
+            if (Directory.Exists(userDirectoryPath) == false)
                 Directory.CreateDirectory(userDirectoryPath);
 
             string userFilePath = Path.Combine(userDirectoryPath, ApplicationPaths.USERFILENAME);
 
             string json = JsonConvert.SerializeObject(entity);
             File.WriteAllText(userFilePath, json);
-
-            return newID;
         }
 
         public UserEntity GetUserByData(string userConnectionMethodGuid, Predicate<UserEntity> predicate)

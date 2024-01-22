@@ -5,6 +5,7 @@
         UserConnection,
         RunApplicationAction,
         AddUser,
+        UpdateUser,
         CancelRunningAction,
         GetRunningActions,
         GetActionInfos
