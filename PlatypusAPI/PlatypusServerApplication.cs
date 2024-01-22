@@ -77,7 +77,7 @@ namespace PlatypusAPI
 
             _socketHandler.SendToServer(Common.Utils.GetBytesFromObject(clientRequestData));
 
-            while (serverResponseWaiter.Received == false) ;
+            while (serverResponseWaiter.Received == false) Thread.Sleep(200);
 
             if (serverResponseWaiter.Exception != null)
                 throw serverResponseWaiter.Exception;

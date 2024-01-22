@@ -57,6 +57,7 @@ namespace Core.Sockethandler
                 case SocketDataType.UserConnection: ReceiveUserConnectionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.RunApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.AddUser: ReceiveAddUserClientRequest(receivedState.ClientKey, clientRequest); break;
+                case SocketDataType.UpdateUser: ReceiveUpdateUserClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.GetRunningActions: ReceiveGetRunningApplicationActionsClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.GetActionInfos: ReceiveGetApplicationActionInfosClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.CancelRunningAction: ReceiveCancelRunningApplicationActionRunClientRequest(receivedState.ClientKey, clientRequest); break;
@@ -112,6 +113,29 @@ namespace Core.Sockethandler
                             UserPermissionFlags = clientRequest.UserPermissionFlags
                         }
                     );   
+                }
+            );
+        }
+
+        private void ReceiveUpdateUserClientRequest(string clientKey, SocketData clientRequestData)
+        {
+            HandleClientRequest<UpdateUserClientRequest, UpdateUserServerResponse>(
+                clientKey, clientRequestData, SocketDataType.UpdateUser,
+                (userAccount, clientRequest, serverResponse) =>
+                {
+                    serverResponse.RequestKey = clientRequest.RequestKey;
+                    serverResponse.UserAccount = _serverInstance.UpdateUser(
+                        clientRequest.UserAccount,
+                        new UserUpdateParameter()
+                        {
+                            ID = clientRequest.UserID,
+                            ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
+                            Email = clientRequest.Email,
+                            Data = clientRequest.Data,
+                            FullName = clientRequest.FullName,
+                            UserPermissionFlags = clientRequest.UserPermissionFlags
+                        }
+                    );
                 }
             );
         }

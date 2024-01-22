@@ -40,7 +40,7 @@ namespace PlatypusAPI
             _isConnecting = true;
             socketHandler.SendToServer(Common.Utils.GetBytesFromObject(requestData));
 
-            while (_isConnecting);
+            while (_isConnecting) Thread.Sleep(200);
 
             if (_exception != null)
                 throw _exception;
