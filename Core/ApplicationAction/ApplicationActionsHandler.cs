@@ -104,7 +104,7 @@ namespace Core.ApplicationAction
 
         public void CancelRunningAction(string guid)
         {
-            if (_applicationActionRuns.ContainsKey(guid) == false) return;
+            if (_applicationActionRuns.ContainsKey(guid) == false) throw new Exception($"No action with guid '{guid}' is runiing");
 
             CancelRunningActionEventHandlerEnvironment eventEnv = new CancelRunningActionEventHandlerEnvironment()
             {
