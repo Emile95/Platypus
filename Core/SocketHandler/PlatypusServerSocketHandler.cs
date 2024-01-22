@@ -58,6 +58,7 @@ namespace Core.Sockethandler
                 case SocketDataType.RunApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.AddUser: ReceiveAddUserClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.UpdateUser: ReceiveUpdateUserClientRequest(receivedState.ClientKey, clientRequest); break;
+                case SocketDataType.RemoveUser: ReceiveRemoveUserClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.GetRunningActions: ReceiveGetRunningApplicationActionsClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.GetActionInfos: ReceiveGetApplicationActionInfosClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.CancelRunningAction: ReceiveCancelRunningApplicationActionRunClientRequest(receivedState.ClientKey, clientRequest); break;
@@ -134,6 +135,25 @@ namespace Core.Sockethandler
                             Data = clientRequest.Data,
                             FullName = clientRequest.FullName,
                             UserPermissionFlags = clientRequest.UserPermissionFlags
+                        }
+                    );
+                }
+            );
+        }
+
+        private void ReceiveRemoveUserClientRequest(string clientKey, SocketData clientRequestData)
+        {
+            HandleClientRequest<RemoveUserClientRequest, RemoveUserServerResponse>(
+                clientKey, clientRequestData, SocketDataType.RemoveUser,
+                (userAccount, clientRequest, serverResponse) =>
+                {
+                    serverResponse.RequestKey = clientRequest.RequestKey;
+                    _serverInstance.RemoveUser(
+                        clientRequest.UserAccount,
+                        new RemoveUserParameter()
+                        {
+                            ID = clientRequest.ID,
+                            ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
                         }
                     );
                 }

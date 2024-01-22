@@ -30,6 +30,16 @@ namespace Persistance.Repository
             File.WriteAllText(userFilePath, json);
         }
 
+        public void RemoveUser(string connectionMethodGuid, int userID)
+        {
+            string userDirectoryPath = ApplicationPaths.GetUserDirectoryPath(connectionMethodGuid, userID);
+
+            if (Directory.Exists(userDirectoryPath) == false) return;
+
+            Directory.Delete(userDirectoryPath, true);
+
+        }
+
         public UserEntity GetUserByData(string userConnectionMethodGuid, Predicate<UserEntity> predicate)
         {
             string[] userDirectories =  Directory.GetDirectories(ApplicationPaths.GetUsersByConnectionMethodDirectory(userConnectionMethodGuid));

@@ -65,6 +65,12 @@ namespace Core
             return _usersHandler.UpdateUser(parameter);
         }
 
+        public void RemoveUser(UserAccount userAccount, RemoveUserParameter parameter)
+        {
+            ValidateUserForPermission(userAccount, UserPermissionFlag.UserCRUD);
+            _usersHandler.RemoveUser(parameter);
+        }
+
         public void CancelRunningApplicationAction(UserAccount userAccount, string guid)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.CancelRunningAction);

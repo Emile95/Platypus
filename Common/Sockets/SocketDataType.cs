@@ -6,6 +6,7 @@
         RunApplicationAction,
         AddUser,
         UpdateUser,
+        RemoveUser,
         CancelRunningAction,
         GetRunningActions,
         GetActionInfos

@@ -65,6 +65,18 @@ namespace PlatypusAPI
             return userAccount;
         }
 
+        public void RemoveUser(RemoveUserParameter parameter)
+        {
+            RunClientRequest<RemoveUserServerResponse, RemoveUserServerResponseWaiter, RemoveUserClientRequest>(
+                 _removeUserServerResponseWaiters, SocketDataType.RemoveUser,
+                 (clientRequest) => {
+                     clientRequest.ID = parameter.ID;
+                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
+                 },
+                 (serverResponseWaiter) => {}
+            );
+        }
+
         public List<ApplicationActionRunInfo> GetRunningApplicationActions()
         {
             List<ApplicationActionRunInfo> result = new List<ApplicationActionRunInfo>();

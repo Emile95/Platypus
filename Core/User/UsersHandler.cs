@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
-using Persistance.Entity;
+﻿using Persistance.Entity;
 using Persistance.Repository;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.User;
 using PlatypusApplicationFramework.Confugration;
-using System.Data.Common;
 using System.Reflection;
-using System.Reflection.Metadata;
 
 namespace Core.User
 {
@@ -75,6 +72,12 @@ namespace Core.User
 
             return SaveUser(parameter.ConnectionMethodGuid, userEntity, false);
         }
+
+        public void RemoveUser(RemoveUserParameter parameter)
+        {
+            _userRepository.RemoveUser(parameter.ConnectionMethodGuid, parameter.ID);
+        }
+
 
         public UserAccount SaveUser(string connectionMethod, UserEntity userEntity, bool isNew)
         {

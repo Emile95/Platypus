@@ -38,6 +38,14 @@ namespace PlatypusAPI
             );
         }
 
+        private void RemoveUserServerResponseCallBack(byte[] bytes)
+        {
+            ServerResponseCallBack<RemoveUserServerResponse, RemoveUserServerResponseWaiter>(
+                _removeUserServerResponseWaiters, bytes,
+                (serverResponseWaiter, serverResponse) => { }
+            );
+        }
+
         private void GetRunningApplicationActionsServerResponseCallBack(byte[] bytes)
         {
             ServerResponseCallBack<GetRunningApplicationActionsServerResponse, GetRunningApplicationActionsServerResponseWaiter>(
@@ -79,6 +87,8 @@ namespace PlatypusAPI
         {
             public UserAccount UserAccount { get; set; }
         }
+
+        private class RemoveUserServerResponseWaiter : ServerResponseWaiter {}
 
         private class GetRunningApplicationActionsServerResponseWaiter : ServerResponseWaiter
         {
