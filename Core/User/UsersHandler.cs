@@ -11,14 +11,14 @@ namespace Core.User
 {
     public class UsersHandler
     {
-        private readonly Dictionary<string, UsersOfConnectionMethod> _userAccounts;
+        private readonly Dictionary<string, IUserConnectionMethod> _connectionMethods;
         private readonly UserRepository _userRepository;
 
         public UsersHandler(
             UserRepository userRepository
         )
         {
-            _userAccounts = new Dictionary<string, UsersOfConnectionMethod>();
+            _connectionMethods = new Dictionary<string, IUserConnectionMethod>();
             _userRepository = userRepository;
         }
 
@@ -30,27 +30,28 @@ namespace Core.User
 
         public void AddBuiltInConnectionMethod(IUserConnectionMethod credentialMethod, string guid)
         {
-            _userAccounts.Add(guid, new UsersOfConnectionMethod() { UserConnectionMethod = credentialMethod });
+            _connectionMethods.Add(guid, credentialMethod);
         }
 
-        public string AddConnectionMethod(IUserConnectionMethod credentialMethod, string applicationGuid)
+        public string AddConnectionMethod(IUserConnectionMethod connectionMethod, string applicationGuid)
         {
-            string newGuid = credentialMethod.GetName() + applicationGuid;
-            _userAccounts.Add(newGuid, new UsersOfConnectionMethod() { UserConnectionMethod = credentialMethod });
+            string newGuid = connectionMethod.GetName() + applicationGuid;
+            _connectionMethods.Add(newGuid, connectionMethod);
             return newGuid;
         }
 
         public void RemoveConnectionMethod(string connectionMethodGuid)
         {
-            _userAccounts.Remove(connectionMethodGuid);
+            if( _connectionMethods.ContainsKey(connectionMethodGuid))
+                _connectionMethods.Remove(connectionMethodGuid);
         }
 
         public UserAccount AddUser(UserCreationParameter userCreationParameter)
         {
-            if (_userAccounts.ContainsKey(userCreationParameter.ConnectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(userCreationParameter.ConnectionMethodGuid);
+            if (_connectionMethods.ContainsKey(userCreationParameter.ConnectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(userCreationParameter.ConnectionMethodGuid);
 
-            UsersOfConnectionMethod usersOfConnectionMethod = _userAccounts[userCreationParameter.ConnectionMethodGuid];
-            Type[] genericTypes = usersOfConnectionMethod.UserConnectionMethod.GetType().BaseType.GetGenericArguments();
+            IUserConnectionMethod connectionMethods = _connectionMethods[userCreationParameter.ConnectionMethodGuid];
+            Type[] genericTypes = connectionMethods.GetType().BaseType.GetGenericArguments();
             if (genericTypes.Length == 0) return null;
 
             ParameterEditorObjectResolver.ValidateDictionnary(genericTypes[0], userCreationParameter.Data);
@@ -69,18 +70,17 @@ namespace Core.User
                 FullName = userCreationParameter.FullName,
                 Email = userCreationParameter.Email
             };
-            usersOfConnectionMethod.Users.Add(userAccount);
 
             return userAccount;
         }
 
         public UserAccount Connect(Dictionary<string, object> credential, string connectionMethodGuid)
         {
-            if(_userAccounts.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
+            if(_connectionMethods.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
             string loginAttemtMessage = "";
             UserAccount userAccount = null;
-            List<UserEntity> usersOfConnectionMethod = _userRepository.GetUsersByConnectionMethod(connectionMethodGuid);
-            bool success = _userAccounts[connectionMethodGuid].UserConnectionMethod.Login(usersOfConnectionMethod, credential, ref loginAttemtMessage, ref userAccount);
+            List<UserEntity> users = _userRepository.GetUsersByConnectionMethod(connectionMethodGuid);
+            bool success = _connectionMethods[connectionMethodGuid].Login(users, credential, ref loginAttemtMessage, ref userAccount);
             if (success) return userAccount;
             throw new UserConnectionFailedException(loginAttemtMessage);
         }

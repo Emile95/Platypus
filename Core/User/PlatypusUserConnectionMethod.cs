@@ -19,7 +19,7 @@ namespace Core.User
         protected override bool LoginImplementation(UserConnectEnvironment<PlatypusUserCredential> env)
         {
             UserEntity foundUser = null;
-            foreach(UserEntity user in env.UsersOfConnectionMethod)
+            foreach(UserEntity user in env.Users)
             {
                 if(user.Data["UserName"].Equals(env.Credential.UserName) &&
                    user.Data["Password"].Equals(env.Credential.Password))
