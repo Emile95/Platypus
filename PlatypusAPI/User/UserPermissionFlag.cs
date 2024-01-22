@@ -1,14 +1,14 @@
 ﻿namespace PlatypusAPI.User
 {
+    [Flags]
     public enum UserPermissionFlag
     {
-        None,
-        Admin,
-        InstallAndUninstallApplication,
-        AddUser,
-        CancelRunningAction,
-        GetActionsInfo,
-        GetRunningActions,
-        RunAction
+        Admin = 0,
+        InstallAndUninstallApplication = 1,
+        AddUser = 2,
+        CancelRunningAction = 4,
+        GetActionsInfo = 8,
+        GetRunningActions = 16,
+        RunAction = 32,
     }
 }

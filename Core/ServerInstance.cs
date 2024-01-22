@@ -171,7 +171,7 @@ namespace Core
 
         private void ValidateUserForPermission(UserAccount userAccount, UserPermissionFlag userPermissionFlag)
         {
-            if (userAccount.UserPermissionFlags.HasFlag(UserPermissionFlag.Admin)) return;
+            if (userAccount.UserPermissionFlags == UserPermissionFlag.Admin) return;
 
             if (userAccount.UserPermissionFlags.HasFlag(userPermissionFlag) == false)
                 throw new UserPermissionException(userAccount);
