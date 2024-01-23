@@ -6,6 +6,7 @@ using PaltypusAPI.Sockets.ClientRequest;
 using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
+using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.Sockets.ClientRequest;
 using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
@@ -72,11 +73,11 @@ namespace Core.Sockethandler
 
         private void ReceiveUserConnectionClientRequest(string clientKey, SocketData clientRequestData)
         {
-            bool exceptionThrowed = HandleClientRequest<UserConnectionData, UserConnectionServerResponse>(
+            bool exceptionThrowed = HandleClientRequest<UserConnectionParameter, UserConnectionServerResponse>(
                 clientKey, clientRequestData, SocketDataType.UserConnection,
                 (userAccount, clientRequest, serverResponse) =>
                 {
-                    serverResponse.UserAccount = _serverInstance.UserConnect(clientRequest.Credential, clientRequest.ConnectionMethodGuid);
+                    serverResponse.UserAccount = _serverInstance.UserConnect(clientRequest);
                     _connectedUserOnSockets[clientKey] = serverResponse.UserAccount;
                 }
             );

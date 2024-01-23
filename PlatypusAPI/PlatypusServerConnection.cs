@@ -1,6 +1,7 @@
 ﻿using Common.Exceptions;
 using Common.Sockets;
 using PlatypusAPI.Exceptions;
+using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
 
@@ -8,7 +9,7 @@ namespace PlatypusAPI
 {
     public class PlatypusServerConnection
     {
-        private UserConnectionData _userConnectionData;
+        private UserConnectionParameter _userConnectionData;
 
         private UserAccount _connectedUser;
 
@@ -17,7 +18,7 @@ namespace PlatypusAPI
 
         public void SetUserConnectionData(string connectionMethodGuid, Dictionary<string, object> credential)
         {
-            _userConnectionData = new UserConnectionData()
+            _userConnectionData = new UserConnectionParameter()
             {
                 ConnectionMethodGuid = connectionMethodGuid,
                 Credential = credential

@@ -1,11 +1,10 @@
-﻿using Core.RestAPI.Model;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using PlatypusAPI.ApplicationAction.Run;
+using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.User;
 using Utils.GuidGeneratorHelper;
 
@@ -41,9 +40,9 @@ namespace Core.RestAPI
                 app.UseHsts();
             }
 
-            app.MapPost(@"/user/connect", CreateRequestDelegate<UserConnection>(false, (headers, userAccount, body) =>
+            app.MapPost(@"/user/connect", CreateRequestDelegate<UserConnectionParameter>(false, (headers, userAccount, body) =>
             {
-                UserAccount connectedUserAccount = _serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
+                UserAccount connectedUserAccount = _serverInstance.UserConnect(body);
 
                 string newToken = GuidGenerator.GenerateFromEnumerable(_tokens.Keys);
 
@@ -72,19 +71,19 @@ namespace Core.RestAPI
             }));
 
 
-            app.MapPost(@"/action/cancel", CreateRequestDelegate<CancelRunningActionBody>(true, (headers, userAccount, body) =>
+            app.MapPost(@"/action/cancel", CreateRequestDelegate<CancelRunningActionParameter>(true, (headers, userAccount, body) =>
             {
                 _serverInstance.CancelRunningApplicationAction(userAccount, body.Guid);
                 return "run cancelled";
             }));
 
-            app.MapPost(@"/application/install", CreateRequestDelegate<InstallApplicationBody>(true, (headers, userAccount, body) =>
+            app.MapPost(@"/application/install", CreateRequestDelegate<InstallApplicationParameter>(true, (headers, userAccount, body) =>
             {
                 _serverInstance.InstallApplication(userAccount, body.DllFilePath);
                 return "application installed";
             }));
 
-            app.MapPost(@"/application/uninstall", CreateRequestDelegate<UninstallApplicationBody>(true, (headers, userAccount, body) =>
+            app.MapPost(@"/application/uninstall", CreateRequestDelegate<UninstallApplicationParameter>(true, (headers, userAccount, body) =>
             {
                 _serverInstance.UninstalApplication(userAccount, body.ApplicationGuid);
                 return "application uninstalled";

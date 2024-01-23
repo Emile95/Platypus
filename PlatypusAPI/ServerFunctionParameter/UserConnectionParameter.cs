@@ -1,6 +1,6 @@
-﻿namespace PlatypusAPI.User
+﻿namespace PlatypusAPI.ServerFunctionParameter
 {
-    public class UserConnectionData
+    public class UserConnectionParameter
     {
         public string ConnectionMethodGuid { get; set; }
         public Dictionary<string, object> Credential { get; set; }

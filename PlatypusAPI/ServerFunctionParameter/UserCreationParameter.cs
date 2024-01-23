@@ -1,4 +1,6 @@
-﻿namespace PlatypusAPI.User
+﻿using PlatypusAPI.User;
+
+namespace PlatypusAPI.ServerFunctionParameter
 {
     public class UserCreationParameter
     {

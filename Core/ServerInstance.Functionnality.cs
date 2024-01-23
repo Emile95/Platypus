@@ -4,14 +4,15 @@ using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.User;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Core.Event;
+using PlatypusAPI.ServerFunctionParameter;
 
 namespace Core
 {
     public partial class ServerInstance
     {
-        public UserAccount UserConnect(Dictionary<string, object> credential, string connectionMethodGuid)
+        public UserAccount UserConnect(UserConnectionParameter parameter)
         {
-            return _usersHandler.Connect(credential, connectionMethodGuid);
+            return _usersHandler.Connect(parameter);
         }
 
         public void InstallApplication(UserAccount userAccount, string applicationPath)

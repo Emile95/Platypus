@@ -1,4 +1,4 @@
-﻿namespace PlatypusAPI.User
+﻿namespace PlatypusAPI.ServerFunctionParameter
 {
     public class RemoveUserParameter
     {
