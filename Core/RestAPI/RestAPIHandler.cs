@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using PlatypusAPI.ApplicationAction.Run;
@@ -40,7 +41,7 @@ namespace Core.RestAPI
                 app.UseHsts();
             }
 
-            MapPost<UserConnection>(app, @"/user/connect", false, (headers, userAccount, body) =>
+            app.MapPost(@"/user/connect", CreateRequestDelegate<UserConnection>(false, (headers, userAccount, body) =>
             {
                 UserAccount connectedUserAccount = _serverInstance.UserConnect(body.Credential, body.ConnectionMethodGuid);
 
@@ -63,58 +64,59 @@ namespace Core.RestAPI
                 userAccountToken.Timer.Start();
 
                 return "connection successfull";
-            });
+            }));
 
-            MapPost<ApplicationActionRunParameter>(app, @"/action", true, (headers, userAccount, body) =>
+            app.MapPost(@"/action", CreateRequestDelegate<ApplicationActionRunParameter>(false, (headers, userAccount, body) =>
             {
                 return _serverInstance.RunAction(userAccount, body);
-            });
+            }));
 
-            MapPost<CancelRunningActionBody>(app, @"/action/cancel", true, (headers, userAccount, body) =>
+
+            app.MapPost(@"/action/cancel", CreateRequestDelegate<CancelRunningActionBody>(true, (headers, userAccount, body) =>
             {
                 _serverInstance.CancelRunningApplicationAction(userAccount, body.Guid);
                 return "run cancelled";
-            });
+            }));
 
-            MapPost<InstallApplicationBody>(app, @"/application/install", true, (headers, userAccount, body) =>
+            app.MapPost(@"/application/install", CreateRequestDelegate<InstallApplicationBody>(true, (headers, userAccount, body) =>
             {
                 _serverInstance.InstallApplication(userAccount, body.DllFilePath);
                 return "application installed";
-            });
+            }));
 
-            MapPost<UninstallApplicationBody>(app, @"/application/uninstall", true, (headers, userAccount, body) =>
+            app.MapPost(@"/application/uninstall", CreateRequestDelegate<UninstallApplicationBody>(true, (headers, userAccount, body) =>
             {
                 _serverInstance.UninstalApplication(userAccount, body.ApplicationGuid);
                 return "application uninstalled";
-            });
+            }));
 
-            MapPost<UserCreationParameter>(app, @"/user", true, (headers, userAccount, body) =>
+            app.MapPost(@"/user", CreateRequestDelegate<UserCreationParameter>(true, (headers, userAccount, body) =>
             {
                 _serverInstance.AddUser(userAccount, body);
                 return "user added";
-            });
+            }));
 
-            MapPut<UserUpdateParameter>(app, @"/user", true, (headers, userAccount, body) =>
+            app.MapPut(@"/user", CreateRequestDelegate<UserUpdateParameter>(true, (headers, userAccount, body) =>
             {
                 _serverInstance.UpdateUser(userAccount, body);
                 return "user updated";
-            });
+            }));
 
-            MapDelete<RemoveUserParameter>(app, @"/user", true, (headers, userAccount, body) =>
+            app.MapDelete(@"/user", CreateRequestDelegate<RemoveUserParameter>(true, (headers, userAccount, body) =>
             {
                 _serverInstance.RemoveUser(userAccount, body);
                 return "user removed";
-            });
+            }));
 
-            MapGet(app, @"/action/runnings", true, (userAccount) =>
+            app.MapGet(@"/action/runnings", CreateRequestDelegate<object>(true, (headers, userAccount, body) =>
             {
                 return _serverInstance.GetRunningApplicationActions(userAccount);
-            });
+            }));
 
-            MapGet(app, @"/action", true, (userAccount) =>
+            app.MapGet(@"/action", CreateRequestDelegate<object>(true, (headers, userAccount, body) =>
             {
                 return _serverInstance.GetApplicationActionInfos(userAccount);
-            });
+            }));
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -128,10 +130,10 @@ namespace Core.RestAPI
             app.Run($"https://localhost:{httpPort}");
         }
 
-        private void MapPost<BodyType>(WebApplication app, string pattern, bool needUser, Func<IHeaderDictionary, UserAccount, BodyType, object> action)
+        private RequestDelegate CreateRequestDelegate<BodyType>(bool needUser, Func<IHeaderDictionary, UserAccount, BodyType, object> action)
             where BodyType : class
         {
-            app.MapPost(pattern, (requestDelegate) =>
+            return (requestDelegate) =>
             {
                 return Task.Run(async () =>
                 {
@@ -149,9 +151,13 @@ namespace Core.RestAPI
                             userAccount = _tokens[userToken].UserAccount;
                         }
 
-                        StreamReader reader = new StreamReader(requestDelegate.Request.Body);
-                        string json = await reader.ReadToEndAsync();
-                        BodyType body = JsonConvert.DeserializeObject<BodyType>(json);
+                        BodyType body = null;
+                        if (requestDelegate.Request.Body != null)
+                        {
+                            StreamReader reader = new StreamReader(requestDelegate.Request.Body);
+                            string json = await reader.ReadToEndAsync();
+                            body = JsonConvert.DeserializeObject<BodyType>(json);
+                        }
 
                         responseObject = action(requestDelegate.Response.Headers, userAccount, body);
 
@@ -163,117 +169,9 @@ namespace Core.RestAPI
 
                     await requestDelegate.Response.WriteAsJsonAsync(responseObject);
                 });
-            });
+            };
         }
 
-        private void MapPut<BodyType>(WebApplication app, string pattern, bool needUser, Func<IHeaderDictionary, UserAccount, BodyType, object> action)
-            where BodyType : class
-        {
-            app.MapPut(pattern, (requestDelegate) =>
-            {
-                return Task.Run(async () =>
-                {
-                    object responseObject = null;
-                    try
-                    {
-                        UserAccount userAccount = null;
-                        if (needUser)
-                        {
-                            string userToken = (string)requestDelegate.Request.Headers[_userTokenRequestHeader];
-
-                            if (userToken == null) throw new Exception($"need '{_userTokenRequestHeader}' in the request header");
-                            if (_tokens.ContainsKey(userToken) == false) throw new Exception($"invalid '{_userTokenRequestHeader}' in the request header");
-
-                            userAccount = _tokens[userToken].UserAccount;
-                        }
-
-                        StreamReader reader = new StreamReader(requestDelegate.Request.Body);
-                        string json = await reader.ReadToEndAsync();
-                        BodyType body = JsonConvert.DeserializeObject<BodyType>(json);
-
-                        responseObject = action(requestDelegate.Response.Headers, userAccount, body);
-
-                    }
-                    catch (Exception ex)
-                    {
-                        responseObject = ex.Message;
-                    }
-
-                    await requestDelegate.Response.WriteAsJsonAsync(responseObject);
-                });
-            });
-        }
-
-        private void MapDelete<BodyType>(WebApplication app, string pattern, bool needUser, Func<IHeaderDictionary, UserAccount, BodyType, object> action)
-            where BodyType : class
-        {
-            app.MapDelete(pattern, (requestDelegate) =>
-            {
-                return Task.Run(async () =>
-                {
-                    object responseObject = null;
-                    try
-                    {
-                        UserAccount userAccount = null;
-                        if (needUser)
-                        {
-                            string userToken = (string)requestDelegate.Request.Headers[_userTokenRequestHeader];
-
-                            if (userToken == null) throw new Exception($"need '{_userTokenRequestHeader}' in the request header");
-                            if (_tokens.ContainsKey(userToken) == false) throw new Exception($"invalid '{_userTokenRequestHeader}' in the request header");
-
-                            userAccount = _tokens[userToken].UserAccount;
-                        }
-
-                        StreamReader reader = new StreamReader(requestDelegate.Request.Body);
-                        string json = await reader.ReadToEndAsync();
-                        BodyType body = JsonConvert.DeserializeObject<BodyType>(json);
-
-                        responseObject = action(requestDelegate.Response.Headers, userAccount, body);
-
-                    }
-                    catch (Exception ex)
-                    {
-                        responseObject = ex.Message;
-                    }
-
-                    await requestDelegate.Response.WriteAsJsonAsync(responseObject);
-                });
-            });
-        }
-        private void MapGet(WebApplication app, string pattern, bool needUser, Func<UserAccount, object> action)
-        {
-            app.MapGet(pattern, (requestDelegate) =>
-            {
-                return Task.Run(async () =>
-                {
-                    object responseObject = null;
-                    try
-                    {
-                        UserAccount userAccount = null;
-
-                        if (needUser)
-                        {
-                            string userToken = (string)requestDelegate.Request.Headers[_userTokenRequestHeader];
-
-                            if (userToken == null) throw new Exception($"need '{_userTokenRequestHeader}' in the request header");
-                            if (_tokens.ContainsKey(userToken) == false) throw new Exception($"invalid '{_userTokenRequestHeader}' in the request header");
-
-                            userAccount = _tokens[userToken].UserAccount;
-                        }
-
-                        responseObject = action(userAccount);
-
-                    }
-                    catch (Exception ex)
-                    {
-                        responseObject = ex.Message;
-                    }
-
-                    await requestDelegate.Response.WriteAsJsonAsync(responseObject);
-                });
-            });
-        }
         private void CheckUserTokensOnTimedEvent(Object source, System.Timers.ElapsedEventArgs e, string token)
         {
             _tokens.Remove(token);
