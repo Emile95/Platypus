@@ -147,7 +147,10 @@ namespace Core.RestAPI
                             if (userToken == null) throw new Exception($"need '{_userTokenRequestHeader}' in the request header");
                             if (_tokens.ContainsKey(userToken) == false) throw new Exception($"invalid '{_userTokenRequestHeader}' in the request header");
 
-                            userAccount = _tokens[userToken].UserAccount;
+                            UserAccountToken userAccountToken = _tokens[userToken];
+                            userAccount = userAccountToken.UserAccount;
+                            userAccountToken.Timer.Stop();
+                            userAccountToken.Timer.Start();
                         }
 
                         BodyType body = null;
