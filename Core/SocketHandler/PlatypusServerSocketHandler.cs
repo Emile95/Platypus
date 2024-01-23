@@ -200,7 +200,13 @@ namespace Core.Sockethandler
                 (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
-                    _serverInstance.CancelRunningApplicationAction(clientRequest.UserAccount, clientRequest.ApplicationRunGuid);
+                    _serverInstance.CancelRunningApplicationAction(
+                        clientRequest.UserAccount, 
+                        new CancelRunningActionParameter()
+                        {
+                            Guid = clientRequest.ApplicationRunGuid
+                        }
+                    );
                 }
             );
         }

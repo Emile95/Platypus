@@ -73,19 +73,19 @@ namespace Core.RestAPI
 
             app.MapPost(@"/action/cancel", CreateRequestDelegate<CancelRunningActionParameter>(true, (headers, userAccount, body) =>
             {
-                _serverInstance.CancelRunningApplicationAction(userAccount, body.Guid);
+                _serverInstance.CancelRunningApplicationAction(userAccount, body);
                 return "run cancelled";
             }));
 
             app.MapPost(@"/application/install", CreateRequestDelegate<InstallApplicationParameter>(true, (headers, userAccount, body) =>
             {
-                _serverInstance.InstallApplication(userAccount, body.DllFilePath);
+                _serverInstance.InstallApplication(userAccount, body);
                 return "application installed";
             }));
 
             app.MapPost(@"/application/uninstall", CreateRequestDelegate<UninstallApplicationParameter>(true, (headers, userAccount, body) =>
             {
-                _serverInstance.UninstalApplication(userAccount, body.ApplicationGuid);
+                _serverInstance.UninstalApplication(userAccount, body);
                 return "application uninstalled";
             }));
 

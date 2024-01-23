@@ -7,6 +7,8 @@ using Persistance;
 using Core.Exceptions;
 using Core.Event;
 using PlatypusApplicationFramework.Core.Event;
+using PlatypusAPI.ServerFunctionParameter;
+using System.Collections.Generic;
 
 namespace Core.Application
 {
@@ -53,7 +55,7 @@ namespace Core.Application
             _applications.Add(applicationGuid, application);
         }
 
-        public void InstallApplication(string applicationPath)
+        public void InstallApplication(InstallApplicationParameter parameter)
         {
             string newGuid = GuidGenerator.GenerateFromEnumerable(_applications.Keys);
 
@@ -64,28 +66,28 @@ namespace Core.Application
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeInstallApplication, eventEnv, (exception) => throw exception);
 
-            PlatypusApplicationBase application = _applicationInstaller.InstallApplication(newGuid, applicationPath);
+            PlatypusApplicationBase application = _applicationInstaller.InstallApplication(newGuid, parameter.DllFilePath);
             LoadApplication(application, newGuid);
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterInstallApplication, eventEnv, (exception) => throw exception);
         }
 
-        public UninstallApplicationDetails UninstallApplication(string applicationGuid)
+        public UninstallApplicationDetails UninstallApplication(UninstallApplicationParameter parameter)
         {
-            if (_applications.ContainsKey(applicationGuid) == false)
-                throw new ApplicationInexistantException(applicationGuid);
+            if (_applications.ContainsKey(parameter.ApplicationGuid) == false)
+                throw new ApplicationInexistantException(parameter.ApplicationGuid);
 
             UninstallApplicationEventHandlerEnvironment eventEnv = new UninstallApplicationEventHandlerEnvironment()
             {
-                ApplicationGuid = applicationGuid
+                ApplicationGuid = parameter.ApplicationGuid
             };
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeUninstallApplication, eventEnv, (exception) => throw exception);
 
-            PlatypusApplicationBase application = _applications[applicationGuid];
-            _applications.Remove(applicationGuid);
+            PlatypusApplicationBase application = _applications[parameter.ApplicationGuid];
+            _applications.Remove(parameter.ApplicationGuid);
 
-            UninstallApplicationDetails details = _applicationInstaller.UninstallApplication(application, applicationGuid);
+            UninstallApplicationDetails details = _applicationInstaller.UninstallApplication(application, parameter.ApplicationGuid);
 
             details.EventEnv = eventEnv;
 

@@ -11,6 +11,9 @@ using PlatypusApplicationFramework.Core.Event;
 using Persistance.Entity;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
+using PlatypusAPI.ServerFunctionParameter;
+using System.Collections.Generic;
+using System.Reflection.Metadata;
 
 namespace Core.ApplicationAction
 {
@@ -46,7 +49,7 @@ namespace Core.ApplicationAction
             foreach(ApplicationActionRun applicationActionRun in _applicationActionRuns.Values)
             {
                 if (applicationActionRun.ActionGuid == actionGuid)
-                    CancelRunningAction(applicationActionRun.Guid);
+                    CancelRunningActionByGuid(applicationActionRun.Guid);
             }
             _applicationActions.Remove(actionGuid);
         }
@@ -102,7 +105,12 @@ namespace Core.ApplicationAction
             return applicationActionRun.Result;
         }
 
-        public void CancelRunningAction(string guid)
+        public void CancelRunningAction(CancelRunningActionParameter parameter)
+        {
+            CancelRunningActionByGuid(parameter.Guid);
+        }
+
+        private void CancelRunningActionByGuid(string guid)
         {
             if (_applicationActionRuns.ContainsKey(guid) == false) throw new Exception($"No action with guid '{guid}' is runiing");
 

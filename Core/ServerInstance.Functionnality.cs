@@ -15,18 +15,18 @@ namespace Core
             return _usersHandler.Connect(parameter);
         }
 
-        public void InstallApplication(UserAccount userAccount, string applicationPath)
+        public void InstallApplication(UserAccount userAccount, InstallApplicationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
 
-            _applicationsHandler.InstallApplication(applicationPath);
+            _applicationsHandler.InstallApplication(parameter);
         }
 
-        public void UninstalApplication(UserAccount userAccount, string applicationGuid)
+        public void UninstalApplication(UserAccount userAccount, UninstallApplicationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
 
-            UninstallApplicationDetails details = _applicationsHandler.UninstallApplication(applicationGuid);
+            UninstallApplicationDetails details = _applicationsHandler.UninstallApplication(parameter);
             foreach (string actionGuid in details.ActionGuids)
                 _applicationActionsHandler.RemoveAction(actionGuid);
             foreach (string userConnectionMethodGuid in details.UserConnectionMethodGuids)
@@ -72,10 +72,10 @@ namespace Core
             _usersHandler.RemoveUser(parameter);
         }
 
-        public void CancelRunningApplicationAction(UserAccount userAccount, string guid)
+        public void CancelRunningApplicationAction(UserAccount userAccount, CancelRunningActionParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.CancelRunningAction);
-            _applicationActionsHandler.CancelRunningAction(guid);
+            _applicationActionsHandler.CancelRunningAction(parameter);
         }
 
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions(UserAccount userAccount)
