@@ -37,6 +37,34 @@ namespace Persistance.Repository
             SaveActionRunByBasePath(actionRunsDirectoryPath, runNumber);
         }
 
+        public void SaveRunningAction(RunningApplicationActionEntity entity)
+        {
+            string runningActionFilePath = ApplicationPaths.GetRunningActionFilePath(entity.Guid);
+            File.WriteAllText(runningActionFilePath, JsonConvert.SerializeObject(entity, Formatting.Indented));
+        }
+
+        public void RemoveRunningAction(string guid)
+        {
+            string runningActionFilePath = ApplicationPaths.GetRunningActionFilePath(guid);
+            File.Delete(runningActionFilePath);
+        }
+
+        public List<RunningApplicationActionEntity> LoadRunningActions()
+        {
+            List<RunningApplicationActionEntity> list = new List<RunningApplicationActionEntity>();
+
+            string[] files = Directory.GetFiles(ApplicationPaths.RUNNINGACTIONSDIRECTORYPATH);
+
+            foreach(string file in files)
+            {
+                string json = File.ReadAllText(file);
+                RunningApplicationActionEntity entity = JsonConvert.DeserializeObject<RunningApplicationActionEntity>(json);
+                list.Add(entity);
+            }
+
+            return list;
+        }
+
         public void SaveActionRunByBasePath(string basePath, int runNumber)
         {
             string actionRunDirectoryPath = Path.Combine(basePath, runNumber.ToString());

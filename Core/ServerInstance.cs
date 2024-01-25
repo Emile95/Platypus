@@ -97,6 +97,11 @@ namespace Core
             _restAPIHandler.Initialize(args, _config.HttpPort, _config.RestAPIUserTokenTimeout);
         }
 
+        public void VerifyPreviousState()
+        {
+            _applicationActionsHandler.VerifyRunningActions(_applicationRepository);
+        }
+
         private void ValidateUserForPermission(UserAccount userAccount, UserPermissionFlag userPermissionFlag)
         {
             if (userAccount.UserPermissionFlags == UserPermissionFlag.Admin) return;

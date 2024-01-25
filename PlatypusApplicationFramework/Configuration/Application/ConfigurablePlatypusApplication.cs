@@ -4,7 +4,6 @@ using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using PlatypusApplicationFramework.Confugration;
 using Logging;
-using Common.Logger.FileLogger;
 using PlatypusApplicationFramework.Core.Application.Logger;
 
 namespace PlatypusApplicationFramework.Configuration.Application
