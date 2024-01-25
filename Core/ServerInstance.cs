@@ -76,30 +76,15 @@ namespace Core
             _socketsHandler = new PlatypusSocketsHandler(this);
         }
 
-        public void LoadConfiguration()
+        public void Start(string[] args)
         {
             string json = File.ReadAllText(ApplicationPaths.CONFIGFILEPATH);
             _config = JsonConvert.DeserializeObject<ServerConfig>(json);
-        }
 
-        public void LoadApplications()
-        {
             _applicationsHandler.LoadApplications();
-        }
-
-        public void InitializeServerSocketHandlers()
-        {
             _socketsHandler.Initialize(_config);
-        }
-
-        public void InitializeRestAPIHandler(string[] args)
-        {
+            _applicationActionsHandler.ReRunStopedApplicationActions(_applicationRepository);
             _restAPIHandler.Initialize(args, _config.HttpPort, _config.RestAPIUserTokenTimeout);
-        }
-
-        public void VerifyPreviousState()
-        {
-            _applicationActionsHandler.VerifyRunningActions(_applicationRepository);
         }
 
         private void ValidateUserForPermission(UserAccount userAccount, UserPermissionFlag userPermissionFlag)

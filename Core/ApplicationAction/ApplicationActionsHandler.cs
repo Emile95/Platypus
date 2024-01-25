@@ -57,7 +57,7 @@ namespace Core.ApplicationAction
             return _applicationActions.ContainsKey(actionGuid);
         }
 
-        public void VerifyRunningActions(ApplicationRepository applicationRepository)
+        public void ReRunStopedApplicationActions(ApplicationRepository applicationRepository)
         {
             List<RunningApplicationActionEntity> runningActions = _applicationActionRepository.LoadRunningActions();
             foreach(RunningApplicationActionEntity runningAction in runningActions)
