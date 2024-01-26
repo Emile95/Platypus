@@ -3,7 +3,7 @@ using PaltypusAPI.Sockets.ClientRequest;
 using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
-using PlatypusUtils.GuidGeneratorHelper;
+using PlatypusUtils;
 
 namespace PlatypusAPI
 {
@@ -56,7 +56,7 @@ namespace PlatypusAPI
             where ServerResponseWaiterType : ServerResponseWaiter, new()
             where ClientRequestType : ClientRequestBase, new()
         {
-            string guid = GuidGenerator.GenerateFromEnumerable(serverResponseWaiters.Keys);
+            string guid = Utils.GenerateGuidFromEnumerable(serverResponseWaiters.Keys);
 
             ServerResponseWaiterType serverResponseWaiter = new ServerResponseWaiterType();
 
@@ -74,10 +74,10 @@ namespace PlatypusAPI
             SocketData clientRequestData = new SocketData()
             {
                 SocketDataType = socketDataType,
-                Data = PlatypusNetwork.Utils.GetBytesFromObject(clientRequest)
+                Data = Utils.GetBytesFromObject(clientRequest)
             };
 
-            _socketHandler.SendToServer(PlatypusNetwork.Utils.GetBytesFromObject(clientRequestData));
+            _socketHandler.SendToServer(Utils.GetBytesFromObject(clientRequestData));
 
             while (serverResponseWaiter.Received == false) Thread.Sleep(200);
 
@@ -94,7 +94,7 @@ namespace PlatypusAPI
             where ServerResponseType : ServerResponseBase
             where ServerResponseWaiterType : ServerResponseWaiter
         {
-            ServerResponseType serverResponse = PlatypusNetwork.Utils.GetObjectFromBytes<ServerResponseType>(bytes);
+            ServerResponseType serverResponse = Utils.GetObjectFromBytes<ServerResponseType>(bytes);
             if (serverResponseWaiters.ContainsKey(serverResponse.RequestKey) == false) return;
             
             ServerResponseWaiterType serverResponseWaiter = serverResponseWaiters[serverResponse.RequestKey];

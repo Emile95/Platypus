@@ -1,12 +1,13 @@
-﻿using PlatypusAPI.User;
-
+﻿using PlatypusAPI.Ressources;
+using PlatypusAPI.User;
+using PlatypusUtils;
 namespace PlatypusAPI.Exceptions
 {
     public class UserPermissionException : FactorisableException
     {
         public UserAccount UserAccount { get; set; }
         public UserPermissionException(UserAccount userAccount)
-            : base(FactorisableExceptionType.UserNotPermitted, PlatypusNetwork.Utils.GetString("UserNotPermitted"))
+            : base(FactorisableExceptionType.UserNotPermitted, Utils.GetString(Strings.ResourceManager, "UserNotPermitted"))
         {
             UserAccount = userAccount;
         }

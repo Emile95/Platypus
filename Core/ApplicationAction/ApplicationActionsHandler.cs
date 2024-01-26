@@ -5,7 +5,6 @@ using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
-using PlatypusUtils.GuidGeneratorHelper;
 using Core.Event;
 using PlatypusApplicationFramework.Core.Event;
 using Persistance.Entity;
@@ -13,6 +12,8 @@ using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ServerFunctionParameter;
 using PlatypusApplicationFramework.Core.ApplicationAction.Logger;
+using PlatypusUtils;
+using Core.Ressource;
 
 namespace Core.ApplicationAction
 {
@@ -109,7 +110,7 @@ namespace Core.ApplicationAction
             if (runActionParameter.Async)
             {
                 
-                string message = PlatypusNetwork.Utils.GetString("NewApplicationActionStarted");
+                string message = Utils.GetString(Strings.ResourceManager,"NewApplicationActionStarted");
                 return new ApplicationActionRunResult()
                 {
                     Message = message,
@@ -180,7 +181,7 @@ namespace Core.ApplicationAction
 
             if(savedRunningAction == null)
             {
-                applicationActionRunGUID = GuidGenerator.GenerateFromEnumerable(_applicationActionRuns.Keys);
+                applicationActionRunGUID = Utils.GenerateGuidFromEnumerable(_applicationActionRuns.Keys);
                 runNumber = CreateNewActionRunNumber(runActionParameter.Guid);
 
                 _applicationActionRepository.SaveRunningAction(new RunningApplicationActionEntity()

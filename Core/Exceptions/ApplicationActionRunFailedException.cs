@@ -1,11 +1,14 @@
-﻿namespace Core.Exceptions
+﻿using Core.Ressource;
+using PlatypusUtils;
+
+namespace Core.Exceptions
 {
     public class ApplicationActionRunFailedException : Exception
     {
         public string FailedMessage {get; set;}
 
         public ApplicationActionRunFailedException(string failedMessage)
-            : base(PlatypusNetwork.Utils.GetString("ApplicationActionFailed"))
+            : base(Utils.GetString(Strings.ResourceManager, "ApplicationActionFailed"))
         {
             FailedMessage = failedMessage;
         }

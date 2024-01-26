@@ -6,6 +6,8 @@ using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using PlatypusAPI.ApplicationAction;
 using PlatypusApplicationFramework.Confugration;
+using PlatypusUtils;
+using Core.Ressource;
 
 namespace Core.ApplicationAction
 {
@@ -81,7 +83,7 @@ namespace Core.ApplicationAction
 
                 object objectResult = methodInfo.Invoke(application, new object[] { env });
 
-                string message = PlatypusNetwork.Utils.GetString("ApplicationActionRunSuccess");
+                string message = Utils.GetString(Strings.ResourceManager, "ApplicationActionRunSuccess");
 
                 return new ApplicationActionRunResult()
                 {

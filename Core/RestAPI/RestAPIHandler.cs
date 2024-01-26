@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.User;
-using PlatypusUtils.GuidGeneratorHelper;
+using PlatypusUtils;
 
 namespace Core.RestAPI
 {
@@ -44,7 +44,7 @@ namespace Core.RestAPI
             {
                 UserAccount connectedUserAccount = _serverInstance.UserConnect(body);
 
-                string newToken = GuidGenerator.GenerateFromEnumerable(_tokens.Keys);
+                string newToken = Utils.GenerateGuidFromEnumerable(_tokens.Keys);
 
                 UserAccountToken userAccountToken = new UserAccountToken()
                 {

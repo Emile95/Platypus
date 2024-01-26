@@ -1,4 +1,4 @@
-﻿using PlatypusNetwork.Ressource;
+﻿using Core.Ressource;
 using Persistance.Entity;
 using PlatypusApplicationFramework.Configuration.User;
 

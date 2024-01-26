@@ -1,9 +1,12 @@
-﻿namespace Core.Exceptions
+﻿using Core.Ressource;
+using PlatypusUtils;
+
+namespace Core.Exceptions
 {
     public class InvalidPlatypusApplicationPackageException : Exception
     {
         public InvalidPlatypusApplicationPackageException(string packageFileName, string errorMessage)
-            : base(PlatypusNetwork.Utils.GetString("ErrorWithPlatypusApplicationPackage", packageFileName, errorMessage))
+            : base(Utils.GetString(Strings.ResourceManager, "ErrorWithPlatypusApplicationPackage", packageFileName, errorMessage))
         {}
     }
 }

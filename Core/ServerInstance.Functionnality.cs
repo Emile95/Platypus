@@ -5,6 +5,8 @@ using PlatypusAPI.User;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Core.Event;
 using PlatypusAPI.ServerFunctionParameter;
+using PlatypusUtils;
+using Core.Ressource;
 
 namespace Core
 {
@@ -41,7 +43,7 @@ namespace Core
 
             if (_applicationActionsHandler.HasActionWithGuid(runActionParameter.Guid) == false)
             {
-                string message = PlatypusNetwork.Utils.GetString("ApplicationActionNotFound", runActionParameter.Guid);
+                string message = Utils.GetString(Strings.ResourceManager, "ApplicationActionNotFound", runActionParameter.Guid);
                 return new ApplicationActionRunResult()
                 {
                     Message = message,

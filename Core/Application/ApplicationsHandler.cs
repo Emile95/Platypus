@@ -2,13 +2,11 @@
 using Persistance.Entity;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusUtils;
-using PlatypusUtils.GuidGeneratorHelper;
 using Persistance;
 using Core.Exceptions;
 using Core.Event;
 using PlatypusApplicationFramework.Core.Event;
 using PlatypusAPI.ServerFunctionParameter;
-using System.Collections.Generic;
 
 namespace Core.Application
 {
@@ -57,7 +55,7 @@ namespace Core.Application
 
         public void InstallApplication(InstallApplicationParameter parameter)
         {
-            string newGuid = GuidGenerator.GenerateFromEnumerable(_applications.Keys);
+            string newGuid = Utils.GenerateGuidFromEnumerable(_applications.Keys);
 
             InstallApplicationEventHandlerEnvironment eventEnv = new InstallApplicationEventHandlerEnvironment()
             {

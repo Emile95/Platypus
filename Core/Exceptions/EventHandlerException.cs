@@ -1,4 +1,6 @@
-﻿using PlatypusApplicationFramework.Core.Event;
+﻿using Core.Ressource;
+using PlatypusApplicationFramework.Core.Event;
+using PlatypusUtils;
 
 namespace Core.Exceptions
 {
@@ -7,7 +9,7 @@ namespace Core.Exceptions
         public string EventHandlerName { get; private set; }
         public EventHandlerType EventHandlerType { get; private set; }
         public EventHandlerException(EventHandlerType eventHandlerType, string eventHandlerName, string message)
-            : base(PlatypusNetwork.Utils.GetString("ErrorDuringEventHandler", eventHandlerName, message))
+            : base(Utils.GetString(Strings.ResourceManager, "ErrorDuringEventHandler", eventHandlerName, message))
         {
             EventHandlerType = eventHandlerType;
             EventHandlerName = eventHandlerName;

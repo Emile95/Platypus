@@ -10,7 +10,7 @@ using PlatypusAPI.Sockets;
 using PlatypusAPI.Sockets.ClientRequest;
 using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
-using PlatypusUtils.GuidGeneratorHelper;
+using PlatypusUtils;
 
 namespace Core.Sockethandler
 {
@@ -33,7 +33,7 @@ namespace Core.Sockethandler
 
         protected override string GenerateClientKey(List<string> currentKeys)
         {
-            return GuidGenerator.GenerateFromEnumerable(currentKeys);
+            return Utils.GenerateGuidFromEnumerable(currentKeys);
         }
 
         public override void OnAccept(ClientReceivedState<string> receivedState)
@@ -49,7 +49,7 @@ namespace Core.Sockethandler
 
         public override void OnReceive(ClientReceivedState<string> receivedState)
         {
-            SocketData clientRequest = PlatypusNetwork.Utils.GetObjectFromBytes<SocketData>(receivedState.BytesRead);
+            SocketData clientRequest = Utils.GetObjectFromBytes<SocketData>(receivedState.BytesRead);
 
             if (clientRequest == null) return;
 
@@ -223,7 +223,7 @@ namespace Core.Sockethandler
                 SocketDataType = serverResponseType
             };
             ResponseType serverResponse = new ResponseType();
-            RequestType clientRequest = PlatypusNetwork.Utils.GetObjectFromBytes<RequestType>(clientRequestData.Data);
+            RequestType clientRequest = Utils.GetObjectFromBytes<RequestType>(clientRequestData.Data);
             try
             {
                 action(userMakingRequest, clientRequest, serverResponse);
@@ -234,8 +234,8 @@ namespace Core.Sockethandler
                 serverResponse.FactorisableExceptionParameters = e.GetParameters();
                 exceptionThrowed = true;
             }
-            serverResponseData.Data = PlatypusNetwork.Utils.GetBytesFromObject(serverResponse);
-            SendToClient(clientKey, PlatypusNetwork.Utils.GetBytesFromObject(serverResponseData));
+            serverResponseData.Data = Utils.GetBytesFromObject(serverResponse);
+            SendToClient(clientKey, Utils.GetBytesFromObject(serverResponseData));
             return exceptionThrowed;
         }
     }
