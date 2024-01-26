@@ -12,9 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Logging\PlatypusLogging.csproj" />
     <ProjectReference Include="..\Persistance\Persistance.csproj" />
     <ProjectReference Include="..\PlatypusAPI\PlatypusAPI.csproj" />
+    <ProjectReference Include="..\PlatypusLogging\PlatypusLogging.csproj" />
     <ProjectReference Include="..\Utils\Utils.csproj" />
   </ItemGroup>
 

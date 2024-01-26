@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusApplicationFramewor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusAPI", "PlatypusAPI\PlatypusAPI.csproj", "{ABE71E3E-45F3-40E5-B793-B9B890765F6B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusLogging", "Logging\PlatypusLogging.csproj", "{289DCBD4-E468-439D-B91D-D4EDCF82B24A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusLogging", "PlatypusLogging\PlatypusLogging.csproj", "{289DCBD4-E468-439D-B91D-D4EDCF82B24A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{16D2BA21-15AB-4932-8A2F-DE32F77DD05D}"
 EndProject
