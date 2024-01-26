@@ -70,7 +70,7 @@ namespace Core
             );
 
             _loggerManager = new LoggerManager();
-            _loggerManager.CreateLogger<PlatypusServerConsoleLogger>();
+            _loggerManager.CreateLogger<ConsoleLogger>();
 
             _restAPIHandler = new RestAPIHandler(this);
             _socketsHandler = new PlatypusSocketsHandler(this);

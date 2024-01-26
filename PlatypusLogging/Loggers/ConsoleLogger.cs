@@ -1,6 +1,6 @@
 ﻿namespace PlatypusLogging.Loggers
 {
-    public class PlatypusServerConsoleLogger : LoggerBase, ILoggingSensivity
+    public class ConsoleLogger : LoggerBase, ILoggingSensivity
     {
         public LoggingLevel MinimumLoggingLevel { get; set; }
         public LoggingLevel MaximumLoggingLevel { get; set; }
