@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Logging\PlatypusLogging.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Ressource\Strings.Designer.cs">
       <DependentUpon>Strings.resx</DependentUpon>
       <DesignTime>True</DesignTime>
