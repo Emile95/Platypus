@@ -1,11 +1,11 @@
-﻿using Common.Logger;
-using Core.Application;
+﻿using Core.Application;
 using Core.ApplicationAction;
 using Core.Event;
 using Core.RestAPI;
 using Core.SocketHandler;
 using Core.User;
 using Logging;
+using Logging.Loggers;
 using Newtonsoft.Json;
 using Persistance;
 using Persistance.Repository;

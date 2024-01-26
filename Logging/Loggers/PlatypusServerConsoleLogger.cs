@@ -1,6 +1,4 @@
-﻿using Logging;
-
-namespace Common.Logger
+﻿namespace Logging.Loggers
 {
     public class PlatypusServerConsoleLogger : LoggerBase, ILoggingSensivity
     {
