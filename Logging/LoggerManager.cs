@@ -1,4 +1,4 @@
-﻿namespace Logging
+﻿namespace PlatypusLogging
 {
     public class LoggerManager : LoggerBase
     {

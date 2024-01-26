@@ -3,7 +3,7 @@ using PlatypusApplicationFramework.Core.Application;
 using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using PlatypusApplicationFramework.Confugration;
-using Logging;
+using PlatypusLogging;
 using PlatypusApplicationFramework.Core.Application.Logger;
 
 namespace PlatypusApplicationFramework.Configuration.Application

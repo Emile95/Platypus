@@ -1,4 +1,4 @@
-﻿namespace Logging.Loggers
+﻿namespace PlatypusLogging.Loggers
 {
     public class PlatypusServerConsoleLogger : LoggerBase, ILoggingSensivity
     {

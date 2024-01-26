@@ -1,4 +1,4 @@
-﻿using Logging;
+﻿using PlatypusLogging;
 
 namespace Common.Logger.FileLogger
 {

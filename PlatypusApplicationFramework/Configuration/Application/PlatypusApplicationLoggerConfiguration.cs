@@ -1,4 +1,4 @@
-﻿using Logging;
+﻿using PlatypusLogging;
 using System.Runtime.Serialization;
 
 namespace PlatypusApplicationFramework.Configuration.Application

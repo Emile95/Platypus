@@ -13,11 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusApplicationFramewor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusAPI", "PlatypusAPI\PlatypusAPI.csproj", "{ABE71E3E-45F3-40E5-B793-B9B890765F6B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logging", "Logging\Logging.csproj", "{289DCBD4-E468-439D-B91D-D4EDCF82B24A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusLogging", "Logging\PlatypusLogging.csproj", "{289DCBD4-E468-439D-B91D-D4EDCF82B24A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{16D2BA21-15AB-4932-8A2F-DE32F77DD05D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntryPoint", "EntryPoint\EntryPoint.csproj", "{42F8F017-DAF2-4C2E-B299-31DB0202633D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntryPoint", "EntryPoint\EntryPoint.csproj", "{42F8F017-DAF2-4C2E-B299-31DB0202633D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
