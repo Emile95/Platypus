@@ -1,4 +1,4 @@
-﻿using Common.Logger.FileLogger;
+﻿using PlatypusNetwork.Logger.FileLogger;
 using PlatypusLogging;
 using Persistance;
 

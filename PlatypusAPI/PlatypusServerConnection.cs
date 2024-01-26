@@ -1,5 +1,4 @@
-﻿using Common.Exceptions;
-using Common.Sockets;
+﻿using PlatypusAPI.Sockets;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.Sockets.ServerResponse;
@@ -35,11 +34,11 @@ namespace PlatypusAPI
             SocketData requestData = new SocketData()
             {
                 SocketDataType = SocketDataType.UserConnection,
-                Data = Common.Utils.GetBytesFromObject(_userConnectionData)
+                Data = PlatypusNetwork.Utils.GetBytesFromObject(_userConnectionData)
             };
 
             _isConnecting = true;
-            socketHandler.SendToServer(Common.Utils.GetBytesFromObject(requestData));
+            socketHandler.SendToServer(PlatypusNetwork.Utils.GetBytesFromObject(requestData));
 
             while (_isConnecting) Thread.Sleep(200);
 
@@ -56,7 +55,7 @@ namespace PlatypusAPI
 
         private void ReceiveUserConnectionServerResponse(byte[] bytes)
         {
-            UserConnectionServerResponse response = Common.Utils.GetObjectFromBytes<UserConnectionServerResponse>(bytes);
+            UserConnectionServerResponse response = PlatypusNetwork.Utils.GetObjectFromBytes<UserConnectionServerResponse>(bytes);
             _connectedUser = response.UserAccount;
             _exception = ExceptionFactory.CreateException(response.FactorisableExceptionType, response.FactorisableExceptionParameters);
             _isConnecting = false;

@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace Common.SocketHandler
+namespace PlatypusNetwork.SocketHandler
 {
     public abstract class ReceivedState
     {

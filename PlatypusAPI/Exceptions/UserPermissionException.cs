@@ -1,5 +1,4 @@
-﻿using Common.Exceptions;
-using PlatypusAPI.User;
+﻿using PlatypusAPI.User;
 
 namespace PlatypusAPI.Exceptions
 {
@@ -7,7 +6,7 @@ namespace PlatypusAPI.Exceptions
     {
         public UserAccount UserAccount { get; set; }
         public UserPermissionException(UserAccount userAccount)
-            : base(FactorisableExceptionType.UserNotPermitted, Common.Utils.GetString("UserNotPermitted"))
+            : base(FactorisableExceptionType.UserNotPermitted, PlatypusNetwork.Utils.GetString("UserNotPermitted"))
         {
             UserAccount = userAccount;
         }

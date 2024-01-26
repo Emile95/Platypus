@@ -41,7 +41,7 @@ namespace Core
 
             if (_applicationActionsHandler.HasActionWithGuid(runActionParameter.Guid) == false)
             {
-                string message = Common.Utils.GetString("ApplicationActionNotFound", runActionParameter.Guid);
+                string message = PlatypusNetwork.Utils.GetString("ApplicationActionNotFound", runActionParameter.Guid);
                 return new ApplicationActionRunResult()
                 {
                     Message = message,

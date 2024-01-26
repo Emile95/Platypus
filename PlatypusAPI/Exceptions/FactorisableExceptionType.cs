@@ -1,4 +1,4 @@
-﻿namespace Common.Exceptions
+﻿namespace PlatypusAPI.Exceptions
 {
     public enum FactorisableExceptionType
     {

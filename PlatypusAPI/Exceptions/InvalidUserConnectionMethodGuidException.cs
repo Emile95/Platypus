@@ -1,13 +1,11 @@
-﻿using Common.Exceptions;
-
-namespace PlatypusAPI.Exceptions
+﻿namespace PlatypusAPI.Exceptions
 {
     public class InvalidUserConnectionMethodGuidException : FactorisableException
     {
         public string UserConnectionMethodGuid { get; private set; }
 
         public InvalidUserConnectionMethodGuidException(string providedGuid)
-            : base(FactorisableExceptionType.InvalidUserConnectionMethodGuid, Common.Utils.GetString("NoUserConnectionMethodWithGuid", providedGuid)) 
+            : base(FactorisableExceptionType.InvalidUserConnectionMethodGuid, PlatypusNetwork.Utils.GetString("NoUserConnectionMethodWithGuid", providedGuid)) 
         {
             UserConnectionMethodGuid = providedGuid;
         }

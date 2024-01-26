@@ -4,7 +4,7 @@ using PlatypusApplicationFramework.Core.Application;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
-using Utils;
+using PlatypusUtils;
 using PlatypusApplicationFramework.Configuration.User;
 using Core.Exceptions;
 

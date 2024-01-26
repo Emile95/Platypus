@@ -3,7 +3,7 @@
     public class InvalidPlatypusApplicationPackageException : Exception
     {
         public InvalidPlatypusApplicationPackageException(string packageFileName, string errorMessage)
-            : base(Common.Utils.GetString("ErrorWithPlatypusApplicationPackage", packageFileName, errorMessage))
+            : base(PlatypusNetwork.Utils.GetString("ErrorWithPlatypusApplicationPackage", packageFileName, errorMessage))
         {}
     }
 }

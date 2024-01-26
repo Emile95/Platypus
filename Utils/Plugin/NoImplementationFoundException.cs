@@ -1,4 +1,4 @@
-﻿namespace Utils.Plugin
+﻿namespace PlatypusUtils.Plugin
 {
     public class NoImplementationFoundException<PluginType> : Exception
     {

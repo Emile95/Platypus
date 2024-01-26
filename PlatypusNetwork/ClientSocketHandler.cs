@@ -1,8 +1,8 @@
-﻿using Common.SocketHandler.State;
+﻿using PlatypusNetwork.SocketHandler.State;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Common.SocketHandler
+namespace PlatypusNetwork.SocketHandler
 {
     public abstract class ClientSocketHandler : BaseSocketHandler<ServerReceivedState>, IClientSocketEventHandler, ISocketHandlerInitiator
     {

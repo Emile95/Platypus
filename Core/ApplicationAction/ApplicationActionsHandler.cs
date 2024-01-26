@@ -5,7 +5,7 @@ using PlatypusApplicationFramework.Core.ApplicationAction;
 using PlatypusApplicationFramework.Configuration.Application;
 using PlatypusApplicationFramework.Configuration.ApplicationAction;
 using System.Reflection;
-using Utils.GuidGeneratorHelper;
+using PlatypusUtils.GuidGeneratorHelper;
 using Core.Event;
 using PlatypusApplicationFramework.Core.Event;
 using Persistance.Entity;
@@ -109,7 +109,7 @@ namespace Core.ApplicationAction
             if (runActionParameter.Async)
             {
                 
-                string message = Common.Utils.GetString("NewApplicationActionStarted");
+                string message = PlatypusNetwork.Utils.GetString("NewApplicationActionStarted");
                 return new ApplicationActionRunResult()
                 {
                     Message = message,

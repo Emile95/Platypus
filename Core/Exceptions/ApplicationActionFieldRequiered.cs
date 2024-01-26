@@ -3,7 +3,7 @@
     public class ApplicationActionFieldRequired : Exception
     {
         public ApplicationActionFieldRequired(string fieldName)
-            : base(Common.Utils.GetString("ApplicationActionFieldRequired", fieldName))
+            : base(PlatypusNetwork.Utils.GetString("ApplicationActionFieldRequired", fieldName))
         { }
     }
 }

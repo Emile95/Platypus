@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Utils.Json
+namespace PlatypusUtils.Json
 {
     public static class JsonHelper
     {

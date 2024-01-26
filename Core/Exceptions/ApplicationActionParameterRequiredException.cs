@@ -3,7 +3,7 @@
     public class ApplicationActionParameterRequiredException : Exception
     {
         public ApplicationActionParameterRequiredException(string actionName)
-            : base(Common.Utils.GetString("ParameterRequieredForApplicationAction", actionName))
+            : base(PlatypusNetwork.Utils.GetString("ParameterRequieredForApplicationAction", actionName))
         { }
     }
 }

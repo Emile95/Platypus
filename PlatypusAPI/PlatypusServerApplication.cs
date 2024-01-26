@@ -1,10 +1,9 @@
-﻿using Common.Exceptions;
-using Common.Sockets;
+﻿using PlatypusAPI.Sockets;
 using PaltypusAPI.Sockets.ClientRequest;
 using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
-using Utils.GuidGeneratorHelper;
+using PlatypusUtils.GuidGeneratorHelper;
 
 namespace PlatypusAPI
 {
@@ -75,10 +74,10 @@ namespace PlatypusAPI
             SocketData clientRequestData = new SocketData()
             {
                 SocketDataType = socketDataType,
-                Data = Common.Utils.GetBytesFromObject(clientRequest)
+                Data = PlatypusNetwork.Utils.GetBytesFromObject(clientRequest)
             };
 
-            _socketHandler.SendToServer(Common.Utils.GetBytesFromObject(clientRequestData));
+            _socketHandler.SendToServer(PlatypusNetwork.Utils.GetBytesFromObject(clientRequestData));
 
             while (serverResponseWaiter.Received == false) Thread.Sleep(200);
 
@@ -95,7 +94,7 @@ namespace PlatypusAPI
             where ServerResponseType : ServerResponseBase
             where ServerResponseWaiterType : ServerResponseWaiter
         {
-            ServerResponseType serverResponse = Common.Utils.GetObjectFromBytes<ServerResponseType>(bytes);
+            ServerResponseType serverResponse = PlatypusNetwork.Utils.GetObjectFromBytes<ServerResponseType>(bytes);
             if (serverResponseWaiters.ContainsKey(serverResponse.RequestKey) == false) return;
             
             ServerResponseWaiterType serverResponseWaiter = serverResponseWaiters[serverResponse.RequestKey];

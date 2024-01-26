@@ -1,4 +1,4 @@
-﻿namespace Utils.GuidGeneratorHelper
+﻿namespace PlatypusUtils.GuidGeneratorHelper
 {
     public static class GuidGenerator
     {

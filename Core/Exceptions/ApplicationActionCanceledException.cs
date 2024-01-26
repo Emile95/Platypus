@@ -4,7 +4,7 @@
     {
         public string CancelMessage { get; set; }
         public ApplicationActionCanceledException(string cancelMessage)
-            : base(Common.Utils.GetString("ApplicationActionCancelled"))
+            : base(PlatypusNetwork.Utils.GetString("ApplicationActionCancelled"))
         {
             CancelMessage = cancelMessage;
         }

@@ -5,7 +5,7 @@
         public string FailedMessage {get; set;}
 
         public ApplicationActionRunFailedException(string failedMessage)
-            : base(Common.Utils.GetString("ApplicationActionFailed"))
+            : base(PlatypusNetwork.Utils.GetString("ApplicationActionFailed"))
         {
             FailedMessage = failedMessage;
         }

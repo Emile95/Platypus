@@ -3,7 +3,7 @@
     public class ApplicationInexistantException : Exception
     {
         public ApplicationInexistantException(string applicationGuid)
-            : base(Common.Utils.GetString("NoApplicationWithGuid", applicationGuid))
+            : base(PlatypusNetwork.Utils.GetString("NoApplicationWithGuid", applicationGuid))
         { }
     }
 }

@@ -1,6 +1,6 @@
-﻿using Common.SocketHandler.State;
+﻿using PlatypusNetwork.SocketHandler.State;
 
-namespace Common.SocketHandler
+namespace PlatypusNetwork.SocketHandler
 {
     public interface IClientSocketEventHandler
     {

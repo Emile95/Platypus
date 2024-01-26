@@ -1,5 +1,4 @@
-﻿using Common.Exceptions;
-using PlatypusAPI.User;
+﻿using PlatypusAPI.User;
 
 namespace PlatypusAPI.Exceptions
 {

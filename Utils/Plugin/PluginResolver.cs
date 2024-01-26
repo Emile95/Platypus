@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using Utils.Plugin;
+using PlatypusUtils.Plugin;
 
-namespace Utils
+namespace PlatypusUtils
 {
     public static class PluginResolver
     {

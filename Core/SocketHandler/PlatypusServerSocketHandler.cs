@@ -1,16 +1,16 @@
-﻿using Common.Exceptions;
-using Common.SocketHandler;
-using Common.SocketHandler.State;
-using Common.Sockets;
+﻿using PlatypusNetwork.SocketHandler;
+using PlatypusNetwork.SocketHandler.State;
+using PlatypusAPI.Exceptions;
 using PaltypusAPI.Sockets.ClientRequest;
 using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.ServerFunctionParameter;
+using PlatypusAPI.Sockets;
 using PlatypusAPI.Sockets.ClientRequest;
 using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
-using Utils.GuidGeneratorHelper;
+using PlatypusUtils.GuidGeneratorHelper;
 
 namespace Core.Sockethandler
 {
@@ -49,7 +49,7 @@ namespace Core.Sockethandler
 
         public override void OnReceive(ClientReceivedState<string> receivedState)
         {
-            SocketData clientRequest = Common.Utils.GetObjectFromBytes<SocketData>(receivedState.BytesRead);
+            SocketData clientRequest = PlatypusNetwork.Utils.GetObjectFromBytes<SocketData>(receivedState.BytesRead);
 
             if (clientRequest == null) return;
 
@@ -223,7 +223,7 @@ namespace Core.Sockethandler
                 SocketDataType = serverResponseType
             };
             ResponseType serverResponse = new ResponseType();
-            RequestType clientRequest = Common.Utils.GetObjectFromBytes<RequestType>(clientRequestData.Data);
+            RequestType clientRequest = PlatypusNetwork.Utils.GetObjectFromBytes<RequestType>(clientRequestData.Data);
             try
             {
                 action(userMakingRequest, clientRequest, serverResponse);
@@ -234,8 +234,8 @@ namespace Core.Sockethandler
                 serverResponse.FactorisableExceptionParameters = e.GetParameters();
                 exceptionThrowed = true;
             }
-            serverResponseData.Data = Common.Utils.GetBytesFromObject(serverResponse);
-            SendToClient(clientKey, Common.Utils.GetBytesFromObject(serverResponseData));
+            serverResponseData.Data = PlatypusNetwork.Utils.GetBytesFromObject(serverResponse);
+            SendToClient(clientKey, PlatypusNetwork.Utils.GetBytesFromObject(serverResponseData));
             return exceptionThrowed;
         }
     }

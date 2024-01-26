@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace Common.SocketHandler.Protocol
+namespace PlatypusNetwork.SocketHandler.Protocol
 {
     public class TcpSockerHandlerResolver<ReceivedStateType> : SocketHandlerResolver<ReceivedStateType>
         where ReceivedStateType : ReceivedState

@@ -1,4 +1,4 @@
-﻿using Common.Exceptions;
+﻿using PlatypusAPI.Exceptions;
 
 namespace PaltypusAPI.Sockets.ServerResponse
 {

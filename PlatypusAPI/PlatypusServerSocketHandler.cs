@@ -1,6 +1,6 @@
-﻿using Common.SocketHandler;
-using Common.SocketHandler.State;
-using Common.Sockets;
+﻿using PlatypusNetwork.SocketHandler;
+using PlatypusNetwork.SocketHandler.State;
+using PlatypusAPI.Sockets;
 
 namespace PlatypusAPI
 {
@@ -29,7 +29,7 @@ namespace PlatypusAPI
 
         public override void OnReceive(ServerReceivedState receivedState)
         {
-            SocketData serverResponse = Common.Utils.GetObjectFromBytes<SocketData>(receivedState.BytesRead);
+            SocketData serverResponse = PlatypusNetwork.Utils.GetObjectFromBytes<SocketData>(receivedState.BytesRead);
 
             if (serverResponse == null) return;
             if (ServerResponseCallBacks.ContainsKey(serverResponse.SocketDataType) == false) return;

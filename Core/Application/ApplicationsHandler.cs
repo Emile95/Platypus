@@ -1,8 +1,8 @@
 ﻿using Persistance.Repository;
 using Persistance.Entity;
 using PlatypusApplicationFramework.Configuration.Application;
-using Utils;
-using Utils.GuidGeneratorHelper;
+using PlatypusUtils;
+using PlatypusUtils.GuidGeneratorHelper;
 using Persistance;
 using Core.Exceptions;
 using Core.Event;

@@ -1,4 +1,4 @@
-﻿namespace Common.SocketHandler.State
+﻿namespace PlatypusNetwork.SocketHandler.State
 {
     public class ClientReceivedState<ClientKeyType> : ReceivedState
     {

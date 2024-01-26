@@ -1,9 +1,9 @@
-﻿using Common.Ressource;
+﻿using PlatypusNetwork.Ressource;
 using Newtonsoft.Json;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-namespace Common
+namespace PlatypusNetwork
 {
     public static class Utils
     {

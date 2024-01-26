@@ -1,6 +1,4 @@
-﻿using Common.Exceptions;
-
-namespace PlatypusAPI.Exceptions
+﻿namespace PlatypusAPI.Exceptions
 {
     [Serializable]
     public class ParameterEditorFieldRequiredException : FactorisableException
@@ -8,7 +6,7 @@ namespace PlatypusAPI.Exceptions
         public string FieldName { get; private set; }
 
         public ParameterEditorFieldRequiredException(string fieldName)
-            : base(FactorisableExceptionType.ParameterEditorFieldRequired, Common.Utils.GetString("ParameterEditorFieldRequired", fieldName))
+            : base(FactorisableExceptionType.ParameterEditorFieldRequired, PlatypusNetwork.Utils.GetString("ParameterEditorFieldRequired", fieldName))
         {
             FieldName = fieldName;
         }

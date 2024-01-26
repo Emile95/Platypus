@@ -81,7 +81,7 @@ namespace Core.ApplicationAction
 
                 object objectResult = methodInfo.Invoke(application, new object[] { env });
 
-                string message = Common.Utils.GetString("ApplicationActionRunSuccess");
+                string message = PlatypusNetwork.Utils.GetString("ApplicationActionRunSuccess");
 
                 return new ApplicationActionRunResult()
                 {

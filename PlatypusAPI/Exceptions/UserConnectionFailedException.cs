@@ -1,6 +1,4 @@
-﻿using Common.Exceptions;
-
-namespace PlatypusAPI.Exceptions
+﻿namespace PlatypusAPI.Exceptions
 {
     [Serializable]
     public class UserConnectionFailedException : FactorisableException

@@ -1,4 +1,4 @@
-﻿namespace Common.SocketHandler
+﻿namespace PlatypusNetwork.SocketHandler
 {
     public interface ISocketEventHandler<ReceivedStateType>
         where ReceivedStateType : ReceivedState, new()
