@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusUtils", "Utils\PlatypusUtils.csproj", "{CDC43CED-1688-48E5-84EA-B3F5FE812EB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusUtils", "PlatypusUtils\PlatypusUtils.csproj", "{CDC43CED-1688-48E5-84EA-B3F5FE812EB8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistance", "Persistance\Persistance.csproj", "{72137BFF-2FF7-404D-9502-6EE4C1F661CE}"
 EndProject
