@@ -1,5 +1,5 @@
 ﻿using Core.Ressource;
-using PlatypusApplicationFramework.Core.Event;
+using PlatypusFramework.Core.Event;
 using PlatypusUtils;
 
 namespace Core.Exceptions

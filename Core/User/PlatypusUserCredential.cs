@@ -1,4 +1,4 @@
-﻿using PlatypusApplicationFramework.Configuration;
+﻿using PlatypusFramework.Configuration;
 
 namespace Core.User
 {

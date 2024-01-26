@@ -1,11 +1,11 @@
 ﻿using Persistance.Repository;
 using Persistance.Entity;
-using PlatypusApplicationFramework.Configuration.Application;
+using PlatypusFramework.Configuration.Application;
 using PlatypusUtils;
 using Persistance;
 using Core.Exceptions;
 using Core.Event;
-using PlatypusApplicationFramework.Core.Event;
+using PlatypusFramework.Core.Event;
 using PlatypusAPI.ServerFunctionParameter;
 
 namespace Core.Application

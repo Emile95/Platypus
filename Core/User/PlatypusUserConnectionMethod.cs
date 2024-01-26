@@ -1,6 +1,6 @@
 ﻿using Core.Ressource;
 using Persistance.Entity;
-using PlatypusApplicationFramework.Configuration.User;
+using PlatypusFramework.Configuration.User;
 
 namespace Core.User
 {

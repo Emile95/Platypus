@@ -3,9 +3,9 @@ using Persistance.Repository;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.User;
-using PlatypusApplicationFramework.Configuration.Application;
-using PlatypusApplicationFramework.Configuration.User;
-using PlatypusApplicationFramework.Confugration;
+using PlatypusFramework.Configuration.Application;
+using PlatypusFramework.Configuration.User;
+using PlatypusFramework.Confugration;
 using System.Reflection;
 
 namespace Core.User

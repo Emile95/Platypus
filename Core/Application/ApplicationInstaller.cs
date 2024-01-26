@@ -1,11 +1,11 @@
 ﻿using Persistance.Repository;
 using Persistance.Entity;
-using PlatypusApplicationFramework.Core.Application;
-using PlatypusApplicationFramework.Configuration.Application;
-using PlatypusApplicationFramework.Configuration.ApplicationAction;
+using PlatypusFramework.Core.Application;
+using PlatypusFramework.Configuration.Application;
+using PlatypusFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using PlatypusUtils;
-using PlatypusApplicationFramework.Configuration.User;
+using PlatypusFramework.Configuration.User;
 using Core.Exceptions;
 
 namespace Core.Application

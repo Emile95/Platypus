@@ -1,4 +1,4 @@
-﻿using PlatypusApplicationFramework.Core.Event;
+﻿using PlatypusFramework.Core.Event;
 
 namespace Core.Application
 {

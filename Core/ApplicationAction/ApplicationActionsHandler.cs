@@ -1,17 +1,17 @@
 ﻿using Core.ApplicationAction.Run;
 using Persistance.Repository;
 using PlatypusAPI.ApplicationAction.Run;
-using PlatypusApplicationFramework.Core.ApplicationAction;
-using PlatypusApplicationFramework.Configuration.Application;
-using PlatypusApplicationFramework.Configuration.ApplicationAction;
+using PlatypusFramework.Core.ApplicationAction;
+using PlatypusFramework.Configuration.Application;
+using PlatypusFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Core.Event;
-using PlatypusApplicationFramework.Core.Event;
+using PlatypusFramework.Core.Event;
 using Persistance.Entity;
 using Persistance;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ServerFunctionParameter;
-using PlatypusApplicationFramework.Core.ApplicationAction.Logger;
+using PlatypusFramework.Core.ApplicationAction.Logger;
 using PlatypusUtils;
 using Core.Ressource;
 

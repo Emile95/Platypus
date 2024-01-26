@@ -1,11 +1,11 @@
 ﻿using Core.Exceptions;
 using PlatypusAPI.ApplicationAction.Run;
-using PlatypusApplicationFramework.Core.ApplicationAction;
-using PlatypusApplicationFramework.Configuration.Application;
-using PlatypusApplicationFramework.Configuration.ApplicationAction;
+using PlatypusFramework.Core.ApplicationAction;
+using PlatypusFramework.Configuration.Application;
+using PlatypusFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using PlatypusAPI.ApplicationAction;
-using PlatypusApplicationFramework.Confugration;
+using PlatypusFramework.Confugration;
 using PlatypusUtils;
 using Core.Ressource;
 

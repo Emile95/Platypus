@@ -1,5 +1,5 @@
 ﻿using PlatypusAPI.ApplicationAction.Run;
-using PlatypusApplicationFramework.Core.ApplicationAction;
+using PlatypusFramework.Core.ApplicationAction;
 
 namespace Core.ApplicationAction.Run
 {

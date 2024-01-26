@@ -1,7 +1,7 @@
 ﻿using Core.Exceptions;
-using PlatypusApplicationFramework.Configuration.Application;
-using PlatypusApplicationFramework.Configuration.Event;
-using PlatypusApplicationFramework.Core.Event;
+using PlatypusFramework.Configuration.Application;
+using PlatypusFramework.Configuration.Event;
+using PlatypusFramework.Core.Event;
 using System.Reflection;
 
 namespace Core.Event

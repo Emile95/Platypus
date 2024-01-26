@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistance", "Persistance\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{61BA1609-8DE4-40D0-88C6-4DB584287AAC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusApplicationFramework", "PlatypusApplicationFramework\PlatypusApplicationFramework.csproj", "{DCD2567F-184A-4950-BD5D-5A31EF4B56AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusFramework", "PlatypusFramework\PlatypusFramework.csproj", "{DCD2567F-184A-4950-BD5D-5A31EF4B56AD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusAPI", "PlatypusAPI\PlatypusAPI.csproj", "{ABE71E3E-45F3-40E5-B793-B9B890765F6B}"
 EndProject
@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusLogging", "Platypus
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntryPoint", "EntryPoint\EntryPoint.csproj", "{42F8F017-DAF2-4C2E-B299-31DB0202633D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatypusNetwork", "PlatypusNetwork\PlatypusNetwork.csproj", "{0EDEA7DC-F26B-4E4F-8A54-E98EDE15A40C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatypusNetwork", "PlatypusNetwork\PlatypusNetwork.csproj", "{0EDEA7DC-F26B-4E4F-8A54-E98EDE15A40C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

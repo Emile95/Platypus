@@ -2,8 +2,8 @@
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.User;
-using PlatypusApplicationFramework.Core.ApplicationAction;
-using PlatypusApplicationFramework.Core.Event;
+using PlatypusFramework.Core.ApplicationAction;
+using PlatypusFramework.Core.Event;
 using PlatypusAPI.ServerFunctionParameter;
 using PlatypusUtils;
 using Core.Ressource;
