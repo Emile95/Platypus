@@ -2,7 +2,7 @@
 
 namespace PlatypusAPI.Network.ServerResponse
 {
-    public class UpdateUserServerResponse : ServerResponseBase
+    public class UpdateUserServerResponse : PlatypusServerResponse
     {
         public UserAccount UserAccount { get; set; }
     }

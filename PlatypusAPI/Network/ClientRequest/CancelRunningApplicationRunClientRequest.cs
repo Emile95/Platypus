@@ -1,6 +1,6 @@
 ﻿namespace PlatypusAPI.Network.ClientRequest
 {
-    public class CancelRunningApplicationRunClientRequest : ClientRequestBase
+    public class CancelRunningApplicationRunClientRequest : PlatypusClientRequest
     {
         public string ApplicationRunGuid { get; set; }
     }

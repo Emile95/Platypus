@@ -79,7 +79,7 @@ namespace PlatypusAPI
         public List<ApplicationActionRunInfo> GetRunningApplicationActions()
         {
             List<ApplicationActionRunInfo> result = new List<ApplicationActionRunInfo>();
-            RunClientRequest<GetRunningApplicationActionsServerResponse, ClientRequestBase>(
+            RunClientRequest<GetRunningApplicationActionsServerResponse, PlatypusClientRequest>(
                  _getRunningApplicationActionsServerResponseWaiters, SocketDataType.GetRunningActions, null,
                  (serverResponse) => {
                      result = serverResponse.ApplicationActionRunInfos;
@@ -91,7 +91,7 @@ namespace PlatypusAPI
         public List<ApplicationActionInfo> GetApplicationActionInfos()
         {
             List<ApplicationActionInfo> result = new List<ApplicationActionInfo>();
-            RunClientRequest<GetApplicationActionInfosServerResponse, ClientRequestBase>(
+            RunClientRequest<GetApplicationActionInfosServerResponse, PlatypusClientRequest>(
                  _getApplicationActionInfosServerResponseWaiter, SocketDataType.GetActionInfos, null,
                  (serverResponse) => {
                      result = serverResponse.ApplicationActionInfos;
@@ -102,7 +102,7 @@ namespace PlatypusAPI
 
         public void CancelRunningApplicationAction(string applicationRunGuid)
         {
-            RunClientRequest<ServerResponseBase, CancelRunningApplicationRunClientRequest>(
+            RunClientRequest<PlatypusServerResponse, CancelRunningApplicationRunClientRequest>(
                  _cancelRunningApplicationActionServerResponseWaiters, SocketDataType.CancelRunningAction,
                  (clientRequest) => {
                      clientRequest.ApplicationRunGuid = applicationRunGuid;

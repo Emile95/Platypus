@@ -1,9 +1,11 @@
 ﻿using PlatypusAPI.Ressources;
 using PlatypusAPI.User;
+using PlatypusNetwork.Exceptions;
 using PlatypusUtils;
+
 namespace PlatypusAPI.Exceptions
 {
-    public class UserPermissionException : FactorisableException
+    public class UserPermissionException : FactorisableException<FactorisableExceptionType>
     {
         public UserAccount UserAccount { get; set; }
         public UserPermissionException(UserAccount userAccount)

@@ -4,6 +4,7 @@ using PlatypusAPI.User;
 using PlatypusUtils;
 using PlatypusAPI.Network;
 using PlatypusAPI.Network.ServerResponse;
+using PlatypusNetwork.Exceptions;
 
 namespace PlatypusAPI
 {
@@ -14,7 +15,7 @@ namespace PlatypusAPI
         private UserAccount _connectedUser;
 
         private bool _isConnecting;
-        private FactorisableException _exception;
+        private FactorisableException<FactorisableExceptionType> _exception;
 
         public void SetUserConnectionData(string connectionMethodGuid, Dictionary<string, object> credential)
         {
@@ -58,7 +59,7 @@ namespace PlatypusAPI
         {
             UserConnectionServerResponse response = Utils.GetObjectFromBytes<UserConnectionServerResponse>(bytes);
             _connectedUser = response.UserAccount;
-            _exception = ExceptionFactory.CreateException(response.FactorisableExceptionType, response.FactorisableExceptionParameters);
+            //_exception = ExceptionFactory.CreateException(response.FactorisableExceptionType, response.FactorisableExceptionParameters);
             _isConnecting = false;
         }
     }

@@ -2,7 +2,7 @@
 
 namespace PlatypusAPI.Network.ServerResponse
 {
-    public class StartActionServerResponse : ServerResponseBase
+    public class StartActionServerResponse : PlatypusServerResponse
     {
         public ApplicationActionRunResult Result { get; set; }
     }

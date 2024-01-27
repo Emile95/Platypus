@@ -1,6 +1,6 @@
 ﻿namespace PlatypusAPI.Network.ServerResponse
 {
-    public class RemoveUserServerResponse : ServerResponseBase
+    public class RemoveUserServerResponse : PlatypusServerResponse
     {
     }
 }

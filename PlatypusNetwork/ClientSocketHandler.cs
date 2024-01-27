@@ -1,4 +1,5 @@
-﻿using PlatypusNetwork.SocketHandler.State;
+﻿using PlatypusNetwork.Request;
+using PlatypusNetwork.SocketHandler.State;
 using System.Net;
 using System.Net.Sockets;
 
@@ -6,8 +7,8 @@ namespace PlatypusNetwork.SocketHandler
 {
     public abstract class ClientSocketHandler : BaseSocketHandler<ServerReceivedState>, IClientSocketEventHandler, ISocketHandlerInitiator
     {
-        public ClientSocketHandler(string protocol)
-            : base(protocol) { }
+        public ClientSocketHandler(ProtocolType protocol, RequestsProfile profile = null)
+            : base(protocol, profile) { }
 
         public void Initialize(int port, string host = null)
         {
@@ -33,6 +34,11 @@ namespace PlatypusNetwork.SocketHandler
         public void SendToServer(byte[] bytes)
         {
             Send(_socket, bytes);
+        }
+
+        public override void OnReceive(ServerReceivedState receivedState)
+        {
+
         }
 
         public abstract void OnConnect(ServerReceivedState state);

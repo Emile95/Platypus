@@ -1,4 +1,5 @@
-﻿using PlatypusNetwork.SocketHandler.Protocol;
+﻿using PlatypusNetwork.Request;
+using PlatypusNetwork.SocketHandler.Protocol;
 using System.Net;
 using System.Net.Sockets;
 
@@ -11,12 +12,12 @@ namespace PlatypusNetwork.SocketHandler
         protected int _receivedBufferSize;
         protected readonly SocketHandlerResolver<ReceivedStateType> _socketResolver;
 
-        public BaseSocketHandler(string protocol)
+        public BaseSocketHandler(ProtocolType protocol, RequestsProfile profile = null)
         {
             _receivedBufferSize = 1000;
             switch (protocol)
             {
-                case "tcp":
+                case ProtocolType.Tcp:
                     _socketResolver = new TcpSockerHandlerResolver<ReceivedStateType>(_receivedBufferSize, OnLostSocket, OnReceive);
                     break;
             }

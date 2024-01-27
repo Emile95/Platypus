@@ -9,6 +9,7 @@ using PlatypusUtils;
 using PlatypusAPI.Network;
 using PlatypusAPI.Network.ServerResponse;
 using PlatypusAPI.Network.ClientRequest;
+using PlatypusNetwork.Exceptions;
 
 namespace Core.Network.SocketHandler
 {
@@ -161,7 +162,7 @@ namespace Core.Network.SocketHandler
 
         private void ReceiveGetRunningApplicationActionsClientRequest(string clientKey, SocketData clientRequestData)
         {
-            HandleClientRequest<ClientRequestBase, GetRunningApplicationActionsServerResponse>(
+            HandleClientRequest<PlatypusClientRequest, GetRunningApplicationActionsServerResponse>(
                 clientKey, clientRequestData, SocketDataType.GetRunningActions,
                 (userAccount, clientRequest, serverResponse) =>
                 {
@@ -177,7 +178,7 @@ namespace Core.Network.SocketHandler
 
         private void ReceiveGetApplicationActionInfosClientRequest(string clientKey, SocketData clientRequestData)
         {
-            HandleClientRequest<ClientRequestBase, GetApplicationActionInfosServerResponse>(
+            HandleClientRequest<PlatypusClientRequest, GetApplicationActionInfosServerResponse>(
                 clientKey, clientRequestData, SocketDataType.GetActionInfos,
                 (userAccount, clientRequest, serverResponse) =>
                 {
@@ -210,7 +211,7 @@ namespace Core.Network.SocketHandler
         }
 
         private bool HandleClientRequest<RequestType, ResponseType>(string clientKey, SocketData clientRequestData, SocketDataType serverResponseType, Action<UserAccount, RequestType, ResponseType> action)
-            where ResponseType : ServerResponseBase, new()
+            where ResponseType : PlatypusServerResponse, new()
             where RequestType : class, new()
         {
             UserAccount userMakingRequest = _connectedUserOnSockets[clientKey];
@@ -226,7 +227,7 @@ namespace Core.Network.SocketHandler
             {
                 action(userMakingRequest, clientRequest, serverResponse);
             }
-            catch (FactorisableException e)
+            catch (FactorisableException<FactorisableExceptionType> e)
             {
                 serverResponse.FactorisableExceptionType = e.FactorisableExceptionType;
                 serverResponse.FactorisableExceptionParameters = e.GetParameters();

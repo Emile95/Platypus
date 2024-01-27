@@ -2,7 +2,7 @@
 
 namespace PlatypusAPI.Network.ClientRequest
 {
-    public class StartActionClientRequest : ClientRequestBase
+    public class StartActionClientRequest : PlatypusClientRequest
     {
         public ApplicationActionRunParameter Parameters { get; set; }
     }

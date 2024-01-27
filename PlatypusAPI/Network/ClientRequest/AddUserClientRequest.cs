@@ -2,7 +2,7 @@
 
 namespace PlatypusAPI.Network.ClientRequest
 {
-    public class AddUserClientRequest : ClientRequestBase
+    public class AddUserClientRequest : PlatypusClientRequest
     {
         public string ConnectionMethodGuid { get; set; }
         public string FullName { get; set; }

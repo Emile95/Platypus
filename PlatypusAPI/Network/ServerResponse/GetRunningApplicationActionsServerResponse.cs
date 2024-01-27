@@ -2,7 +2,7 @@
 
 namespace PlatypusAPI.Network.ServerResponse
 {
-    public class GetRunningApplicationActionsServerResponse : ServerResponseBase
+    public class GetRunningApplicationActionsServerResponse : PlatypusServerResponse
     {
         public List<ApplicationActionRunInfo> ApplicationActionRunInfos { get; set; }
     }

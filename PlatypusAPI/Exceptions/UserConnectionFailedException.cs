@@ -1,7 +1,9 @@
-﻿namespace PlatypusAPI.Exceptions
+﻿using PlatypusNetwork.Exceptions;
+
+namespace PlatypusAPI.Exceptions
 {
     [Serializable]
-    public class UserConnectionFailedException : FactorisableException
+    public class UserConnectionFailedException : FactorisableException<FactorisableExceptionType>
     {
         public UserConnectionFailedException(string message)
             : base(FactorisableExceptionType.UserConnectionFailed, message) { }

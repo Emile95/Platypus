@@ -1,9 +1,10 @@
 ﻿using PlatypusAPI.Ressources;
+using PlatypusNetwork.Exceptions;
 using PlatypusUtils;
 
 namespace PlatypusAPI.Exceptions
 {
-    public class InvalidUserConnectionMethodGuidException : FactorisableException
+    public class InvalidUserConnectionMethodGuidException : FactorisableException<FactorisableExceptionType>
     {
         public string UserConnectionMethodGuid { get; private set; }
 
