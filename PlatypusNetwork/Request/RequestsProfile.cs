@@ -9,10 +9,10 @@ namespace PlatypusNetwork.Request
         public Dictionary<RequestType, RequestDefinitionBase<ExceptionEnumType>> Requests { get; private set; }
         private ExceptionFactory<ExceptionEnumType> _exceptionFactory;
 
-        public RequestsProfile()
+        public RequestsProfile(ExceptionFactoryProfile<ExceptionEnumType> exceptionFactoryProfile)
         {
             Requests = new Dictionary<RequestType, RequestDefinitionBase<ExceptionEnumType>>();
-            _exceptionFactory = new ExceptionFactory<ExceptionEnumType>();
+            _exceptionFactory = new ExceptionFactory<ExceptionEnumType>(exceptionFactoryProfile);
         }
 
         protected void MapRequest<ClientRequestType, ServerResponseType>(RequestType requestType) 

@@ -79,12 +79,12 @@ namespace Core.Network.SocketHandler
                 clientKey, clientRequestData, RequestType.UserConnection,
                 (userAccount, clientRequest, serverResponse) =>
                 {
+                    serverResponse.RequestKey = clientRequest.RequestKey;
                     serverResponse.UserAccount = _serverInstance.UserConnect(new UserConnectionParameter()
                     {
                         ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
                         Credential = clientRequest.Credential,
                     });
-                    serverResponse.RequestKey = clientRequest.RequestKey;
                     _connectedUserOnSockets[clientKey] = serverResponse.UserAccount;
                 }
             );

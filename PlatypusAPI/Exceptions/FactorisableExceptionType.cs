@@ -2,7 +2,6 @@
 {
     public enum FactorisableExceptionType
     {
-        None,
         UserConnectionFailed,
         ParameterEditorFieldRequired,
         InvalidUserConnectionMethodGuid,

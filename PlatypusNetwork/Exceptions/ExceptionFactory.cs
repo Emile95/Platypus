@@ -5,9 +5,9 @@
     {
         private Dictionary<ExceptionTypeEnum, Func<object[], FactorisableException<ExceptionTypeEnum>>> _factorisableExcptions;
 
-        public ExceptionFactory()
+        public ExceptionFactory(ExceptionFactoryProfile<ExceptionTypeEnum> profile)
         {
-            _factorisableExcptions = new Dictionary<ExceptionTypeEnum, Func<object[], FactorisableException<ExceptionTypeEnum>>>();
+            _factorisableExcptions = profile.FactorisableExecptions;
         }
 
         public FactorisableException<ExceptionTypeEnum> CreateException(ExceptionTypeEnum type, params object[] parameters)

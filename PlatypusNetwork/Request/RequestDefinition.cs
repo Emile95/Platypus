@@ -48,6 +48,8 @@ namespace PlatypusNetwork.Request
 
             while (serverResponseWaiter.Received == false) Thread.Sleep(200);
 
+            Console.WriteLine(serverResponseWaiter.Response.FactorisableExceptionType);
+
             if (serverResponseWaiter.Response.ExceptionThrowed)
                 throw _exceptionFactory.CreateException(serverResponseWaiter.Response.FactorisableExceptionType, serverResponseWaiter.Response.FactorisableExceptionParameters);
 

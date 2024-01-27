@@ -8,6 +8,7 @@ namespace PlatypusAPI.Network
     public class PlatypusRequestsProfile : RequestsProfile<FactorisableExceptionType, RequestType>
     {
         public PlatypusRequestsProfile()
+            : base(new PlatypusExceptionFactoryProfile())
         {
             MapRequest<StartActionClientRequest, StartActionServerResponse>(RequestType.RunApplicationAction);
             MapRequest<CancelRunningApplicationRunClientRequest, PlatypusServerResponse>(RequestType.CancelRunningAction);
