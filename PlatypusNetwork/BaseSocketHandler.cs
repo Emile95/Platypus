@@ -1,5 +1,4 @@
-﻿using PlatypusNetwork.Request;
-using PlatypusNetwork.SocketHandler.Protocol;
+﻿using PlatypusNetwork.SocketHandler.Protocol;
 using System.Net;
 using System.Net.Sockets;
 
@@ -13,9 +12,8 @@ namespace PlatypusNetwork.SocketHandler
         protected Socket _socket;
         protected int _receivedBufferSize;
         protected readonly SocketHandlerResolver<ReceivedStateType> _socketResolver;
-        protected Dictionary<RequestType, RequestDefinitionBase<ExceptionEnumType>> requestDefinitions;
-
-        public BaseSocketHandler(ProtocolType protocol, RequestsProfile<ExceptionEnumType, RequestType> profile = null)
+        
+        public BaseSocketHandler(ProtocolType protocol)
         {
             _receivedBufferSize = 1000;
             switch (protocol)
@@ -25,9 +23,6 @@ namespace PlatypusNetwork.SocketHandler
                     break;
             }
             _socket = _socketResolver.CreateSocket();
-
-            requestDefinitions = profile?.Requests;
-
         }
 
         public void Send(Socket socket, byte[] bytes)

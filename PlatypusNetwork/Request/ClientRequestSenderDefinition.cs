@@ -3,30 +3,28 @@ using PlatypusUtils;
 
 namespace PlatypusNetwork.Request
 {
-    public class RequestDefinition<ExceptionEnumType, RequestType, ClientRequestType, ServerResponseType> : RequestDefinitionBase<ExceptionEnumType>
+    public class ClientRequestSenderDefinition<ExceptionEnumType, RequestTypeEnum, ClientRequestType, ServerResponseType> : ClientRequestSenderDefinitionBase<ExceptionEnumType, RequestTypeEnum>
         where ExceptionEnumType:  Enum
-        where RequestType : Enum
+        where RequestTypeEnum : Enum
         where ClientRequestType : ClientRequestBase, new()
         where ServerResponseType : ServerResponseBase<ExceptionEnumType>
     {
-        private RequestType _requestType;
-        private Dictionary<string, ServerResponseWaiter<ExceptionEnumType, ServerResponseType>> _serverResponseWaiters;
+        private Dictionary<string, ServerResponseWaiter<ServerResponseType>> _serverResponseWaiters;
 
-        public RequestDefinition(
-            ExceptionFactory<ExceptionEnumType> exceptionFactory, 
-            RequestType requestType
+        public ClientRequestSenderDefinition(
+            RequestTypeEnum requestType,
+            ExceptionFactory<ExceptionEnumType> exceptionFactory
         )
-            : base(exceptionFactory) 
+            : base(requestType, exceptionFactory) 
         {
-            _serverResponseWaiters = new Dictionary<string, ServerResponseWaiter<ExceptionEnumType, ServerResponseType>>();
-            _requestType = requestType;
+            _serverResponseWaiters = new Dictionary<string, ServerResponseWaiter<ServerResponseType>>();
         }
 
-        public ServerResponseType HandleClientRequest(Action<RequestData<RequestType>> requestAction, Action<ClientRequestType> consumer = null)
+        public ServerResponseType HandleClientRequest(Action<RequestData<RequestTypeEnum>> requestAction, Action<ClientRequestType> consumer = null)
         {
             string guid = Utils.GenerateGuidFromEnumerable(_serverResponseWaiters.Keys);
 
-            ServerResponseWaiter<ExceptionEnumType, ServerResponseType> serverResponseWaiter = new ServerResponseWaiter<ExceptionEnumType, ServerResponseType>();
+            ServerResponseWaiter<ServerResponseType> serverResponseWaiter = new ServerResponseWaiter<ServerResponseType>();
 
             _serverResponseWaiters.Add(guid, serverResponseWaiter);
 
@@ -38,7 +36,7 @@ namespace PlatypusNetwork.Request
             if (consumer != null)
                 consumer(clientRequest);
 
-            RequestData<RequestType> clientRequestData = new RequestData<RequestType>()
+            RequestData<RequestTypeEnum> clientRequestData = new RequestData<RequestTypeEnum>()
             {
                 RequestType = _requestType,
                 Data = Utils.GetBytesFromObject(clientRequest)
@@ -62,10 +60,17 @@ namespace PlatypusNetwork.Request
 
             if (_serverResponseWaiters.ContainsKey(serverResponse.RequestKey) == false) return;
 
-            ServerResponseWaiter<ExceptionEnumType, ServerResponseType> serverResponseWaiter = _serverResponseWaiters[serverResponse.RequestKey];
+            ServerResponseWaiter<ServerResponseType> serverResponseWaiter = _serverResponseWaiters[serverResponse.RequestKey];
 
             serverResponseWaiter.Received = true;
             serverResponseWaiter.Response = serverResponse;
+        }
+
+        private class ServerResponseWaiter<ResponseType>
+            where ResponseType : ServerResponseBase<ExceptionEnumType>
+        {
+            public bool Received { get; set; }
+            public ResponseType Response { get; set; }
         }
     }
 }

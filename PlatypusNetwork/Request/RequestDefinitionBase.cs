@@ -1,17 +1,14 @@
-﻿using PlatypusNetwork.Exceptions;
-
-namespace PlatypusNetwork.Request
+﻿namespace PlatypusNetwork.Request
 {
-    public abstract class RequestDefinitionBase<ExceptionEnumType>
+    public class RequestDefinitionBase<ExceptionEnumType, RequestType>
         where ExceptionEnumType : Enum
+        where RequestType : Enum
     {
-        protected ExceptionFactory<ExceptionEnumType> _exceptionFactory;
+        protected RequestType _requestType;
 
-        public RequestDefinitionBase(ExceptionFactory<ExceptionEnumType> exceptionFactory)
+        public RequestDefinitionBase(RequestType requestType) 
         {
-            _exceptionFactory = exceptionFactory;
+            _requestType = requestType;
         }
-
-        public abstract void ServerResponseCallBack(byte[] bytes);
     }
 }

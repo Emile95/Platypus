@@ -1,12 +1,12 @@
 ﻿namespace PlatypusNetwork.SocketHandler.State
 {
-    public class ClientReceivedState<ClientKeyType> : ReceivedState
+    public class ClientReceivedState : ReceivedState
     {
-        public ClientKeyType ClientKey { get; set; }
+        public string ClientKey { get; set; }
 
         public override ReceivedState CreateCopy()
         {
-            ClientReceivedState<ClientKeyType> clientReceivedState = new ClientReceivedState<ClientKeyType>();
+            ClientReceivedState clientReceivedState = new ClientReceivedState();
             clientReceivedState.BufferSize = BufferSize;
             clientReceivedState.Buffer = new byte[BufferSize];
             clientReceivedState.WorkSocket = WorkSocket;

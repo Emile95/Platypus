@@ -2,9 +2,8 @@
 
 namespace PlatypusNetwork.SocketHandler
 {
-    public interface IServerSocketEventHandler<ClientKeyType>
-        where ClientKeyType : class
+    public interface IServerSocketEventHandler
     {
-        void OnAccept(ClientReceivedState<ClientKeyType> receivedState);
+        void OnAccept(ClientReceivedState receivedState);
     }
 }

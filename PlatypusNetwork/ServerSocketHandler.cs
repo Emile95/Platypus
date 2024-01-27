@@ -1,20 +1,31 @@
-﻿using PlatypusNetwork.SocketHandler.State;
+﻿using PlatypusNetwork.Request;
+using PlatypusNetwork.SocketHandler.State;
+using PlatypusUtils;
 using System.Net;
 using System.Net.Sockets;
 
 namespace PlatypusNetwork.SocketHandler
 {
-    public abstract class ServerSocketHandler<ExceptionEnumType, RequestType, ClientSocketKeyType> : BaseSocketHandler<ExceptionEnumType, RequestType, ClientReceivedState<ClientSocketKeyType>>, ISocketHandlerInitiator, IServerSocketEventHandler<ClientSocketKeyType>
+    public abstract class ServerSocketHandler<ExceptionEnumType, RequestTypeEnum> : BaseSocketHandler<ExceptionEnumType, RequestTypeEnum, ClientReceivedState>, ISocketHandlerInitiator, IServerSocketEventHandler
         where ExceptionEnumType : Enum
-        where RequestType : Enum
-        where ClientSocketKeyType : class
+        where RequestTypeEnum : Enum
     {
-        protected readonly Dictionary<ClientSocketKeyType, Socket> _clientSockets;
+        protected readonly Dictionary<string, Socket> _clientSockets;
 
-        public ServerSocketHandler(ProtocolType protocol)
+        protected Dictionary<RequestTypeEnum, ClientRequestReceiverDefinitionBase<ExceptionEnumType, RequestTypeEnum>> _requestDefinitions;
+        protected RequestsProfile<ExceptionEnumType, RequestTypeEnum> _requestsProfile;
+        public ServerSocketHandler(ProtocolType protocol, RequestsProfile<ExceptionEnumType, RequestTypeEnum> profile)
             : base(protocol)
         {
-            _clientSockets = new Dictionary<ClientSocketKeyType, Socket>();
+            _clientSockets = new Dictionary<string, Socket>();
+
+            _requestDefinitions = new Dictionary<RequestTypeEnum, ClientRequestReceiverDefinitionBase<ExceptionEnumType, RequestTypeEnum>>();
+
+            _requestsProfile = profile;
+
+            if (profile != null)
+                foreach (KeyValuePair<RequestTypeEnum, RequestDefinitionBase<ExceptionEnumType, RequestTypeEnum>> requestDefinition in profile.RequestDefinitions)
+                    _requestDefinitions.Add(requestDefinition.Key, requestDefinition.Value as ClientRequestReceiverDefinitionBase<ExceptionEnumType, RequestTypeEnum>);
         }
 
         public void Initialize(int port, string host = null)
@@ -35,7 +46,7 @@ namespace PlatypusNetwork.SocketHandler
             _socket.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
         }
 
-        public void SendToClient(ClientSocketKeyType clientSocketKey, byte[] bytes)
+        public void SendToClient(string clientSocketKey, byte[] bytes)
         {
             Send(_clientSockets[clientSocketKey], bytes);
         }
@@ -46,18 +57,29 @@ namespace PlatypusNetwork.SocketHandler
                 Send(clientSocket, bytes);
         }
 
-        public abstract void OnAccept(ClientReceivedState<ClientSocketKeyType> receivedState);
+        public abstract void OnAccept(ClientReceivedState receivedState);
 
-        protected abstract ClientSocketKeyType GenerateClientKey(List<ClientSocketKeyType> allKeys);
+        protected abstract string GenerateClientKey(List<string> allKeys);
+
+        public override void OnReceive(ClientReceivedState receivedState)
+        {
+            RequestData<RequestTypeEnum> clientRequest = Utils.GetObjectFromBytes<RequestData<RequestTypeEnum>>(receivedState.BytesRead);
+
+            if (clientRequest == null) return;
+
+            _requestDefinitions[clientRequest.RequestType].HandleClientRequest(receivedState.ClientKey, clientRequest, (serverResponse) => {
+                SendToClient(receivedState.ClientKey, Utils.GetBytesFromObject(serverResponse));
+            });
+        }
 
         private void AcceptCallBack(IAsyncResult ar)
         {
             Socket serverSocket = (Socket)ar.AsyncState;
             Socket clientSocket = serverSocket.EndAccept(ar);
-            ClientSocketKeyType clientKey = GenerateClientKey(_clientSockets.Keys.ToList());
+            string clientKey = GenerateClientKey(_clientSockets.Keys.ToList());
             _clientSockets.Add(clientKey, clientSocket);
 
-            ClientReceivedState<ClientSocketKeyType> state = new ClientReceivedState<ClientSocketKeyType>();
+            ClientReceivedState state = new ClientReceivedState();
             state.BufferSize = _receivedBufferSize;
             state.Buffer = new byte[_receivedBufferSize];
             state.WorkSocket = clientSocket;

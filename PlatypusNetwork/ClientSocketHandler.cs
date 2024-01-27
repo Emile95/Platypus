@@ -10,10 +10,17 @@ namespace PlatypusNetwork.SocketHandler
         where ExceptionEnumType : Enum
         where RequestType : Enum
     {
-        
+        protected Dictionary<RequestType, ClientRequestSenderDefinitionBase<ExceptionEnumType, RequestType>> _requestDefinitions;
 
         public ClientSocketHandler(ProtocolType protocol, RequestsProfile<ExceptionEnumType, RequestType> profile = null)
-            : base(protocol, profile) {}
+            : base(protocol) 
+        {
+            _requestDefinitions = new Dictionary<RequestType, ClientRequestSenderDefinitionBase<ExceptionEnumType, RequestType>>();
+
+            if(profile != null)
+                foreach (KeyValuePair<RequestType, RequestDefinitionBase<ExceptionEnumType, RequestType>> requestDefinition in profile.RequestDefinitions)
+                    _requestDefinitions.Add(requestDefinition.Key, requestDefinition.Value as ClientRequestSenderDefinitionBase<ExceptionEnumType, RequestType>);
+        }
 
         public void Initialize(int port, string host = null)
         {
@@ -39,7 +46,7 @@ namespace PlatypusNetwork.SocketHandler
         public override void OnReceive(ServerReceivedState receivedState)
         {
             RequestData<RequestType> serverResponse = Utils.GetObjectFromBytes<RequestData<RequestType>>(receivedState.BytesRead);
-            requestDefinitions[serverResponse.RequestType].ServerResponseCallBack(serverResponse.Data);
+            _requestDefinitions[serverResponse.RequestType].ServerResponseCallBack(serverResponse.Data);
         }
 
         public virtual void OnConnect(ServerReceivedState state) { }
@@ -48,7 +55,7 @@ namespace PlatypusNetwork.SocketHandler
             where ServerResponseType : ServerResponseBase<ExceptionEnumType>
             where ClientRequestType : ClientRequestBase, new()
         {
-            var requestDefinition = requestDefinitions[requestType] as RequestDefinition<ExceptionEnumType, RequestType, ClientRequestType, ServerResponseType>;
+            var requestDefinition = _requestDefinitions[requestType] as ClientRequestSenderDefinition<ExceptionEnumType, RequestType, ClientRequestType, ServerResponseType>;
 
             return requestDefinition.HandleClientRequest(
                 (clientRequestData) => Send(_socket, Utils.GetBytesFromObject(clientRequestData)), 
