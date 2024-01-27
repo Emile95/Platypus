@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PlatypusUtils\PlatypusUtils.csproj" />
+  </ItemGroup>
+
 </Project>

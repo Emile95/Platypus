@@ -12,101 +12,77 @@ namespace PlatypusAPI
     {
         public ApplicationActionRunResult RunApplicationAction(ApplicationActionRunParameter applicationActionRunparameter)
         {
-            ApplicationActionRunResult result = null;
-            RunClientRequest<StartActionServerResponse, StartActionClientRequest>(
-                 _startActionServerResponseWaiters, SocketDataType.RunApplicationAction,
-                 (clientRequest) => {
-                     clientRequest.Parameters = applicationActionRunparameter;
-                 },
-                 (serverResponse) => {
-                     result = serverResponse.Result;
-                 }
+            StartActionServerResponse response = _socketHandler.HandleClientRequest<StartActionClientRequest, StartActionServerResponse>(
+                RequestType.RunApplicationAction,
+                (clientRequest) => clientRequest.Parameters = applicationActionRunparameter
             );
-            return result;
+
+            return response.Result;
         }
 
         public UserAccount AddUser(UserCreationParameter parameter)
         {
-            UserAccount userAccount = null;
-            RunClientRequest<AddUserServerResponse, AddUserClientRequest>(
-                 _addUserServerResponseWaiters, SocketDataType.AddUser,
-                 (clientRequest) => {
-                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
-                     clientRequest.FullName = parameter.FullName;
-                     clientRequest.Email = parameter.Email;
-                     clientRequest.Data = parameter.Data;
-                     clientRequest.UserPermissionFlags = parameter.UserPermissionFlags;
-                 },
-                 (serverResponse) => {
-                     userAccount = serverResponse.UserAccount;
-                 }
+            AddUserServerResponse response = _socketHandler.HandleClientRequest<AddUserClientRequest, AddUserServerResponse>(
+                RequestType.AddUser,
+                (clientRequest) => {
+                    clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
+                    clientRequest.FullName = parameter.FullName;
+                    clientRequest.Email = parameter.Email;
+                    clientRequest.Data = parameter.Data;
+                    clientRequest.UserPermissionFlags = parameter.UserPermissionFlags;
+                }
             );
-            return userAccount;
+
+            return response.UserAccount;
         }
 
         public UserAccount UpdateUser(UserUpdateParameter parameter)
         {
-            UserAccount userAccount = null;
-            RunClientRequest<UpdateUserServerResponse, UpdateUserClientRequest>(
-                 _updateUserServerResponseWaiters, SocketDataType.UpdateUser,
-                 (clientRequest) => {
-                     clientRequest.UserID = parameter.ID;
-                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
-                     clientRequest.FullName = parameter.FullName;
-                     clientRequest.Email = parameter.Email;
-                     clientRequest.Data = parameter.Data;
-                     clientRequest.UserPermissionFlags = parameter.UserPermissionFlags;
-                 },
-                 (serverResponse) => {
-                     userAccount = serverResponse.UserAccount;
-                 }
+            UpdateUserServerResponse response = _socketHandler.HandleClientRequest<UpdateUserClientRequest, UpdateUserServerResponse>(
+                RequestType.UpdateUser,
+                (clientRequest) => {
+                    clientRequest.UserID = parameter.ID;
+                    clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
+                    clientRequest.FullName = parameter.FullName;
+                    clientRequest.Email = parameter.Email;
+                    clientRequest.Data = parameter.Data;
+                    clientRequest.UserPermissionFlags = parameter.UserPermissionFlags;
+                }
             );
-            return userAccount;
+
+            return response.UserAccount;
         }
 
         public void RemoveUser(RemoveUserParameter parameter)
         {
-            RunClientRequest<RemoveUserServerResponse, RemoveUserClientRequest>(
-                 _removeUserServerResponseWaiters, SocketDataType.RemoveUser,
-                 (clientRequest) => {
-                     clientRequest.ID = parameter.ID;
-                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
-                 },
-                 (serverResponse) => {}
+            RemoveUserServerResponse response = _socketHandler.HandleClientRequest<RemoveUserClientRequest, RemoveUserServerResponse>(
+                RequestType.RemoveUser,
+                (clientRequest) => {
+                    clientRequest.ID = parameter.ID;
+                    clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
+                }
             );
         }
 
         public List<ApplicationActionRunInfo> GetRunningApplicationActions()
         {
-            List<ApplicationActionRunInfo> result = new List<ApplicationActionRunInfo>();
-            RunClientRequest<GetRunningApplicationActionsServerResponse, PlatypusClientRequest>(
-                 _getRunningApplicationActionsServerResponseWaiters, SocketDataType.GetRunningActions, null,
-                 (serverResponse) => {
-                     result = serverResponse.ApplicationActionRunInfos;
-                 }
-            );
-            return result;
+            GetRunningApplicationActionsServerResponse response = _socketHandler.HandleClientRequest<PlatypusClientRequest, GetRunningApplicationActionsServerResponse>(RequestType.GetRunningActions);
+            return response.ApplicationActionRunInfos;
         }
 
         public List<ApplicationActionInfo> GetApplicationActionInfos()
         {
-            List<ApplicationActionInfo> result = new List<ApplicationActionInfo>();
-            RunClientRequest<GetApplicationActionInfosServerResponse, PlatypusClientRequest>(
-                 _getApplicationActionInfosServerResponseWaiter, SocketDataType.GetActionInfos, null,
-                 (serverResponse) => {
-                     result = serverResponse.ApplicationActionInfos;
-                 }
-            );
-            return result;
+            GetApplicationActionInfosServerResponse response = _socketHandler.HandleClientRequest<PlatypusClientRequest, GetApplicationActionInfosServerResponse>(RequestType.GetActionInfos);
+            return response.ApplicationActionInfos;
         }
 
         public void CancelRunningApplicationAction(string applicationRunGuid)
         {
-            RunClientRequest<PlatypusServerResponse, CancelRunningApplicationRunClientRequest>(
-                 _cancelRunningApplicationActionServerResponseWaiters, SocketDataType.CancelRunningAction,
-                 (clientRequest) => {
-                     clientRequest.ApplicationRunGuid = applicationRunGuid;
-                 }
+            PlatypusServerResponse response = _socketHandler.HandleClientRequest<CancelRunningApplicationRunClientRequest, PlatypusServerResponse>(
+                RequestType.CancelRunningAction, 
+                (clientRequest) => {
+                    clientRequest.ApplicationRunGuid = applicationRunGuid;
+                }
             );
         }
     }

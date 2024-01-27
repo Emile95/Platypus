@@ -1,6 +1,6 @@
 ﻿namespace PlatypusAPI.Network
 {
-    public enum SocketDataType
+    public enum RequestType
     {
         UserConnection,
         RunApplicationAction,

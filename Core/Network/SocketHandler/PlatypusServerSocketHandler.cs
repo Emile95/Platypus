@@ -10,10 +10,13 @@ using PlatypusAPI.Network;
 using PlatypusAPI.Network.ServerResponse;
 using PlatypusAPI.Network.ClientRequest;
 using PlatypusNetwork.Exceptions;
+using PlatypusNetwork;
+using System.Net.Sockets;
+using PlatypusNetwork.Request;
 
 namespace Core.Network.SocketHandler
 {
-    internal class PlatypusServerSocketHandler : ServerSocketHandler<string>
+    internal class PlatypusServerSocketHandler : ServerSocketHandler<FactorisableExceptionType, RequestType, string>
     {
         private readonly ServerInstance _serverInstance;
         private readonly int _port;
@@ -21,7 +24,7 @@ namespace Core.Network.SocketHandler
 
         public PlatypusServerSocketHandler(
             ServerInstance serverInstance,
-            string protocol,
+            ProtocolType protocol,
             int port
         ) : base(protocol)
         {
@@ -48,20 +51,20 @@ namespace Core.Network.SocketHandler
 
         public override void OnReceive(ClientReceivedState<string> receivedState)
         {
-            SocketData clientRequest = Utils.GetObjectFromBytes<SocketData>(receivedState.BytesRead);
+            RequestData<RequestType> clientRequest = Utils.GetObjectFromBytes<RequestData<RequestType>>(receivedState.BytesRead);
 
             if (clientRequest == null) return;
 
-            switch (clientRequest.SocketDataType)
+            switch (clientRequest.RequestType)
             {
-                case SocketDataType.UserConnection: ReceiveUserConnectionClientRequest(receivedState.ClientKey, clientRequest); break;
-                case SocketDataType.RunApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
-                case SocketDataType.AddUser: ReceiveAddUserClientRequest(receivedState.ClientKey, clientRequest); break;
-                case SocketDataType.UpdateUser: ReceiveUpdateUserClientRequest(receivedState.ClientKey, clientRequest); break;
-                case SocketDataType.RemoveUser: ReceiveRemoveUserClientRequest(receivedState.ClientKey, clientRequest); break;
-                case SocketDataType.GetRunningActions: ReceiveGetRunningApplicationActionsClientRequest(receivedState.ClientKey, clientRequest); break;
-                case SocketDataType.GetActionInfos: ReceiveGetApplicationActionInfosClientRequest(receivedState.ClientKey, clientRequest); break;
-                case SocketDataType.CancelRunningAction: ReceiveCancelRunningApplicationActionRunClientRequest(receivedState.ClientKey, clientRequest); break;
+                case RequestType.UserConnection: ReceiveUserConnectionClientRequest(receivedState.ClientKey, clientRequest); break;
+                case RequestType.RunApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
+                case RequestType.AddUser: ReceiveAddUserClientRequest(receivedState.ClientKey, clientRequest); break;
+                case RequestType.UpdateUser: ReceiveUpdateUserClientRequest(receivedState.ClientKey, clientRequest); break;
+                case RequestType.RemoveUser: ReceiveRemoveUserClientRequest(receivedState.ClientKey, clientRequest); break;
+                case RequestType.GetRunningActions: ReceiveGetRunningApplicationActionsClientRequest(receivedState.ClientKey, clientRequest); break;
+                case RequestType.GetActionInfos: ReceiveGetApplicationActionInfosClientRequest(receivedState.ClientKey, clientRequest); break;
+                case RequestType.CancelRunningAction: ReceiveCancelRunningApplicationActionRunClientRequest(receivedState.ClientKey, clientRequest); break;
             }
         }
 
@@ -70,13 +73,18 @@ namespace Core.Network.SocketHandler
             Initialize(_port, host);
         }
 
-        private void ReceiveUserConnectionClientRequest(string clientKey, SocketData clientRequestData)
+        private void ReceiveUserConnectionClientRequest(string clientKey, RequestData<RequestType> clientRequestData)
         {
-            bool exceptionThrowed = HandleClientRequest<UserConnectionParameter, UserConnectionServerResponse>(
-                clientKey, clientRequestData, SocketDataType.UserConnection,
+            bool exceptionThrowed = HandleClientRequest<UserConnectionClientRequest, UserConnectionServerResponse>(
+                clientKey, clientRequestData, RequestType.UserConnection,
                 (userAccount, clientRequest, serverResponse) =>
                 {
-                    serverResponse.UserAccount = _serverInstance.UserConnect(clientRequest);
+                    serverResponse.UserAccount = _serverInstance.UserConnect(new UserConnectionParameter()
+                    {
+                        ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
+                        Credential = clientRequest.Credential,
+                    });
+                    serverResponse.RequestKey = clientRequest.RequestKey;
                     _connectedUserOnSockets[clientKey] = serverResponse.UserAccount;
                 }
             );
@@ -84,10 +92,10 @@ namespace Core.Network.SocketHandler
                 _clientSockets.Remove(clientKey);
         }
 
-        private void ReceiveStartApplicationActionClientRequest(string clientKey, SocketData clientRequestData)
+        private void ReceiveStartApplicationActionClientRequest(string clientKey, RequestData<RequestType> clientRequestData)
         {
             HandleClientRequest<StartActionClientRequest, StartActionServerResponse>(
-                clientKey, clientRequestData, SocketDataType.RunApplicationAction,
+                clientKey, clientRequestData, RequestType.RunApplicationAction,
                 (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
@@ -96,10 +104,10 @@ namespace Core.Network.SocketHandler
             );
         }
 
-        private void ReceiveAddUserClientRequest(string clientKey, SocketData clientRequestData)
+        private void ReceiveAddUserClientRequest(string clientKey, RequestData<RequestType> clientRequestData)
         {
             HandleClientRequest<AddUserClientRequest, AddUserServerResponse>(
-                clientKey, clientRequestData, SocketDataType.AddUser,
+                clientKey, clientRequestData, RequestType.AddUser,
                 (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
@@ -118,10 +126,10 @@ namespace Core.Network.SocketHandler
             );
         }
 
-        private void ReceiveUpdateUserClientRequest(string clientKey, SocketData clientRequestData)
+        private void ReceiveUpdateUserClientRequest(string clientKey, RequestData<RequestType> clientRequestData)
         {
             HandleClientRequest<UpdateUserClientRequest, UpdateUserServerResponse>(
-                clientKey, clientRequestData, SocketDataType.UpdateUser,
+                clientKey, clientRequestData, RequestType.UpdateUser,
                 (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
@@ -141,10 +149,10 @@ namespace Core.Network.SocketHandler
             );
         }
 
-        private void ReceiveRemoveUserClientRequest(string clientKey, SocketData clientRequestData)
+        private void ReceiveRemoveUserClientRequest(string clientKey, RequestData<RequestType> clientRequestData)
         {
             HandleClientRequest<RemoveUserClientRequest, RemoveUserServerResponse>(
-                clientKey, clientRequestData, SocketDataType.RemoveUser,
+                clientKey, clientRequestData, RequestType.RemoveUser,
                 (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
@@ -160,10 +168,10 @@ namespace Core.Network.SocketHandler
             );
         }
 
-        private void ReceiveGetRunningApplicationActionsClientRequest(string clientKey, SocketData clientRequestData)
+        private void ReceiveGetRunningApplicationActionsClientRequest(string clientKey, RequestData<RequestType> clientRequestData)
         {
             HandleClientRequest<PlatypusClientRequest, GetRunningApplicationActionsServerResponse>(
-                clientKey, clientRequestData, SocketDataType.GetRunningActions,
+                clientKey, clientRequestData, RequestType.GetRunningActions,
                 (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
@@ -176,10 +184,10 @@ namespace Core.Network.SocketHandler
             );
         }
 
-        private void ReceiveGetApplicationActionInfosClientRequest(string clientKey, SocketData clientRequestData)
+        private void ReceiveGetApplicationActionInfosClientRequest(string clientKey, RequestData<RequestType> clientRequestData)
         {
             HandleClientRequest<PlatypusClientRequest, GetApplicationActionInfosServerResponse>(
-                clientKey, clientRequestData, SocketDataType.GetActionInfos,
+                clientKey, clientRequestData, RequestType.GetActionInfos,
                 (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
@@ -192,10 +200,10 @@ namespace Core.Network.SocketHandler
             );
         }
 
-        private void ReceiveCancelRunningApplicationActionRunClientRequest(string clientKey, SocketData clientRequestData)
+        private void ReceiveCancelRunningApplicationActionRunClientRequest(string clientKey, RequestData<RequestType> clientRequestData)
         {
             HandleClientRequest<CancelRunningApplicationRunClientRequest, AddUserServerResponse>(
-                clientKey, clientRequestData, SocketDataType.CancelRunningAction,
+                clientKey, clientRequestData, RequestType.CancelRunningAction,
                 (userAccount, clientRequest, serverResponse) =>
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
@@ -210,25 +218,26 @@ namespace Core.Network.SocketHandler
             );
         }
 
-        private bool HandleClientRequest<RequestType, ResponseType>(string clientKey, SocketData clientRequestData, SocketDataType serverResponseType, Action<UserAccount, RequestType, ResponseType> action)
+        private bool HandleClientRequest<ClientRequestType, ResponseType>(string clientKey, RequestData<RequestType> clientRequestData, PlatypusAPI.Network.RequestType serverResponseType, Action<UserAccount, ClientRequestType, ResponseType> action)
+            where ClientRequestType : ClientRequestBase
             where ResponseType : PlatypusServerResponse, new()
-            where RequestType : class, new()
         {
             UserAccount userMakingRequest = _connectedUserOnSockets[clientKey];
 
             bool exceptionThrowed = false;
-            SocketData serverResponseData = new SocketData()
+            RequestData<RequestType> serverResponseData = new RequestData<RequestType>()
             {
-                SocketDataType = serverResponseType
+                RequestType = serverResponseType
             };
             ResponseType serverResponse = new ResponseType();
-            RequestType clientRequest = Utils.GetObjectFromBytes<RequestType>(clientRequestData.Data);
+            ClientRequestType clientRequest = Utils.GetObjectFromBytes<ClientRequestType>(clientRequestData.Data);
             try
             {
                 action(userMakingRequest, clientRequest, serverResponse);
             }
             catch (FactorisableException<FactorisableExceptionType> e)
             {
+                serverResponse.ExceptionThrowed = true;
                 serverResponse.FactorisableExceptionType = e.FactorisableExceptionType;
                 serverResponse.FactorisableExceptionParameters = e.GetParameters();
                 exceptionThrowed = true;

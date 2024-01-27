@@ -5,14 +5,17 @@ using System.Net.Sockets;
 
 namespace PlatypusNetwork.SocketHandler
 {
-    public abstract class BaseSocketHandler<ReceivedStateType> : ISocketEventHandler<ReceivedStateType>
+    public abstract class BaseSocketHandler<ExceptionEnumType, RequestType, ReceivedStateType> : ISocketEventHandler<ReceivedStateType>
+        where ExceptionEnumType : Enum
         where ReceivedStateType : ReceivedState, new()
+        where RequestType : Enum
     {
         protected Socket _socket;
         protected int _receivedBufferSize;
         protected readonly SocketHandlerResolver<ReceivedStateType> _socketResolver;
+        protected Dictionary<RequestType, RequestDefinitionBase<ExceptionEnumType>> requestDefinitions;
 
-        public BaseSocketHandler(ProtocolType protocol, RequestsProfile profile = null)
+        public BaseSocketHandler(ProtocolType protocol, RequestsProfile<ExceptionEnumType, RequestType> profile = null)
         {
             _receivedBufferSize = 1000;
             switch (protocol)
@@ -22,6 +25,9 @@ namespace PlatypusNetwork.SocketHandler
                     break;
             }
             _socket = _socketResolver.CreateSocket();
+
+            requestDefinitions = profile?.Requests;
+
         }
 
         public void Send(Socket socket, byte[] bytes)

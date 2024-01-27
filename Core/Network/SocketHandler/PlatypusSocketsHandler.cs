@@ -1,4 +1,6 @@
-﻿namespace Core.Network.SocketHandler
+﻿using System.Net.Sockets;
+
+namespace Core.Network.SocketHandler
 {
     public class PlatypusSocketsHandler
     {
@@ -15,7 +17,7 @@
 
         public void Initialize(ServerConfig serverConfig, string host = null)
         {
-            _serverSocketsHandler.Add(new PlatypusServerSocketHandler(_serverInstance, "tcp", serverConfig.TcpSocketPort));
+            _serverSocketsHandler.Add(new PlatypusServerSocketHandler(_serverInstance, ProtocolType.Tcp, serverConfig.TcpSocketPort));
 
             foreach (PlatypusServerSocketHandler serverSocketHandler in _serverSocketsHandler)
                 serverSocketHandler.Initialize(host);

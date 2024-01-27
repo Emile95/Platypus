@@ -4,12 +4,14 @@ using System.Net.Sockets;
 
 namespace PlatypusNetwork.SocketHandler
 {
-    public abstract class ServerSocketHandler<ClientSocketKeyType> : BaseSocketHandler<ClientReceivedState<ClientSocketKeyType>>, ISocketHandlerInitiator, IServerSocketEventHandler<ClientSocketKeyType>
+    public abstract class ServerSocketHandler<ExceptionEnumType, RequestType, ClientSocketKeyType> : BaseSocketHandler<ExceptionEnumType, RequestType, ClientReceivedState<ClientSocketKeyType>>, ISocketHandlerInitiator, IServerSocketEventHandler<ClientSocketKeyType>
+        where ExceptionEnumType : Enum
+        where RequestType : Enum
         where ClientSocketKeyType : class
     {
         protected readonly Dictionary<ClientSocketKeyType, Socket> _clientSockets;
 
-        public ServerSocketHandler(string protocol)
+        public ServerSocketHandler(ProtocolType protocol)
             : base(protocol)
         {
             _clientSockets = new Dictionary<ClientSocketKeyType, Socket>();
