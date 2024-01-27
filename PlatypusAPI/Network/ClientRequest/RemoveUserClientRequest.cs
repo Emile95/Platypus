@@ -1,6 +1,4 @@
-﻿using PaltypusAPI.Sockets.ClientRequest;
-
-namespace PlatypusAPI.Sockets.ClientRequest
+﻿namespace PlatypusAPI.Network.ClientRequest
 {
     public class RemoveUserClientRequest : ClientRequestBase
     {

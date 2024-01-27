@@ -1,7 +1,6 @@
-﻿using PaltypusAPI.Sockets.ServerResponse;
-using PlatypusAPI.ApplicationAction;
+﻿using PlatypusAPI.ApplicationAction;
 
-namespace PlatypusAPI.Sockets.ServerResponse
+namespace PlatypusAPI.Network.ServerResponse
 {
     public class GetApplicationActionInfosServerResponse : ServerResponseBase
     {

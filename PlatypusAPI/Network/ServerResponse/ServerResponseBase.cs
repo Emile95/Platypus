@@ -1,6 +1,6 @@
 ﻿using PlatypusAPI.Exceptions;
 
-namespace PaltypusAPI.Sockets.ServerResponse
+namespace PlatypusAPI.Network.ServerResponse
 {
     public class ServerResponseBase
     {

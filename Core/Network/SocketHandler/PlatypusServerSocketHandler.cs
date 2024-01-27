@@ -1,18 +1,16 @@
 ﻿using PlatypusNetwork.SocketHandler;
 using PlatypusNetwork.SocketHandler.State;
 using PlatypusAPI.Exceptions;
-using PaltypusAPI.Sockets.ClientRequest;
-using PaltypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.ServerFunctionParameter;
-using PlatypusAPI.Sockets;
-using PlatypusAPI.Sockets.ClientRequest;
-using PlatypusAPI.Sockets.ServerResponse;
 using PlatypusAPI.User;
 using PlatypusUtils;
+using PlatypusAPI.Network;
+using PlatypusAPI.Network.ServerResponse;
+using PlatypusAPI.Network.ClientRequest;
 
-namespace Core.Sockethandler
+namespace Core.Network.SocketHandler
 {
     internal class PlatypusServerSocketHandler : ServerSocketHandler<string>
     {
@@ -53,7 +51,7 @@ namespace Core.Sockethandler
 
             if (clientRequest == null) return;
 
-            switch(clientRequest.SocketDataType)
+            switch (clientRequest.SocketDataType)
             {
                 case SocketDataType.UserConnection: ReceiveUserConnectionClientRequest(receivedState.ClientKey, clientRequest); break;
                 case SocketDataType.RunApplicationAction: ReceiveStartApplicationActionClientRequest(receivedState.ClientKey, clientRequest); break;
@@ -114,7 +112,7 @@ namespace Core.Sockethandler
                             FullName = clientRequest.FullName,
                             UserPermissionFlags = clientRequest.UserPermissionFlags
                         }
-                    );   
+                    );
                 }
             );
         }
@@ -201,7 +199,7 @@ namespace Core.Sockethandler
                 {
                     serverResponse.RequestKey = clientRequest.RequestKey;
                     _serverInstance.CancelRunningApplicationAction(
-                        clientRequest.UserAccount, 
+                        clientRequest.UserAccount,
                         new CancelRunningActionParameter()
                         {
                             Guid = clientRequest.ApplicationRunGuid
@@ -216,7 +214,7 @@ namespace Core.Sockethandler
             where RequestType : class, new()
         {
             UserAccount userMakingRequest = _connectedUserOnSockets[clientKey];
-            
+
             bool exceptionThrowed = false;
             SocketData serverResponseData = new SocketData()
             {

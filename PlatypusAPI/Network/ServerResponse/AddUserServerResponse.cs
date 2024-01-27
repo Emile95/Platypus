@@ -1,7 +1,6 @@
-﻿using PaltypusAPI.Sockets.ServerResponse;
-using PlatypusAPI.User;
+﻿using PlatypusAPI.User;
 
-namespace PlatypusAPI.Sockets.ServerResponse
+namespace PlatypusAPI.Network.ServerResponse
 {
     public class AddUserServerResponse : ServerResponseBase
     {

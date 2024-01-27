@@ -8,7 +8,7 @@ using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.User;
 using PlatypusUtils;
 
-namespace Core.RestAPI
+namespace Core.Network.RestAPI
 {
     public class RestAPIHandler
     {
@@ -174,7 +174,7 @@ namespace Core.RestAPI
             };
         }
 
-        private void CheckUserTokensOnTimedEvent(Object source, System.Timers.ElapsedEventArgs e, string token)
+        private void CheckUserTokensOnTimedEvent(object source, System.Timers.ElapsedEventArgs e, string token)
         {
             _tokens.Remove(token);
         }

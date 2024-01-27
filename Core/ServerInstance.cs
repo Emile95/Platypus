@@ -1,8 +1,6 @@
 ﻿using Core.Application;
 using Core.ApplicationAction;
 using Core.Event;
-using Core.RestAPI;
-using Core.SocketHandler;
 using Core.User;
 using PlatypusLogging;
 using PlatypusLogging.Loggers;
@@ -11,6 +9,8 @@ using Persistance;
 using Persistance.Repository;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
+using Core.Network.RestAPI;
+using Core.Network.SocketHandler;
 
 namespace Core
 {

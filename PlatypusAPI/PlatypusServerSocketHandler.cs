@@ -1,7 +1,7 @@
 ﻿using PlatypusNetwork.SocketHandler;
 using PlatypusNetwork.SocketHandler.State;
-using PlatypusAPI.Sockets;
 using PlatypusUtils;
+using PlatypusAPI.Network;
 
 namespace PlatypusAPI
 {

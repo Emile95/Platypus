@@ -1,6 +1,4 @@
-﻿using Core.Sockethandler;
-
-namespace Core.SocketHandler
+﻿namespace Core.Network.SocketHandler
 {
     public class PlatypusSocketsHandler
     {

@@ -1,7 +1,6 @@
-﻿using PaltypusAPI.Sockets.ServerResponse;
-using PlatypusAPI.ApplicationAction;
+﻿using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ApplicationAction.Run;
-using PlatypusAPI.Sockets.ServerResponse;
+using PlatypusAPI.Network.ServerResponse;
 using PlatypusAPI.User;
 
 namespace PlatypusAPI

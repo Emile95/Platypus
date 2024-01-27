@@ -1,7 +1,6 @@
-﻿using PaltypusAPI.Sockets.ClientRequest;
-using PlatypusAPI.User;
+﻿using PlatypusAPI.User;
 
-namespace PlatypusAPI.Sockets.ClientRequest
+namespace PlatypusAPI.Network.ClientRequest
 {
     public class UpdateUserClientRequest : ClientRequestBase
     {

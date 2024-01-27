@@ -1,9 +1,9 @@
-﻿using PlatypusAPI.Sockets;
-using PaltypusAPI.Sockets.ClientRequest;
-using PaltypusAPI.Sockets.ServerResponse;
-using PlatypusAPI.Exceptions;
+﻿using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
 using PlatypusUtils;
+using PlatypusAPI.Network;
+using PlatypusAPI.Network.ServerResponse;
+using PlatypusAPI.Network.ClientRequest;
 
 namespace PlatypusAPI
 {

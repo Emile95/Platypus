@@ -1,10 +1,10 @@
 ﻿using PlatypusAPI.User;
 
-namespace PaltypusAPI.Sockets.ClientRequest
+namespace PlatypusAPI.Network.ClientRequest
 {
     public class ClientRequestBase
     {
         public UserAccount UserAccount { get; set; }
-        public string RequestKey { get; set;}
+        public string RequestKey { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace PlatypusAPI.Sockets
+﻿namespace PlatypusAPI.Network
 {
     public class SocketData
     {

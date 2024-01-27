@@ -1,6 +1,6 @@
 ﻿using PlatypusAPI.User;
 
-namespace Core.RestAPI
+namespace Core.Network.RestAPI
 {
     internal class UserAccountToken
     {
