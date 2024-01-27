@@ -12,13 +12,13 @@ namespace PlatypusAPI
         private readonly PlatypusClientSocketHandler _socketHandler;
         public UserAccount ConnectedUser { get; private set; }
 
-        private readonly Dictionary<string, StartActionServerResponseWaiter> _startActionServerResponseWaiters;
-        private readonly Dictionary<string, AddUserServerResponseWaiter> _addUserServerResponseWaiters;
-        private readonly Dictionary<string, UpdateUserServerResponseWaiter> _updateUserServerResponseWaiters;
-        private readonly Dictionary<string, RemoveUserServerResponseWaiter> _removeUserServerResponseWaiters;
-        private readonly Dictionary<string, GetRunningApplicationActionsServerResponseWaiter> _getRunningApplicationActionsServerResponseWaiters;
-        private readonly Dictionary<string, GetApplicationActionInfosServerResponseWaiter> _getApplicationActionInfosServerResponseWaiter;
-        private readonly Dictionary<string, ServerResponseWaiter> _cancelRunningApplicationActionServerResponseWaiters;
+        private readonly Dictionary<string, ServerResponseWaiter<StartActionServerResponse>> _startActionServerResponseWaiters;
+        private readonly Dictionary<string, ServerResponseWaiter<AddUserServerResponse>> _addUserServerResponseWaiters;
+        private readonly Dictionary<string, ServerResponseWaiter<UpdateUserServerResponse>> _updateUserServerResponseWaiters;
+        private readonly Dictionary<string, ServerResponseWaiter<RemoveUserServerResponse>> _removeUserServerResponseWaiters;
+        private readonly Dictionary<string, ServerResponseWaiter<GetRunningApplicationActionsServerResponse>> _getRunningApplicationActionsServerResponseWaiters;
+        private readonly Dictionary<string, ServerResponseWaiter<GetApplicationActionInfosServerResponse>> _getApplicationActionInfosServerResponseWaiter;
+        private readonly Dictionary<string, ServerResponseWaiter<ServerResponseBase>> _cancelRunningApplicationActionServerResponseWaiters;
 
         public PlatypusServerApplication(
             PlatypusClientSocketHandler socketHandler,
@@ -28,13 +28,13 @@ namespace PlatypusAPI
             _socketHandler = socketHandler;
             ConnectedUser = connectedUser;
 
-            _startActionServerResponseWaiters = new Dictionary<string, StartActionServerResponseWaiter>();
-            _addUserServerResponseWaiters = new Dictionary<string, AddUserServerResponseWaiter>();
-            _updateUserServerResponseWaiters = new Dictionary<string, UpdateUserServerResponseWaiter>();
-            _removeUserServerResponseWaiters = new Dictionary<string, RemoveUserServerResponseWaiter>();
-            _getRunningApplicationActionsServerResponseWaiters = new Dictionary<string, GetRunningApplicationActionsServerResponseWaiter>();
-            _getApplicationActionInfosServerResponseWaiter = new Dictionary<string, GetApplicationActionInfosServerResponseWaiter>();
-            _cancelRunningApplicationActionServerResponseWaiters = new Dictionary<string, ServerResponseWaiter>();
+            _startActionServerResponseWaiters = new Dictionary<string, ServerResponseWaiter<StartActionServerResponse>>();
+            _addUserServerResponseWaiters = new Dictionary<string, ServerResponseWaiter<AddUserServerResponse>>();
+            _updateUserServerResponseWaiters = new Dictionary<string, ServerResponseWaiter<UpdateUserServerResponse>>();
+            _removeUserServerResponseWaiters = new Dictionary<string, ServerResponseWaiter<RemoveUserServerResponse>>();
+            _getRunningApplicationActionsServerResponseWaiters = new Dictionary<string, ServerResponseWaiter<GetRunningApplicationActionsServerResponse>>();
+            _getApplicationActionInfosServerResponseWaiter = new Dictionary<string, ServerResponseWaiter<GetApplicationActionInfosServerResponse>>();
+            _cancelRunningApplicationActionServerResponseWaiters = new Dictionary<string, ServerResponseWaiter<ServerResponseBase>>();
 
             _socketHandler.ServerResponseCallBacks[SocketDataType.RunApplicationAction].Add(StartApplicationServerResponseCallBack);
             _socketHandler.ServerResponseCallBacks[SocketDataType.AddUser].Add(AddUserServerResponseCallBack);
@@ -51,14 +51,13 @@ namespace PlatypusAPI
 
         }
 
-        private void RunClientRequest<ServerResponseType, ServerResponseWaiterType, ClientRequestType>(Dictionary<string, ServerResponseWaiterType> serverResponseWaiters, SocketDataType socketDataType, Action<ClientRequestType> consumer = null, Action<ServerResponseWaiterType> callBack = null)
+        private void RunClientRequest<ServerResponseType, ClientRequestType>(Dictionary<string, ServerResponseWaiter<ServerResponseType>> serverResponseWaiters, SocketDataType socketDataType, Action<ClientRequestType> consumer = null, Action<ServerResponseType> callBack = null)
             where ServerResponseType : ServerResponseBase
-            where ServerResponseWaiterType : ServerResponseWaiter, new()
             where ClientRequestType : ClientRequestBase, new()
         {
             string guid = Utils.GenerateGuidFromEnumerable(serverResponseWaiters.Keys);
 
-            ServerResponseWaiterType serverResponseWaiter = new ServerResponseWaiterType();
+            ServerResponseWaiter<ServerResponseType> serverResponseWaiter = new ServerResponseWaiter<ServerResponseType>();
 
             serverResponseWaiters.Add(guid, serverResponseWaiter);
 
@@ -85,19 +84,18 @@ namespace PlatypusAPI
                 throw serverResponseWaiter.Exception;
 
             if (callBack != null)
-                callBack(serverResponseWaiter);
+                callBack(serverResponseWaiter.Response);
 
             serverResponseWaiters.Remove(guid);
         }
 
-        private void ServerResponseCallBack<ServerResponseType, ServerResponseWaiterType>(Dictionary<string, ServerResponseWaiterType> serverResponseWaiters, byte[] bytes, Action<ServerResponseWaiterType, ServerResponseType> consumer = null)
+        private void ServerResponseCallBack<ServerResponseType>(Dictionary<string, ServerResponseWaiter<ServerResponseType>> serverResponseWaiters, byte[] bytes, Action<ServerResponseWaiter<ServerResponseType>, ServerResponseType> consumer = null)
             where ServerResponseType : ServerResponseBase
-            where ServerResponseWaiterType : ServerResponseWaiter
         {
             ServerResponseType serverResponse = Utils.GetObjectFromBytes<ServerResponseType>(bytes);
             if (serverResponseWaiters.ContainsKey(serverResponse.RequestKey) == false) return;
-            
-            ServerResponseWaiterType serverResponseWaiter = serverResponseWaiters[serverResponse.RequestKey];
+
+            ServerResponseWaiter<ServerResponseType> serverResponseWaiter = serverResponseWaiters[serverResponse.RequestKey];
             serverResponseWaiter.Exception = ExceptionFactory.CreateException(serverResponse.FactorisableExceptionType, serverResponse.FactorisableExceptionParameters);
             serverResponseWaiter.Received = true;
 
@@ -105,10 +103,12 @@ namespace PlatypusAPI
                 consumer(serverResponseWaiter, serverResponse);
         }
 
-        private class ServerResponseWaiter
+        private class ServerResponseWaiter<ResponseType>
+            where ResponseType : ServerResponseBase
         {
             public bool Received { get; set; }
             public FactorisableException Exception { get; set; }
+            public ResponseType Response { get; set; }
         }
     }
 }
