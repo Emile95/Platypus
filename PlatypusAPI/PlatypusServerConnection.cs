@@ -24,7 +24,7 @@ namespace PlatypusAPI
 
         public PlatypusServerApplication Connect(ProtocolType protocol = ProtocolType.Tcp, string host = null, int port = 2000)
         {
-            ClientSocketHandler<FactorisableExceptionType, RequestType> socketHandler = new ClientSocketHandler<FactorisableExceptionType, RequestType>(protocol, 1000000000, new PlatypusRequestsProfile());
+            ClientSocketHandler<FactorisableExceptionType, RequestType> socketHandler = new ClientSocketHandler<FactorisableExceptionType, RequestType>(protocol, 1000, new PlatypusRequestsProfile());
             socketHandler.Initialize(port, host);
 
             UserConnectionServerResponse serverResponse = socketHandler.HandleClientRequest<UserConnectionClientRequest, UserConnectionServerResponse>(
