@@ -33,7 +33,10 @@ namespace PlatypusAPI
         {
             StartActionServerResponse response = _socketHandler.HandleClientRequest<StartActionClientRequest, StartActionServerResponse>(
                 RequestType.RunApplicationAction,
-                (clientRequest) => clientRequest.Parameters = applicationActionRunparameter
+                (clientRequest) => {
+                    clientRequest.UserAccount = ConnectedUser;
+                    clientRequest.Parameters = applicationActionRunparameter;
+                }
             );
 
             return response.Result;
@@ -44,6 +47,7 @@ namespace PlatypusAPI
             AddUserServerResponse response = _socketHandler.HandleClientRequest<AddUserClientRequest, AddUserServerResponse>(
                 RequestType.AddUser,
                 (clientRequest) => {
+                    clientRequest.UserAccount = ConnectedUser;
                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
                     clientRequest.FullName = parameter.FullName;
                     clientRequest.Email = parameter.Email;
@@ -60,6 +64,7 @@ namespace PlatypusAPI
             UpdateUserServerResponse response = _socketHandler.HandleClientRequest<UpdateUserClientRequest, UpdateUserServerResponse>(
                 RequestType.UpdateUser,
                 (clientRequest) => {
+                    clientRequest.UserAccount = ConnectedUser;
                     clientRequest.UserID = parameter.ID;
                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
                     clientRequest.FullName = parameter.FullName;
@@ -77,6 +82,7 @@ namespace PlatypusAPI
             RemoveUserServerResponse response = _socketHandler.HandleClientRequest<RemoveUserClientRequest, RemoveUserServerResponse>(
                 RequestType.RemoveUser,
                 (clientRequest) => {
+                    clientRequest.UserAccount = ConnectedUser;
                     clientRequest.ID = parameter.ID;
                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
                 }
@@ -85,13 +91,19 @@ namespace PlatypusAPI
 
         public List<ApplicationActionRunInfo> GetRunningApplicationActions()
         {
-            GetRunningApplicationActionsServerResponse response = _socketHandler.HandleClientRequest<PlatypusClientRequest, GetRunningApplicationActionsServerResponse>(RequestType.GetRunningActions);
+            GetRunningApplicationActionsServerResponse response = _socketHandler.HandleClientRequest<PlatypusClientRequest, GetRunningApplicationActionsServerResponse>(
+                RequestType.GetRunningActions,
+                (clientRequest) => clientRequest.UserAccount = ConnectedUser
+            );
             return response.ApplicationActionRunInfos;
         }
 
         public List<ApplicationActionInfo> GetApplicationActionInfos()
         {
-            GetApplicationActionInfosServerResponse response = _socketHandler.HandleClientRequest<PlatypusClientRequest, GetApplicationActionInfosServerResponse>(RequestType.GetActionInfos);
+            GetApplicationActionInfosServerResponse response = _socketHandler.HandleClientRequest<PlatypusClientRequest, GetApplicationActionInfosServerResponse>(
+                RequestType.GetActionInfos,
+                (clientRequest) => clientRequest.UserAccount = ConnectedUser
+            );
             return response.ApplicationActionInfos;
         }
 
@@ -100,6 +112,7 @@ namespace PlatypusAPI
             PlatypusServerResponse response = _socketHandler.HandleClientRequest<CancelRunningApplicationRunClientRequest, PlatypusServerResponse>(
                 RequestType.CancelRunningAction,
                 (clientRequest) => {
+                    clientRequest.UserAccount = ConnectedUser;
                     clientRequest.ApplicationRunGuid = applicationRunGuid;
                 }
             );

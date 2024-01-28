@@ -83,6 +83,13 @@ namespace Core
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions(UserAccount userAccount)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.GetRunningActions);
+
+            /*List<ApplicationActionRunInfo> results = new List<ApplicationActionRunInfo>();
+            for(int i = 0; i < 100; i++)
+            {
+                results.Add(new ApplicationActionRunInfo());
+            }
+            return results;*/
             return _applicationActionsHandler.GetRunningApplicationActionInfos();
         }
 
