@@ -23,6 +23,7 @@ namespace PlatypusNetwork.Request
             };
             ServerResponseType serverResponse = new ServerResponseType();
             ClientRequestType clientRequest = Utils.GetObjectFromBytes<ClientRequestType>(clientRequestData.Data);
+            serverResponse.RequestKey = clientRequest.RequestKey;
             try
             {
                 ServerAction(clientKey, clientRequest, serverResponse);
