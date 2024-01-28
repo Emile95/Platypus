@@ -16,8 +16,8 @@ namespace PlatypusNetwork.SocketHandler
 
         protected Dictionary<RequestTypeEnum, ClientRequestReceiverDefinitionBase<ExceptionEnumType, RequestTypeEnum>> _requestDefinitions;
         protected RequestsProfile<ExceptionEnumType, RequestTypeEnum> _requestsProfile;
-        public ServerSocketHandler(ProtocolType protocol, RequestsProfile<ExceptionEnumType, RequestTypeEnum> profile)
-            : base(protocol)
+        public ServerSocketHandler(ProtocolType protocol, int receivedBufferSize, RequestsProfile<ExceptionEnumType, RequestTypeEnum> profile)
+            : base(protocol, receivedBufferSize)
         {
             _clientSockets = new Dictionary<string, Socket>();
 

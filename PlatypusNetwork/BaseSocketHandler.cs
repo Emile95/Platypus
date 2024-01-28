@@ -13,9 +13,9 @@ namespace PlatypusNetwork.SocketHandler
         protected int _receivedBufferSize;
         protected readonly SocketHandlerResolver<ReceivedStateType> _socketResolver;
         
-        public BaseSocketHandler(ProtocolType protocol)
+        public BaseSocketHandler(ProtocolType protocol, int receivedBufferSize)
         {
-            _receivedBufferSize = 1000;
+            _receivedBufferSize = receivedBufferSize;
             switch (protocol)
             {
                 case ProtocolType.Tcp:

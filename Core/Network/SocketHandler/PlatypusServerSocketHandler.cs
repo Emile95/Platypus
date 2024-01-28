@@ -22,7 +22,7 @@ namespace Core.Network.SocketHandler
             ServerInstance serverInstance,
             ProtocolType protocol,
             int port
-        ) : base(protocol, new PlatypusRequestsProfile(false))
+        ) : base(protocol, 1000, new PlatypusRequestsProfile(false))
         {
             _port = port;
             _connectedUserOnSockets = new Dictionary<string, UserAccount>();

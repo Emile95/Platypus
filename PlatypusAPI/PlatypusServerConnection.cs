@@ -12,6 +12,7 @@ namespace PlatypusAPI
     {
         private UserConnectionParameter _userConnectionData;
 
+
         public void SetUserConnectionData(string connectionMethodGuid, Dictionary<string, object> credential)
         {
             _userConnectionData = new UserConnectionParameter()
@@ -23,7 +24,7 @@ namespace PlatypusAPI
 
         public PlatypusServerApplication Connect(ProtocolType protocol = ProtocolType.Tcp, string host = null, int port = 2000)
         {
-            ClientSocketHandler<FactorisableExceptionType, RequestType> socketHandler = new ClientSocketHandler<FactorisableExceptionType, RequestType>(protocol, new PlatypusRequestsProfile());
+            ClientSocketHandler<FactorisableExceptionType, RequestType> socketHandler = new ClientSocketHandler<FactorisableExceptionType, RequestType>(protocol, 1000000000, new PlatypusRequestsProfile());
             socketHandler.Initialize(port, host);
 
             UserConnectionServerResponse serverResponse = socketHandler.HandleClientRequest<UserConnectionClientRequest, UserConnectionServerResponse>(
