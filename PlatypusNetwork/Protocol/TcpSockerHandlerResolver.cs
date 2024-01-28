@@ -57,7 +57,6 @@ namespace PlatypusNetwork.SocketHandler.Protocol
             int currentBufferIndex = 0;
             int lengthOfCurrentRead = nBbytesRead;
             bool requestWillBeCompleted = false;
-            bool otherRequestAfterEnd = false;
 
             if (_isBeginingOfRequest)
             {
@@ -73,12 +72,7 @@ namespace PlatypusNetwork.SocketHandler.Protocol
                 else
                 {
                     _isBeginingOfRequest = false;
-                    if(_requestSize < lengthOfCurrentRead)
-                    {
-                        otherRequestAfterEnd = true;
-                        currentBufferLengthToRead = lengthOfCurrentRead - (lengthOfCurrentRead - _requestSize);
-                    }
-                    else currentBufferLengthToRead = lengthOfCurrentRead;
+                    currentBufferLengthToRead = _requestSize < lengthOfCurrentRead ? lengthOfCurrentRead - (lengthOfCurrentRead - _requestSize) : lengthOfCurrentRead;
                 }
 
                 currentBufferLengthToRead += sizeOfInt;
@@ -90,14 +84,12 @@ namespace PlatypusNetwork.SocketHandler.Protocol
 
                 int nbBytesToReadToCompleteRequest = _requestSize - currentLengthOfRequestBuffer;
 
-                currentBufferLengthToRead = lengthOfCurrentRead - (lengthOfCurrentRead - nbBytesToReadToCompleteRequest);
-
-                otherRequestAfterEnd = nbBytesToReadToCompleteRequest < lengthOfCurrentRead;
-
                 currentBufferLengthToRead = nbBytesToReadToCompleteRequest < lengthOfCurrentRead ?
                     lengthOfCurrentRead - (lengthOfCurrentRead - nbBytesToReadToCompleteRequest) :
                     lengthOfCurrentRead;
 
+
+               //WeirdFix
                if (requestWillBeCompleted)
                     _requestBuffer[_requestSize - 1] = state.Buffer[currentBufferLengthToRead];
             }

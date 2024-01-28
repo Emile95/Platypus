@@ -22,5 +22,4 @@ catch (UserConnectionFailedException exception)
     Console.WriteLine(exception.Message);
 }
 
-
 Console.WriteLine("Hello, World!");

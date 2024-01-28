@@ -38,7 +38,6 @@ namespace PlatypusAPI
                     clientRequest.Parameters = applicationActionRunparameter;
                 }
             );
-
             return response.Result;
         }
 
@@ -55,7 +54,6 @@ namespace PlatypusAPI
                     clientRequest.UserPermissionFlags = parameter.UserPermissionFlags;
                 }
             );
-
             return response.UserAccount;
         }
 
@@ -73,7 +71,6 @@ namespace PlatypusAPI
                     clientRequest.UserPermissionFlags = parameter.UserPermissionFlags;
                 }
             );
-
             return response.UserAccount;
         }
 

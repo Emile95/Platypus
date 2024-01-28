@@ -89,6 +89,9 @@ namespace Core
         public IEnumerable<ApplicationActionInfo> GetApplicationActionInfos(UserAccount userAccount)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.GetActionsInfo);
+
+            //return new ApplicationActionInfo[20000];
+
             return _applicationActionsHandler.GetApplicationActionInfos();
         }
     }
