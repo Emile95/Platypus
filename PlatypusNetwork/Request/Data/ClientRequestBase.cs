@@ -1,5 +1,4 @@
-﻿
-namespace PlatypusNetwork.Request
+﻿namespace PlatypusNetwork.Request.Data
 {
     public class ClientRequestBase
     {

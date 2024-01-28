@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 namespace PlatypusNetwork.SocketHandler
 {
-    public abstract class BaseSocketHandler<ExceptionEnumType, RequestType, ReceivedStateType> : ISocketEventHandler<ReceivedStateType>
+    public abstract class BaseSocketHandler<ExceptionEnumType, RequestType, ReceivedStateType>
         where ExceptionEnumType : Enum
         where ReceivedStateType : ReceivedState, new()
         where RequestType : Enum

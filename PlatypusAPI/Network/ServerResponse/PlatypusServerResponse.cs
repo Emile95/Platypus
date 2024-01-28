@@ -1,5 +1,5 @@
 ﻿using PlatypusAPI.Exceptions;
-using PlatypusNetwork.Request;
+using PlatypusNetwork.Request.Data;
 
 namespace PlatypusAPI.Network.ServerResponse
 {

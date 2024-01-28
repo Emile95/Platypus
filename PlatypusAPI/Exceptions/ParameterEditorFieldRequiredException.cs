@@ -4,7 +4,6 @@ using PlatypusUtils;
 
 namespace PlatypusAPI.Exceptions
 {
-    [Serializable]
     public class ParameterEditorFieldRequiredException : FactorisableException<FactorisableExceptionType>
     {
         public string FieldName { get; private set; }

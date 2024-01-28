@@ -1,6 +1,6 @@
 ﻿using PlatypusNetwork.Exceptions;
 
-namespace PlatypusNetwork.Request
+namespace PlatypusNetwork.Request.Definition
 {
     public abstract class ClientRequestSenderDefinitionBase<ExceptionEnumType, RequestTypeEnum> : RequestDefinitionBase<ExceptionEnumType, RequestTypeEnum>
         where ExceptionEnumType : Enum

@@ -2,7 +2,6 @@
 
 namespace PlatypusAPI.Exceptions
 {
-    [Serializable]
     public class UserConnectionFailedException : FactorisableException<FactorisableExceptionType>
     {
         public UserConnectionFailedException(string message)

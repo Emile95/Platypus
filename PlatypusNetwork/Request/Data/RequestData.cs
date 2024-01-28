@@ -1,4 +1,4 @@
-﻿namespace PlatypusNetwork
+﻿namespace PlatypusNetwork.Request.Data
 {
     public class RequestData<RequestEnumType>
         where RequestEnumType : Enum

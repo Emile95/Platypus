@@ -1,4 +1,6 @@
 ﻿using PlatypusNetwork.Request;
+using PlatypusNetwork.Request.Data;
+using PlatypusNetwork.Request.Definition;
 using PlatypusNetwork.SocketHandler.State;
 using PlatypusUtils;
 using System.Net;
@@ -6,7 +8,7 @@ using System.Net.Sockets;
 
 namespace PlatypusNetwork.SocketHandler
 {
-    public abstract class ServerSocketHandler<ExceptionEnumType, RequestTypeEnum> : BaseSocketHandler<ExceptionEnumType, RequestTypeEnum, ClientReceivedState>, ISocketHandlerInitiator, IServerSocketEventHandler
+    public abstract class ServerSocketHandler<ExceptionEnumType, RequestTypeEnum> : BaseSocketHandler<ExceptionEnumType, RequestTypeEnum, ClientReceivedState>
         where ExceptionEnumType : Enum
         where RequestTypeEnum : Enum
     {

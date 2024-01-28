@@ -1,4 +1,4 @@
-﻿namespace PlatypusNetwork.Request
+﻿namespace PlatypusNetwork.Request.Data
 {
     public class ServerResponseBase<ExceptionEnumType>
         where ExceptionEnumType : Enum

@@ -1,10 +1,11 @@
 ﻿using PlatypusNetwork.Exceptions;
+using PlatypusNetwork.Request.Data;
 using PlatypusUtils;
 
-namespace PlatypusNetwork.Request
+namespace PlatypusNetwork.Request.Definition
 {
     public class ClientRequestSenderDefinition<ExceptionEnumType, RequestTypeEnum, ClientRequestType, ServerResponseType> : ClientRequestSenderDefinitionBase<ExceptionEnumType, RequestTypeEnum>
-        where ExceptionEnumType:  Enum
+        where ExceptionEnumType : Enum
         where RequestTypeEnum : Enum
         where ClientRequestType : ClientRequestBase, new()
         where ServerResponseType : ServerResponseBase<ExceptionEnumType>
@@ -15,7 +16,7 @@ namespace PlatypusNetwork.Request
             RequestTypeEnum requestType,
             ExceptionFactory<ExceptionEnumType> exceptionFactory
         )
-            : base(requestType, exceptionFactory) 
+            : base(requestType, exceptionFactory)
         {
             _serverResponseWaiters = new Dictionary<string, ServerResponseWaiter<ServerResponseType>>();
         }

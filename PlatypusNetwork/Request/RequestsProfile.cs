@@ -1,4 +1,6 @@
 ﻿using PlatypusNetwork.Exceptions;
+using PlatypusNetwork.Request.Data;
+using PlatypusNetwork.Request.Definition;
 
 namespace PlatypusNetwork.Request
 {

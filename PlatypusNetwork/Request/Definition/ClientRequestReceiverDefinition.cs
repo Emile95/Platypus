@@ -1,7 +1,8 @@
 ﻿using PlatypusNetwork.Exceptions;
+using PlatypusNetwork.Request.Data;
 using PlatypusUtils;
 
-namespace PlatypusNetwork.Request
+namespace PlatypusNetwork.Request.Definition
 {
     public class ClientRequestReceiverDefinition<ExceptionEnumType, RequestTypeEnum, ClientRequestType, ServerResponseType> : ClientRequestReceiverDefinitionBase<ExceptionEnumType, RequestTypeEnum>
         where ExceptionEnumType : Enum
@@ -9,10 +10,10 @@ namespace PlatypusNetwork.Request
         where ClientRequestType : ClientRequestBase
         where ServerResponseType : ServerResponseBase<ExceptionEnumType>, new()
     {
-        public Action<string, ClientRequestType, ServerResponseType> ServerAction {get; set;}
+        public Action<string, ClientRequestType, ServerResponseType> ServerAction { get; set; }
 
         public ClientRequestReceiverDefinition(RequestTypeEnum requestType)
-            : base(requestType) {}
+            : base(requestType) { }
 
         public override bool HandleClientRequest(string clientKey, RequestData<RequestTypeEnum> clientRequestData, Action<RequestData<RequestTypeEnum>> serverResponseConsumer)
         {
