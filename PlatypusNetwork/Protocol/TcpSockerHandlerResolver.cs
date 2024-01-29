@@ -5,11 +5,10 @@ namespace PlatypusNetwork.SocketHandler.Protocol
     public class TcpSockerHandlerResolver<ReceivedStateType> : SocketHandlerResolver<ReceivedStateType>
         where ReceivedStateType : ReceivedState
     {
-        private bool _isBeginingOfRequest = true;
-        private int _requestBufferIndex = 0;
-        private byte[] _requestBuffer;
-        private int _requestSize = 0;
-
+        private byte[] _currentRequestBuffer;
+        private int _currentRequestBufferLength = 0;
+        private int _currentRequestBufferCurrentOffset = 0;
+        
         public TcpSockerHandlerResolver(
             int receivedBufferSize,
             Action<ReceivedStateType> onLostSocket,
@@ -45,7 +44,6 @@ namespace PlatypusNetwork.SocketHandler.Protocol
             try
             {
                 nBbytesRead = socket.EndReceive(ar);
-
             }
             catch (SocketException e)
             {
@@ -53,66 +51,46 @@ namespace PlatypusNetwork.SocketHandler.Protocol
                 return;
             }
 
-            int currentBufferLengthToRead = 0;
-            int currentBufferIndex = 0;
-            int lengthOfCurrentRead = nBbytesRead;
-            bool requestWillBeCompleted = false;
-
-            if (_isBeginingOfRequest)
-            {
-                _requestSize = GetLengthOfTheRequest(state);
-                _requestBuffer = new byte[_requestSize];
-                lengthOfCurrentRead -= sizeOfInt;
-                currentBufferIndex = sizeOfInt;
-                if (_requestSize == lengthOfCurrentRead)
-                {
-                    currentBufferLengthToRead = _requestSize;
-                    requestWillBeCompleted = true;
-                } 
-                else
-                {
-                    _isBeginingOfRequest = false;
-                    currentBufferLengthToRead = _requestSize < lengthOfCurrentRead ? lengthOfCurrentRead - (lengthOfCurrentRead - _requestSize) : lengthOfCurrentRead;
-                }
-
-                currentBufferLengthToRead += sizeOfInt;
-            }
-            else
-            {
-                int currentLengthOfRequestBuffer = _requestBufferIndex + 1;
-                requestWillBeCompleted = (currentLengthOfRequestBuffer + lengthOfCurrentRead) >= _requestSize;
-
-                int nbBytesToReadToCompleteRequest = _requestSize - currentLengthOfRequestBuffer;
-
-                currentBufferLengthToRead = nbBytesToReadToCompleteRequest < lengthOfCurrentRead ?
-                    lengthOfCurrentRead - (lengthOfCurrentRead - nbBytesToReadToCompleteRequest) :
-                    lengthOfCurrentRead;
-
-
-               //WeirdFix
-               if (requestWillBeCompleted)
-                    _requestBuffer[_requestSize - 1] = state.Buffer[currentBufferLengthToRead];
-            }
-
-            while(currentBufferIndex < currentBufferLengthToRead)
-                _requestBuffer[_requestBufferIndex++] = state.Buffer[currentBufferIndex++];
-            
-            if(requestWillBeCompleted)
-            {
-                state.BytesRead = _requestBuffer;
-                _requestBufferIndex = 0;
-                _onReceive(state);
-            }
+            ResolveReceivedBuffer(state, nBbytesRead, 0);
 
             ReceivedState nextState = state.CreateCopy();
             socket.BeginReceive(nextState.Buffer, 0, _receivedBufferSize, 0, ReadCallBack, nextState);
         }
 
-        private int GetLengthOfTheRequest(ReceivedStateType state)
+        private void ResolveReceivedBuffer(ReceivedStateType state, int nBbytesReceived, int currentReceivedBufferOffset)
+        {
+            if (_currentRequestBufferCurrentOffset == 0)
+                currentReceivedBufferOffset += SetCurrentRequestBuffer(state.Buffer, currentReceivedBufferOffset);
+
+            while (currentReceivedBufferOffset < nBbytesReceived && _currentRequestBufferCurrentOffset < _currentRequestBufferLength)
+                _currentRequestBuffer[_currentRequestBufferCurrentOffset++] = state.Buffer[currentReceivedBufferOffset++];
+
+            if (_currentRequestBufferCurrentOffset == _currentRequestBufferLength)
+                OnCurrentRequestDataRetreived(state);
+
+            if (currentReceivedBufferOffset < nBbytesReceived)
+                ResolveReceivedBuffer(state, nBbytesReceived, currentReceivedBufferOffset);
+        }
+
+        private void OnCurrentRequestDataRetreived(ReceivedStateType state)
+        {
+            state.BytesRead = _currentRequestBuffer;
+            _currentRequestBufferCurrentOffset = 0;
+            _onReceive(state);
+        }
+
+        private int SetCurrentRequestBuffer(byte[] buffer, int getLengthOffset)
+        {
+            _currentRequestBufferLength = GetIntFromBuffer(buffer, getLengthOffset);
+            _currentRequestBuffer = new byte[_currentRequestBufferLength];
+            return sizeOfInt;
+        }
+
+        private int GetIntFromBuffer(byte[] buffer, int startOffset)
         {
             byte[] requestLengthData = new byte[sizeOfInt];
-            for (int i = 0; i < requestLengthData.Length; i++)
-                requestLengthData[i] = state.Buffer[i];
+            for (int i = 0; i < sizeOfInt; i++)
+                requestLengthData[i] = buffer[startOffset+i];
             return BitConverter.ToInt32(requestLengthData, 0);
         }
     }

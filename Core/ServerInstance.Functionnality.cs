@@ -90,7 +90,15 @@ namespace Core
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.GetActionsInfo);
 
-            //return new ApplicationActionInfo[20000];
+            /*List< ApplicationActionInfo > result = new List< ApplicationActionInfo >();
+            for (int i = 0; i < 100000; i++)
+                result.Add(new ApplicationActionInfo() { 
+                    Guid = "500",
+                    Name = "50000",
+                    ParentApplicationGuid = "dsfsdfsdf"
+                });
+
+            return result;*/
 
             return _applicationActionsHandler.GetApplicationActionInfos();
         }

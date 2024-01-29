@@ -7,6 +7,8 @@ using PlatypusAPI.Network.ServerResponse;
 using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.User;
 using PlatypusNetwork.SocketHandler;
+using System.Collections.Concurrent;
+using PlatypusUtils;
 
 namespace PlatypusAPI
 {
@@ -15,6 +17,8 @@ namespace PlatypusAPI
         private readonly ClientSocketHandler<FactorisableExceptionType, RequestType> _socketHandler;
         public UserAccount ConnectedUser { get; private set; }
 
+        private ConcurrentQueue<string> _requestTickets;
+
         public PlatypusServerApplication(
             ClientSocketHandler<FactorisableExceptionType, RequestType> socketHandler,
             UserAccount connectedUser
@@ -22,11 +26,12 @@ namespace PlatypusAPI
         {
             _socketHandler = socketHandler;
             ConnectedUser = connectedUser;
+            _requestTickets = new ConcurrentQueue<string>();
         }
 
         public void Disconnect()
         {
-
+            
         }
 
         public ApplicationActionRunResult RunApplicationAction(ApplicationActionRunParameter applicationActionRunparameter)
