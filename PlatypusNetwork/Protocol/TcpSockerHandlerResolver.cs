@@ -58,14 +58,17 @@ namespace PlatypusNetwork.SocketHandler.Protocol
             ResolveReceivedBuffer(state, nBbytesRead, 0);
 
             ReceivedState nextState = state.CreateCopy();
-            socket.BeginReceive(nextState.Buffer, 0, _receivedBufferSize, 0, ReadCallBack, nextState);
+            socket.BeginReceive(nextState.Buffer, 0, _receivedBufferSize, SocketFlags.None, ReadCallBack, nextState);
         }
 
         private void ResolveReceivedBuffer(ReceivedStateType state, int nBbytesReceived, int currentReceivedBufferOffset)
         {
             if (_currentRequestBufferCurrentOffset == 0)
-                currentReceivedBufferOffset += SetCurrentRequestBuffer(state.Buffer, currentReceivedBufferOffset);
-
+            {
+                SetCurrentRequestBuffer(state.Buffer, currentReceivedBufferOffset);
+                currentReceivedBufferOffset += sizeOfInt;
+            }
+                
             while (currentReceivedBufferOffset < nBbytesReceived && _currentRequestBufferCurrentOffset < _currentRequestBufferLength)
                 _currentRequestBuffer[_currentRequestBufferCurrentOffset++] = state.Buffer[currentReceivedBufferOffset++];
 
@@ -83,11 +86,10 @@ namespace PlatypusNetwork.SocketHandler.Protocol
             _onReceive(state);
         }
 
-        private int SetCurrentRequestBuffer(byte[] buffer, int getLengthOffset)
+        private void SetCurrentRequestBuffer(byte[] buffer, int getLengthOffset)
         {
             _currentRequestBufferLength = GetIntFromBuffer(buffer, getLengthOffset);
             _currentRequestBuffer = new byte[_currentRequestBufferLength];
-            return sizeOfInt;
         }
 
         private int GetIntFromBuffer(byte[] buffer, int startOffset)
