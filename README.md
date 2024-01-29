@@ -6,3 +6,8 @@ Modulable Server Application
 - Receive request by 'PlatypusAPI' package via other application
 - Create module that implement server functionnality with 'PlatypusFramework' package
 
+
+Utility Packages
+
+- PlatyusNetwork : Server and client application communication with socket
+- PlatypusLogging : logging package helper
