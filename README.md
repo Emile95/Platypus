@@ -1,5 +1,8 @@
---Server Application--
+Platypus
 
-- Can comminucate with the server via REST Api
-- Implement server Functionability with 'PlatypusFramework' and 'PlatypusAPI' package has module.
-- Can communicate with the server by using 'PlatypusAPI' package
+Modulable Server Application
+
+- Built In RestAPI
+- Receive request by 'PlatypusAPI' package via other application
+- Create module that implement server functionnality with 'PlatypusFramework' package
+
