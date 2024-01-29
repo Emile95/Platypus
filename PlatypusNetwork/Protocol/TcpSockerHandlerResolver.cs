@@ -68,7 +68,7 @@ namespace PlatypusNetwork.SocketHandler.Protocol
                 SetCurrentRequestBuffer(state.Buffer, currentReceivedBufferOffset);
                 currentReceivedBufferOffset += sizeOfInt;
             }
-                
+
             while (currentReceivedBufferOffset < nBbytesReceived && _currentRequestBufferCurrentOffset < _currentRequestBufferLength)
                 _currentRequestBuffer[_currentRequestBufferCurrentOffset++] = state.Buffer[currentReceivedBufferOffset++];
 

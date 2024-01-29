@@ -41,7 +41,7 @@ namespace PlatypusNetwork.SocketHandler
             state.BufferSize = _receivedBufferSize;
             state.Buffer = new byte[_receivedBufferSize];
             state.WorkSocket = _socket;
-            _socket.BeginReceive(state.Buffer, 0, _receivedBufferSize, 0, new AsyncCallback(_socketResolver.ReadCallBack), state);
+            _socket.BeginReceive(state.Buffer, 0, _receivedBufferSize, SocketFlags.None, new AsyncCallback(_socketResolver.ReadCallBack), state);
             OnConnect(state);
         }
 

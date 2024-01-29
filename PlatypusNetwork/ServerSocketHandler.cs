@@ -89,7 +89,7 @@ namespace PlatypusNetwork.SocketHandler
 
             OnAccept(state);
 
-            clientSocket.BeginReceive(state.Buffer, 0, _receivedBufferSize, 0, new AsyncCallback(_socketResolver.ReadCallBack), state);
+            clientSocket.BeginReceive(state.Buffer, 0, _receivedBufferSize, SocketFlags.None, new AsyncCallback(_socketResolver.ReadCallBack), state);
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
         }
     }
