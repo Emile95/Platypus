@@ -30,6 +30,11 @@ namespace PlatypusNetwork.SocketHandler
             _socketResolver.Send(socket, bytes);
         }
 
+        public void SendMultiple(Socket socket, byte[][] bytesList)
+        {
+            _socketResolver.SendMultiple(socket, bytesList);
+        }
+
         protected IPEndPoint GetEndPoint(IPAddress ipAddress, int port)
         {
             return new IPEndPoint(ipAddress, port);

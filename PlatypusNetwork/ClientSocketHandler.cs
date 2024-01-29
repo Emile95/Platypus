@@ -45,6 +45,16 @@ namespace PlatypusNetwork.SocketHandler
             OnConnect(state);
         }
 
+        public void SendToServer(byte[] data)
+        {
+            Send(_socket, data);
+        }
+
+        public void SendToServer(byte[][] datas)
+        {
+            SendMultiple(_socket, datas);
+        }
+
         public override void OnReceive(ServerReceivedState receivedState)
         {
             RequestData<RequestType> serverResponse = Utils.GetObjectFromBytes<RequestData<RequestType>>(receivedState.BytesRead);

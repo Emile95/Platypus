@@ -17,17 +17,21 @@ namespace PlatypusNetwork.SocketHandler.Protocol
         
         public override void Send(Socket socket, byte[] bytes)
         {
-            byte[] sendLengthBytes = BitConverter.GetBytes(bytes.Length);
-            int newSendLength = bytes.Length + sendLengthBytes.Length;
-            byte[] newBytes = new byte[newSendLength];
+            socket.Send(CreateSendData(bytes));
+        }
 
-            for (int i = 0; i < sendLengthBytes.Length; i++)
-                newBytes[i] = sendLengthBytes[i];
+        public override void SendMultiple(Socket socket, byte[][] bytesList)
+        {
+            List<byte> bytesToReturn = new List<byte>();
+            foreach (byte[] bytes in bytesList)
+            {
+                byte[] newBytes = CreateSendData(bytes);
 
-            for (int i = sendLengthBytes.Length; i < newSendLength; i++)
-                newBytes[i] = bytes[i - sendLengthBytes.Length];
+                foreach (byte b in newBytes)
+                    bytesToReturn.Add(b);
+            }
 
-            socket.Send(newBytes);
+            socket.Send(bytesToReturn.ToArray());
         }
 
         public override Socket CreateSocket()
