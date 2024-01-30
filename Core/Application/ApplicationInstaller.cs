@@ -38,24 +38,31 @@ namespace Core.Application
                 Guid = newGuid
             }, applicationPath);
 
-            PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(newDllFilePath);
-
-            Type type = platypusApplication.GetType();
-            MethodInfo[] methods = type.GetMethods();
-
-            foreach (MethodInfo method in methods)
+            try
             {
-                if (InstallAction(newGuid, method)) continue;
-                if (InstallUserConnectionMethod(platypusApplication, newGuid, method)) continue;
+                PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(newDllFilePath);
+
+                Type type = platypusApplication.GetType();
+                MethodInfo[] methods = type.GetMethods();
+
+                foreach (MethodInfo method in methods)
+                {
+                    if (InstallAction(newGuid, method)) continue;
+                    if (InstallUserConnectionMethod(platypusApplication, newGuid, method)) continue;
+                }
+
+                ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
+                env.ApplicationRepository = _applicationRepository;
+                env.ApplicationGuid = newGuid;
+
+                platypusApplication.Install(env);
+
+                return platypusApplication;
+            } catch(Exception)
+            {
+                _applicationRepository.RemoveApplication(newGuid);
+                return null;
             }
-
-            ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
-            env.ApplicationRepository = _applicationRepository;
-            env.ApplicationGuid = newGuid;
-
-            platypusApplication.Install(env);
-
-            return platypusApplication;
         }
 
         public UninstallApplicationDetails UninstallApplication(PlatypusApplicationBase application, string applicationGuid)

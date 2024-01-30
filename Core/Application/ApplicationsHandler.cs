@@ -53,7 +53,7 @@ namespace Core.Application
             _applications.Add(applicationGuid, application);
         }
 
-        public void InstallApplication(InstallApplicationParameter parameter)
+        public bool InstallApplication(InstallApplicationParameter parameter)
         {
             string newGuid = Utils.GenerateGuidFromEnumerable(_applications.Keys);
 
@@ -65,9 +65,14 @@ namespace Core.Application
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeInstallApplication, eventEnv, (exception) => throw exception);
 
             PlatypusApplicationBase application = _applicationInstaller.InstallApplication(newGuid, parameter.DllFilePath);
+
+            if (application == null) return false;
+
             LoadApplication(application, newGuid);
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterInstallApplication, eventEnv, (exception) => throw exception);
+
+            return true;
         }
 
         public UninstallApplicationDetails UninstallApplication(UninstallApplicationParameter parameter)

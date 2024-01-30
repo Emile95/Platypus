@@ -17,11 +17,11 @@ namespace Core
             return _usersHandler.Connect(parameter);
         }
 
-        public void InstallApplication(UserAccount userAccount, InstallApplicationParameter parameter)
+        public bool InstallApplication(UserAccount userAccount, InstallApplicationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
 
-            _applicationsHandler.InstallApplication(parameter);
+            return _applicationsHandler.InstallApplication(parameter);
         }
 
         public void UninstalApplication(UserAccount userAccount, UninstallApplicationParameter parameter)

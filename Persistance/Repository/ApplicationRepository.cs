@@ -8,7 +8,6 @@ namespace Persistance.Repository
         public string SaveApplication(ApplicationEntity entity, string compressedFilePath)
         {
             string newApplicationDirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(entity.Guid);
-            Directory.CreateDirectory(newApplicationDirectoryPath);
 
             string temporaryDirectoryPath = Path.Combine(Path.GetTempPath(), entity.Guid);
             Directory.CreateDirectory(temporaryDirectoryPath);
@@ -25,6 +24,7 @@ namespace Persistance.Repository
                     Directory.Move(directoryPath, Path.Combine(newApplicationDirectoryPath, directoryInfo.Name));
                 }
 
+            Directory.CreateDirectory(newApplicationDirectoryPath);
             string newApplicationDllFilePath = ApplicationPaths.GetApplicationDllFilePathByBasePath(newApplicationDirectoryPath);
             File.Copy(dllFiles[0], newApplicationDllFilePath, true);
 

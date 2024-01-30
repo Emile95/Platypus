@@ -79,8 +79,9 @@ namespace Core.Network.RestAPI
 
             app.MapPost(@"/application/install", CreateRequestDelegate<InstallApplicationParameter>(true, (headers, userAccount, body) =>
             {
-                _serverInstance.InstallApplication(userAccount, body);
-                return "application installed";
+                if(_serverInstance.InstallApplication(userAccount, body))
+                    return "application installed";
+                return "application failed to install";
             }));
 
             app.MapPost(@"/application/uninstall", CreateRequestDelegate<UninstallApplicationParameter>(true, (headers, userAccount, body) =>
