@@ -5,32 +5,23 @@ namespace PlatypusUtils
 {
     public static class PluginResolver
     {
-        public static List<PluginType> InstanciateImplementationsFromDll<PluginType>(string dllPath, bool exceptionIfNotFound = false)
+        public static PluginType InstanciateImplementationFromFile<PluginType>(string filePath, bool exceptionIfNotFound = false)
             where PluginType : class
         {
-            List<PluginType> plugins = new List<PluginType>();
-
-            Assembly assembly = LoadAssembly(dllPath);
-
-            Type pluginType = typeof(PluginType);
-
-            foreach (Type type in assembly.GetTypes())
-            {
-                if (pluginType.IsAssignableFrom(type))
-                    plugins.Add(Activator.CreateInstance(type) as PluginType);
-            }
-
-            if (exceptionIfNotFound && plugins.Count == 0)
-                throw new NoImplementationFoundException<PluginType>();
-
-            return plugins;
+            byte[] bytesRaw = File.ReadAllBytes(filePath);
+            return InstanciateImplementationFromRawBytes<PluginType>(bytesRaw);
         }
 
-        public static PluginType InstanciateImplementationFromDll<PluginType>(string dllPath, bool exceptionIfNotFound = false)
+        public static PluginType InstanciateImplementationFromRawBytes<PluginType>(byte[] rawBytes, bool exceptionIfNotFound = false)
             where PluginType : class
         {
-            Assembly assembly = LoadAssembly(dllPath);
+            Assembly assembly = Assembly.Load(rawBytes);
+            return InstanciateImplementationFromAssembly<PluginType>(assembly);
+        }
 
+        public static PluginType InstanciateImplementationFromAssembly<PluginType>(Assembly assembly, bool exceptionIfNotFound = false)
+            where PluginType : class
+        {
             Type pluginType = typeof(PluginType);
 
             foreach (Type type in assembly.GetTypes())
@@ -43,12 +34,6 @@ namespace PlatypusUtils
                 throw new NoImplementationFoundException<PluginType>();
 
             return null;
-        }
-
-        private static Assembly LoadAssembly(string dllFilePath)
-        {
-            byte[] assemblyBytes = File.ReadAllBytes(dllFilePath);
-            return Assembly.Load(assemblyBytes);
         }
     }
 }

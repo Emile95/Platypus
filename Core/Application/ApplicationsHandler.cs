@@ -41,7 +41,7 @@ namespace Core.Application
             List<ApplicationEntity> applications = _applicationRepository.LoadApplications();
             foreach(ApplicationEntity application in applications)
             {
-                PlatypusApplicationBase applicationBase = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(application.DllFilePath);
+                PlatypusApplicationBase applicationBase = PluginResolver.InstanciateImplementationFromFile<PlatypusApplicationBase>(application.DllFilePath);
                 LoadApplication(applicationBase, application.Guid);
             }
         }

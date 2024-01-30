@@ -40,7 +40,7 @@ namespace Core.Application
 
             try
             {
-                PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromDll<PlatypusApplicationBase>(newDllFilePath);
+                PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromFile<PlatypusApplicationBase>(newDllFilePath);
 
                 Type type = platypusApplication.GetType();
                 MethodInfo[] methods = type.GetMethods();
