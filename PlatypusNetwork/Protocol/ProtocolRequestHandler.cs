@@ -2,20 +2,20 @@
 
 namespace PlatypusNetwork.SocketHandler.Protocol
 {
-    public abstract class SocketHandlerResolver<ReceivedStateType>
+    public abstract class ProtocolRequestHandler<ReceivedStateType>
         where ReceivedStateType : ReceivedState
     {
-        protected readonly int _sizeOfRequestHeader = sizeof(int);
+        public int SizeOfRequestHeader { get; protected set; }
         protected readonly Action<ReceivedStateType> _onLostSocket;
         protected readonly Action<ReceivedStateType> _onReceive;
 
-        public SocketHandlerResolver(
+        public ProtocolRequestHandler(
             int sizeOfRequestHeader,
             Action<ReceivedStateType> onLostSocket,
             Action<ReceivedStateType> onReceive
         )
         {
-            _sizeOfRequestHeader = sizeOfRequestHeader;
+            SizeOfRequestHeader = sizeOfRequestHeader;
             _onLostSocket = onLostSocket;
             _onReceive = onReceive;
         }

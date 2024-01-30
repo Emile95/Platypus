@@ -10,28 +10,27 @@ namespace PlatypusNetwork.SocketHandler
         where RequestType : Enum
     {
         protected Socket _socket;
-        protected int _sizeOfRequestHeader = sizeof(int);
-        protected readonly SocketHandlerResolver<ReceivedStateType> _socketResolver;
+        protected readonly ProtocolRequestHandler<ReceivedStateType> _protocolRequestHandler;
         
         public BaseSocketHandler(ProtocolType protocol)
         {
             switch (protocol)
             {
                 case ProtocolType.Tcp:
-                    _socketResolver = new TcpSockerHandlerResolver<ReceivedStateType>(_sizeOfRequestHeader, OnLostSocket, OnReceive);
+                    _protocolRequestHandler = new TcpProtocolRequestHandler<ReceivedStateType>(OnLostSocket, OnReceive);
                     break;
             }
-            _socket = _socketResolver.CreateSocket();
+            _socket = _protocolRequestHandler.CreateSocket();
         }
 
         public void Send(Socket socket, byte[] bytes)
         {
-            _socketResolver.Send(socket, bytes);
+            _protocolRequestHandler.Send(socket, bytes);
         }
 
         public void SendMultiple(Socket socket, byte[][] bytesList)
         {
-            _socketResolver.SendMultiple(socket, bytesList);
+            _protocolRequestHandler.SendMultiple(socket, bytesList);
         }
 
         protected IPEndPoint GetEndPoint(IPAddress ipAddress, int port)

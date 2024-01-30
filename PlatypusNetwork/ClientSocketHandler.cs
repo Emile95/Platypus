@@ -39,11 +39,11 @@ namespace PlatypusNetwork.SocketHandler
             _socket.Connect(GetEndPoint(hostIpAdress, port));
 
             ServerReceivedState state = new ServerReceivedState();
-            state.BufferSize = _sizeOfRequestHeader;
-            state.Buffer = new byte[_sizeOfRequestHeader];
+            state.BufferSize = _protocolRequestHandler.SizeOfRequestHeader;
+            state.Buffer = new byte[_protocolRequestHandler.SizeOfRequestHeader];
             state.WorkSocket = _socket;
 
-            _socket.BeginReceive(state.Buffer, 0, _sizeOfRequestHeader, SocketFlags.None, new AsyncCallback(_socketResolver.ReadCallBack), state);
+            _socket.BeginReceive(state.Buffer, 0, _protocolRequestHandler.SizeOfRequestHeader, SocketFlags.None, new AsyncCallback(_protocolRequestHandler.ReadCallBack), state);
             OnConnect(state);
         }
 

@@ -82,14 +82,14 @@ namespace PlatypusNetwork.SocketHandler
             _clientSockets.Add(clientKey, clientSocket);
 
             ClientReceivedState state = new ClientReceivedState();
-            state.BufferSize = _sizeOfRequestHeader;
-            state.Buffer = new byte[_sizeOfRequestHeader];
+            state.BufferSize = _protocolRequestHandler.SizeOfRequestHeader;
+            state.Buffer = new byte[_protocolRequestHandler.SizeOfRequestHeader];
             state.WorkSocket = clientSocket;
             state.ClientKey = clientKey;
 
             OnAccept(state);
 
-            clientSocket.BeginReceive(state.Buffer, 0, _sizeOfRequestHeader, SocketFlags.None, new AsyncCallback(_socketResolver.ReadCallBack), state);
+            clientSocket.BeginReceive(state.Buffer, 0, _protocolRequestHandler.SizeOfRequestHeader, SocketFlags.None, new AsyncCallback(_protocolRequestHandler.ReadCallBack), state);
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
         }
     }

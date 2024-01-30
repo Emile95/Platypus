@@ -2,18 +2,17 @@
 
 namespace PlatypusNetwork.SocketHandler.Protocol
 {
-    public class TcpSockerHandlerResolver<ReceivedStateType> : SocketHandlerResolver<ReceivedStateType>
+    public class TcpProtocolRequestHandler<ReceivedStateType> : ProtocolRequestHandler<ReceivedStateType>
         where ReceivedStateType : ReceivedState
     {
         private byte[] _currentRequestBuffer;
         private int _currentRequestBufferLength = 0;
         private int _currentRequestBufferCurrentOffset = 0;
         
-        public TcpSockerHandlerResolver(
-            int sizeOfRequestHeader,
+        public TcpProtocolRequestHandler(
             Action<ReceivedStateType> onLostSocket,
             Action<ReceivedStateType> onReceive
-        ) : base(sizeOfRequestHeader, onLostSocket, onReceive) { }
+        ) : base(sizeof(int), onLostSocket, onReceive) { }
         
         public override void Send(Socket socket, byte[] bytes)
         {
@@ -59,7 +58,7 @@ namespace PlatypusNetwork.SocketHandler.Protocol
 
             ReceivedState nextState = state.CreateCopy();
 
-            nextState.BufferSize = hasIncompleteCurrentRequest ? (_currentRequestBufferLength / 10) + 200 : _sizeOfRequestHeader;
+            nextState.BufferSize = hasIncompleteCurrentRequest ? (_currentRequestBufferLength / 10) + 200 : SizeOfRequestHeader;
             nextState.Buffer = new byte[nextState.BufferSize];
 
             socket.BeginReceive(nextState.Buffer, 0, nextState.BufferSize, SocketFlags.None, ReadCallBack, nextState);
@@ -72,7 +71,7 @@ namespace PlatypusNetwork.SocketHandler.Protocol
             if (_currentRequestBufferCurrentOffset == 0 && _currentRequestBufferLength == 0)
             {
                 SetCurrentRequestBuffer(state.Buffer, currentReceivedBufferOffset);
-                currentReceivedBufferOffset += _sizeOfRequestHeader;
+                currentReceivedBufferOffset += SizeOfRequestHeader;
             }
 
             while (currentReceivedBufferOffset < nBbytesReceived && _currentRequestBufferCurrentOffset < _currentRequestBufferLength)
@@ -106,8 +105,8 @@ namespace PlatypusNetwork.SocketHandler.Protocol
 
         private int GetIntFromBuffer(byte[] buffer, int startOffset)
         {
-            byte[] requestLengthData = new byte[_sizeOfRequestHeader];
-            for (int i = 0; i < _sizeOfRequestHeader; i++)
+            byte[] requestLengthData = new byte[SizeOfRequestHeader];
+            for (int i = 0; i < SizeOfRequestHeader; i++)
                 requestLengthData[i] = buffer[startOffset+i];
             return BitConverter.ToInt32(requestLengthData, 0);
         }
