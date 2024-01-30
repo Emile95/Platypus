@@ -16,8 +16,8 @@ namespace PlatypusNetwork.SocketHandler
 
         protected Dictionary<RequestTypeEnum, ClientRequestReceiverDefinitionBase<ExceptionEnumType, RequestTypeEnum>> _requestDefinitions;
         protected RequestsProfile<ExceptionEnumType, RequestTypeEnum> _requestsProfile;
-        public ServerSocketHandler(ProtocolType protocol, int receivedBufferSize, RequestsProfile<ExceptionEnumType, RequestTypeEnum> profile)
-            : base(protocol, receivedBufferSize)
+        public ServerSocketHandler(ProtocolType protocol, RequestsProfile<ExceptionEnumType, RequestTypeEnum> profile)
+            : base(protocol)
         {
             _clientSockets = new Dictionary<string, Socket>();
 
@@ -82,14 +82,14 @@ namespace PlatypusNetwork.SocketHandler
             _clientSockets.Add(clientKey, clientSocket);
 
             ClientReceivedState state = new ClientReceivedState();
-            state.BufferSize = _receivedBufferSize;
-            state.Buffer = new byte[_receivedBufferSize];
+            state.BufferSize = _sizeOfRequestHeader;
+            state.Buffer = new byte[_sizeOfRequestHeader];
             state.WorkSocket = clientSocket;
             state.ClientKey = clientKey;
 
             OnAccept(state);
 
-            clientSocket.BeginReceive(state.Buffer, 0, _receivedBufferSize, SocketFlags.None, new AsyncCallback(_socketResolver.ReadCallBack), state);
+            clientSocket.BeginReceive(state.Buffer, 0, _sizeOfRequestHeader, SocketFlags.None, new AsyncCallback(_socketResolver.ReadCallBack), state);
             serverSocket.BeginAccept(new AsyncCallback(AcceptCallBack), _socket);
         }
     }

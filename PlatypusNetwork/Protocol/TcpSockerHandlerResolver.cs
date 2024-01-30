@@ -10,10 +10,10 @@ namespace PlatypusNetwork.SocketHandler.Protocol
         private int _currentRequestBufferCurrentOffset = 0;
         
         public TcpSockerHandlerResolver(
-            int receivedBufferSize,
+            int sizeOfRequestHeader,
             Action<ReceivedStateType> onLostSocket,
             Action<ReceivedStateType> onReceive
-        ) : base(receivedBufferSize, onLostSocket, onReceive) { }
+        ) : base(sizeOfRequestHeader, onLostSocket, onReceive) { }
         
         public override void Send(Socket socket, byte[] bytes)
         {
@@ -55,33 +55,45 @@ namespace PlatypusNetwork.SocketHandler.Protocol
                 return;
             }
 
-            ResolveReceivedBuffer(state, nBbytesRead, 0);
+            bool hasIncompleteCurrentRequest = ResolveReceivedBuffer(state, nBbytesRead, 0);
 
             ReceivedState nextState = state.CreateCopy();
-            socket.BeginReceive(nextState.Buffer, 0, _receivedBufferSize, SocketFlags.None, ReadCallBack, nextState);
+
+            nextState.BufferSize = hasIncompleteCurrentRequest ? (_currentRequestBufferLength / 10) + 200 : _sizeOfRequestHeader;
+            nextState.Buffer = new byte[nextState.BufferSize];
+
+            socket.BeginReceive(nextState.Buffer, 0, nextState.BufferSize, SocketFlags.None, ReadCallBack, nextState);
         }
 
-        private void ResolveReceivedBuffer(ReceivedStateType state, int nBbytesReceived, int currentReceivedBufferOffset)
+        private bool ResolveReceivedBuffer(ReceivedStateType state, int nBbytesReceived, int currentReceivedBufferOffset)
         {
-            if (_currentRequestBufferCurrentOffset == 0)
+            bool hasIncompleteCurrentRequest = true;
+
+            if (_currentRequestBufferCurrentOffset == 0 && _currentRequestBufferLength == 0)
             {
                 SetCurrentRequestBuffer(state.Buffer, currentReceivedBufferOffset);
-                currentReceivedBufferOffset += sizeOfInt;
+                currentReceivedBufferOffset += _sizeOfRequestHeader;
             }
 
             while (currentReceivedBufferOffset < nBbytesReceived && _currentRequestBufferCurrentOffset < _currentRequestBufferLength)
                 _currentRequestBuffer[_currentRequestBufferCurrentOffset++] = state.Buffer[currentReceivedBufferOffset++];
 
             if (_currentRequestBufferCurrentOffset == _currentRequestBufferLength)
+            {
                 OnCurrentRequestDataRetreived(state);
-
+                hasIncompleteCurrentRequest = false;
+            }
+                
             if (currentReceivedBufferOffset < nBbytesReceived)
                 ResolveReceivedBuffer(state, nBbytesReceived, currentReceivedBufferOffset);
+                
+            return hasIncompleteCurrentRequest;
         }
 
         private void OnCurrentRequestDataRetreived(ReceivedStateType state)
         {
             state.BytesRead = _currentRequestBuffer;
+            _currentRequestBufferLength = 0;
             _currentRequestBufferCurrentOffset = 0;
             _onReceive(state);
         }
@@ -94,8 +106,8 @@ namespace PlatypusNetwork.SocketHandler.Protocol
 
         private int GetIntFromBuffer(byte[] buffer, int startOffset)
         {
-            byte[] requestLengthData = new byte[sizeOfInt];
-            for (int i = 0; i < sizeOfInt; i++)
+            byte[] requestLengthData = new byte[_sizeOfRequestHeader];
+            for (int i = 0; i < _sizeOfRequestHeader; i++)
                 requestLengthData[i] = buffer[startOffset+i];
             return BitConverter.ToInt32(requestLengthData, 0);
         }

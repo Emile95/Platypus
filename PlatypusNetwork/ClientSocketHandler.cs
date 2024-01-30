@@ -14,8 +14,8 @@ namespace PlatypusNetwork.SocketHandler
     {
         protected Dictionary<RequestType, ClientRequestSenderDefinitionBase<ExceptionEnumType, RequestType>> _requestDefinitions;
 
-        public ClientSocketHandler(ProtocolType protocol, int receivedBufferSize, RequestsProfile<ExceptionEnumType, RequestType> profile)
-            : base(protocol, receivedBufferSize) 
+        public ClientSocketHandler(ProtocolType protocol, RequestsProfile<ExceptionEnumType, RequestType> profile)
+            : base(protocol) 
         {
             _requestDefinitions = new Dictionary<RequestType, ClientRequestSenderDefinitionBase<ExceptionEnumType, RequestType>>();
 
@@ -37,11 +37,13 @@ namespace PlatypusNetwork.SocketHandler
             }
             else hostIpAdress = IPAddress.Parse(host);
             _socket.Connect(GetEndPoint(hostIpAdress, port));
+
             ServerReceivedState state = new ServerReceivedState();
-            state.BufferSize = _receivedBufferSize;
-            state.Buffer = new byte[_receivedBufferSize];
+            state.BufferSize = _sizeOfRequestHeader;
+            state.Buffer = new byte[_sizeOfRequestHeader];
             state.WorkSocket = _socket;
-            _socket.BeginReceive(state.Buffer, 0, _receivedBufferSize, SocketFlags.None, new AsyncCallback(_socketResolver.ReadCallBack), state);
+
+            _socket.BeginReceive(state.Buffer, 0, _sizeOfRequestHeader, SocketFlags.None, new AsyncCallback(_socketResolver.ReadCallBack), state);
             OnConnect(state);
         }
 

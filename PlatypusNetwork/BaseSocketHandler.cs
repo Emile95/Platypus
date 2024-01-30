@@ -10,16 +10,15 @@ namespace PlatypusNetwork.SocketHandler
         where RequestType : Enum
     {
         protected Socket _socket;
-        protected int _receivedBufferSize;
+        protected int _sizeOfRequestHeader = sizeof(int);
         protected readonly SocketHandlerResolver<ReceivedStateType> _socketResolver;
         
-        public BaseSocketHandler(ProtocolType protocol, int receivedBufferSize)
+        public BaseSocketHandler(ProtocolType protocol)
         {
-            _receivedBufferSize = receivedBufferSize;
             switch (protocol)
             {
                 case ProtocolType.Tcp:
-                    _socketResolver = new TcpSockerHandlerResolver<ReceivedStateType>(_receivedBufferSize, OnLostSocket, OnReceive);
+                    _socketResolver = new TcpSockerHandlerResolver<ReceivedStateType>(_sizeOfRequestHeader, OnLostSocket, OnReceive);
                     break;
             }
             _socket = _socketResolver.CreateSocket();
