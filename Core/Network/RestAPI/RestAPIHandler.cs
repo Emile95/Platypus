@@ -10,22 +10,30 @@ using PlatypusUtils;
 
 namespace Core.Network.RestAPI
 {
-    public class RestAPIHandler
+    public class RestAPIHandler : ISeverPortListener
     {
         private readonly ServerInstance _serverInstance;
         private readonly Dictionary<string, UserAccountToken> _tokens;
+        private string[] _args;
+        private double _userTokenTimeout;
 
         private string _userTokenRequestHeader = "user-token";
-        public RestAPIHandler(ServerInstance serverInstance)
+        public RestAPIHandler(
+            ServerInstance serverInstance,
+            string[] args,
+            double userTokenTimeout
+        )
         {
             _serverInstance = serverInstance;
+            _args = args;
+            _userTokenTimeout = userTokenTimeout;
             _tokens = new Dictionary<string, UserAccountToken>();
         }
-        public void Initialize(string[] args, int httpPort, double userTokenTimeout)
+        public void InitializeServerPortListener(int httpPort)
         {
-            double userTokenTimeoutInMinutes = userTokenTimeout * 60000;
+            double userTokenTimeoutInMinutes = _userTokenTimeout * 60000;
 
-            var builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication.CreateBuilder(_args);
 
             // Add services to the container.
             builder.Services.AddRazorPages();

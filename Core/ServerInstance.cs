@@ -10,7 +10,8 @@ using Persistance.Repository;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
 using Core.Network.RestAPI;
-using Core.Network.SocketHandler;
+using Core.Network;
+using System.Net.Sockets;
 
 namespace Core
 {
@@ -18,19 +19,22 @@ namespace Core
     {
         private ServerConfig _config;
 
-        private readonly ApplicationsHandler _applicationsHandler;
-        private readonly ApplicationActionsHandler _applicationActionsHandler;
-        private readonly EventsHandler _eventsHandler;
-        private readonly UsersHandler _usersHandler;
+        private ApplicationsHandler _applicationsHandler;
+        private ApplicationActionsHandler _applicationActionsHandler;
+        private EventsHandler _eventsHandler;
+        private UsersHandler _usersHandler;
 
-        private readonly ApplicationRepository _applicationRepository;
-        private readonly LoggerManager _loggerManager;
+        private ApplicationRepository _applicationRepository;
+        private LoggerManager _loggerManager;
 
-        private readonly RestAPIHandler _restAPIHandler;
-        private readonly PlatypusSocketsHandler _socketsHandler;
+        private ISeverPortListener _restAPIHandler;
+        private ISeverPortListener _tcpServerSocketHandler;
 
-        public ServerInstance()
+        public void Initialize(string[] args)
         {
+            string json = File.ReadAllText(ApplicationPaths.CONFIGFILEPATH);
+            _config = JsonConvert.DeserializeObject<ServerConfig>(json);
+
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
 
             _eventsHandler = new EventsHandler();
@@ -72,19 +76,18 @@ namespace Core
             _loggerManager = new LoggerManager();
             _loggerManager.CreateLogger<ConsoleLogger>();
 
-            _restAPIHandler = new RestAPIHandler(this);
-            _socketsHandler = new PlatypusSocketsHandler(this);
+            _restAPIHandler = new RestAPIHandler(this, args, _config.RestAPIUserTokenTimeout);
+            _tcpServerSocketHandler = new PlatypusServerSocketHandler(this, ProtocolType.Tcp);
         }
 
-        public void Start(string[] args)
+        public void Start()
         {
-            string json = File.ReadAllText(ApplicationPaths.CONFIGFILEPATH);
-            _config = JsonConvert.DeserializeObject<ServerConfig>(json);
-
             _applicationsHandler.LoadApplications();
-            _socketsHandler.Initialize(_config);
+
             _applicationActionsHandler.ReRunStopedApplicationActions(_applicationRepository);
-            _restAPIHandler.Initialize(args, _config.HttpPort, _config.RestAPIUserTokenTimeout);
+
+            _tcpServerSocketHandler.InitializeServerPortListener(_config.TcpSocketPort);
+            _restAPIHandler.InitializeServerPortListener(_config.HttpPort);
         }
 
         private void ValidateUserForPermission(UserAccount userAccount, UserPermissionFlag userPermissionFlag)

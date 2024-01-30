@@ -1,4 +1,5 @@
 ﻿using Core;
 
 ServerInstance serverInstance = new ServerInstance();
-serverInstance.Start(args);
+serverInstance.Initialize(args);
+serverInstance.Start();

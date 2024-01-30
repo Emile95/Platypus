@@ -11,20 +11,17 @@ using PlatypusAPI.Network.ServerResponse;
 using PlatypusAPI.Network.ClientRequest;
 using System.Net.Sockets;
 
-namespace Core.Network.SocketHandler
+namespace Core.Network
 {
-    internal class PlatypusServerSocketHandler : ServerSocketHandler<FactorisableExceptionType, RequestType>
+    internal class PlatypusServerSocketHandler : ServerSocketHandler<FactorisableExceptionType, RequestType>, ISeverPortListener
     {
-        private readonly int _port;
         private readonly Dictionary<string, UserAccount> _connectedUserOnSockets;
 
         public PlatypusServerSocketHandler(
             ServerInstance serverInstance,
-            ProtocolType protocol,
-            int port
+            ProtocolType protocol
         ) : base(protocol, new PlatypusRequestsProfile(false))
         {
-            _port = port;
             _connectedUserOnSockets = new Dictionary<string, UserAccount>();
             MapServerActions(serverInstance);
         }
@@ -47,7 +44,8 @@ namespace Core.Network.SocketHandler
 
         private void MapServerActions(ServerInstance serverInstance)
         {
-            _requestsProfile.MapServerAction<UserConnectionClientRequest, UserConnectionServerResponse>(RequestType.UserConnection, (clientKey, clientRequest, serverResponse) => {
+            _requestsProfile.MapServerAction<UserConnectionClientRequest, UserConnectionServerResponse>(RequestType.UserConnection, (clientKey, clientRequest, serverResponse) =>
+            {
                 serverResponse.UserAccount = serverInstance.UserConnect(new UserConnectionParameter()
                 {
                     ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
@@ -56,11 +54,13 @@ namespace Core.Network.SocketHandler
                 _connectedUserOnSockets[clientKey] = serverResponse.UserAccount;
             });
 
-            _requestsProfile.MapServerAction<StartActionClientRequest, StartActionServerResponse>(RequestType.RunApplicationAction, (clientKey, clientRequest, serverResponse) => {
+            _requestsProfile.MapServerAction<StartActionClientRequest, StartActionServerResponse>(RequestType.RunApplicationAction, (clientKey, clientRequest, serverResponse) =>
+            {
                 serverResponse.Result = serverInstance.RunAction(clientRequest.UserAccount, clientRequest.Parameters);
             });
 
-            _requestsProfile.MapServerAction<AddUserClientRequest, AddUserServerResponse>(RequestType.AddUser, (clientKey, clientRequest, serverResponse) => {
+            _requestsProfile.MapServerAction<AddUserClientRequest, AddUserServerResponse>(RequestType.AddUser, (clientKey, clientRequest, serverResponse) =>
+            {
                 serverResponse.UserAccount = serverInstance.AddUser(
                     clientRequest.UserAccount,
                     new UserCreationParameter()
@@ -74,7 +74,8 @@ namespace Core.Network.SocketHandler
                 );
             });
 
-            _requestsProfile.MapServerAction<UpdateUserClientRequest, UpdateUserServerResponse>(RequestType.UpdateUser, (clientKey, clientRequest, serverResponse) => {
+            _requestsProfile.MapServerAction<UpdateUserClientRequest, UpdateUserServerResponse>(RequestType.UpdateUser, (clientKey, clientRequest, serverResponse) =>
+            {
                 serverResponse.UserAccount = serverInstance.UpdateUser(
                     clientRequest.UserAccount,
                     new UserUpdateParameter()
@@ -89,7 +90,8 @@ namespace Core.Network.SocketHandler
                 );
             });
 
-            _requestsProfile.MapServerAction<RemoveUserClientRequest, RemoveUserServerResponse>(RequestType.RemoveUser, (clientKey, clientRequest, serverResponse) => {
+            _requestsProfile.MapServerAction<RemoveUserClientRequest, RemoveUserServerResponse>(RequestType.RemoveUser, (clientKey, clientRequest, serverResponse) =>
+            {
                 serverInstance.RemoveUser(
                     clientRequest.UserAccount,
                     new RemoveUserParameter()
@@ -100,7 +102,8 @@ namespace Core.Network.SocketHandler
                 );
             });
 
-            _requestsProfile.MapServerAction<PlatypusClientRequest, GetRunningApplicationActionsServerResponse>(RequestType.GetRunningActions, (clientKey, clientRequest, serverResponse) => {
+            _requestsProfile.MapServerAction<PlatypusClientRequest, GetRunningApplicationActionsServerResponse>(RequestType.GetRunningActions, (clientKey, clientRequest, serverResponse) =>
+            {
                 IEnumerable<ApplicationActionRunInfo> result = serverInstance.GetRunningApplicationActions(clientRequest.UserAccount);
                 if (result.Count() != 0)
                     serverResponse.ApplicationActionRunInfos = result.ToList();
@@ -108,7 +111,8 @@ namespace Core.Network.SocketHandler
                     serverResponse.ApplicationActionRunInfos = new List<ApplicationActionRunInfo>();
             });
 
-            _requestsProfile.MapServerAction<PlatypusClientRequest, GetApplicationActionInfosServerResponse>(RequestType.GetActionInfos, (clientKey, clientRequest, serverResponse) => {
+            _requestsProfile.MapServerAction<PlatypusClientRequest, GetApplicationActionInfosServerResponse>(RequestType.GetActionInfos, (clientKey, clientRequest, serverResponse) =>
+            {
                 IEnumerable<ApplicationActionInfo> result = serverInstance.GetApplicationActionInfos(clientRequest.UserAccount);
                 if (result.Count() != 0)
                     serverResponse.ApplicationActionInfos = result.ToList();
@@ -116,7 +120,8 @@ namespace Core.Network.SocketHandler
                     serverResponse.ApplicationActionInfos = new List<ApplicationActionInfo>();
             });
 
-            _requestsProfile.MapServerAction<CancelRunningApplicationRunClientRequest, PlatypusServerResponse>(RequestType.CancelRunningAction, (clientKey, clientRequest, serverResponse) => {
+            _requestsProfile.MapServerAction<CancelRunningApplicationRunClientRequest, PlatypusServerResponse>(RequestType.CancelRunningAction, (clientKey, clientRequest, serverResponse) =>
+            {
                 serverInstance.CancelRunningApplicationAction(
                     clientRequest.UserAccount,
                     new CancelRunningActionParameter()
@@ -127,9 +132,9 @@ namespace Core.Network.SocketHandler
             });
         }
 
-        public void Initialize(string host)
+        public void InitializeServerPortListener(int port)
         {
-            Initialize(_port, host);
+            Initialize(port);
         }
     }
 }
