@@ -20,21 +20,13 @@ namespace Core
         public bool InstallApplication(UserAccount userAccount, InstallApplicationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
-
             return _applicationsHandler.InstallApplication(parameter);
         }
 
         public void UninstalApplication(UserAccount userAccount, UninstallApplicationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
-
-            UninstallApplicationDetails details = _applicationsHandler.UninstallApplication(parameter);
-            foreach (string actionGuid in details.ActionGuids)
-                _applicationActionsHandler.RemoveAction(actionGuid);
-            foreach (string userConnectionMethodGuid in details.UserConnectionMethodGuids)
-                _usersHandler.RemoveConnectionMethod(userConnectionMethodGuid);
-
-            _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterUninstallApplication, details.EventEnv, (exception) => throw exception);
+            _applicationsHandler.UninstallApplication(parameter);
         }
 
         public ApplicationActionRunResult RunAction(UserAccount userAccount, ApplicationActionRunParameter runActionParameter)

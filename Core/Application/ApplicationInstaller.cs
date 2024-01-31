@@ -16,12 +16,12 @@ namespace Core.Application
     public class ApplicationInstaller
     {
         private readonly Repository<ApplicationEntity> _applicationRepository;
-        private readonly ApplicationActionRepository _applicationActionRepository;
+        private readonly Repository<ApplicationActionEntity> _applicationActionRepository;
         private readonly UserRepository _userRepository;
 
         public ApplicationInstaller(
             Repository<ApplicationEntity> applicationRepository,
-            ApplicationActionRepository applicationActionRepository,
+            Repository<ApplicationActionEntity> applicationActionRepository,
             UserRepository userRepository
         )
         {
@@ -74,7 +74,7 @@ namespace Core.Application
             }
         }
 
-        public UninstallApplicationDetails UninstallApplication(PlatypusApplicationBase application, string applicationGuid)
+        public void UninstallApplication(PlatypusApplicationBase application, string applicationGuid)
         {
             ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
             env.ApplicationGuid = applicationGuid;
@@ -83,13 +83,12 @@ namespace Core.Application
 
             _applicationRepository.Remove(new ApplicationEntity() { Guid = applicationGuid });
 
-            UninstallApplicationDetails details = new UninstallApplicationDetails()
-            {
-                ActionGuids = _applicationActionRepository.RemoveActionsOfApplication(applicationGuid),
-                UserConnectionMethodGuids = _userRepository.RemoveUserCredentialMethodOfApplication(applicationGuid)
-            };
-
-            return details;
+            string[] applicationActionsNames = application.GetAllApplicationActionNames();
+            foreach(string applicationActionsName in applicationActionsNames)
+                _applicationActionRepository.Remove(new ApplicationActionEntity()
+                {
+                    Guid = applicationActionsName + applicationGuid
+                });
         }
 
         private bool InstallAction(string applicationGuid, MethodInfo methodInfo)
@@ -97,7 +96,10 @@ namespace Core.Application
             ActionDefinitionAttribute actionDefinition = methodInfo.GetCustomAttribute<ActionDefinitionAttribute>();
             if (actionDefinition == null) return false;
 
-            _applicationActionRepository.SaveAction(actionDefinition.Name+ applicationGuid);
+            _applicationActionRepository.Add(new ApplicationActionEntity() { 
+                Guid = actionDefinition.Name + applicationGuid
+            });
+            //_applicationActionRepository.SaveAction(actionDefinition.Name+ applicationGuid);
             return true;
         }
 

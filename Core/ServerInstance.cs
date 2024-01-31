@@ -38,7 +38,7 @@ namespace Core
             string json = File.ReadAllText(ApplicationPaths.CONFIGFILEPATH);
             _config = JsonConvert.DeserializeObject<ServerConfig>(json);
 
-            ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
+            Repository<ApplicationActionEntity> applicationActionRepository = new FolderRepository<ApplicationActionEntity>(ApplicationPaths.ACTIONSDIRECTORYPATH);
 
             _eventsHandler = new EventsHandler();
 

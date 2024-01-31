@@ -74,7 +74,7 @@ namespace Core.Application
             return true;
         }
 
-        public UninstallApplicationDetails UninstallApplication(UninstallApplicationParameter parameter)
+        public void UninstallApplication(UninstallApplicationParameter parameter)
         {
             if (_applications.ContainsKey(parameter.ApplicationGuid) == false)
                 throw new ApplicationInexistantException(parameter.ApplicationGuid);
@@ -89,11 +89,9 @@ namespace Core.Application
             PlatypusApplicationBase application = _applications[parameter.ApplicationGuid];
             _applications.Remove(parameter.ApplicationGuid);
 
-            UninstallApplicationDetails details = _applicationInstaller.UninstallApplication(application, parameter.ApplicationGuid);
+            _applicationInstaller.UninstallApplication(application, parameter.ApplicationGuid);
 
-            details.EventEnv = eventEnv;
-
-            return details;
+            _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterUninstallApplication, eventEnv, (exception) => throw exception);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace PlatypusRepository.Folder
             _folderEntityHandler = new FolderEntityHandler<EntityType>();
 
             _entityType = typeof(EntityType);
-            PropertyInfo[] propertyInfos = type.GetProperties();
+            PropertyInfo[] propertyInfos = _entityType.GetProperties();
 
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {

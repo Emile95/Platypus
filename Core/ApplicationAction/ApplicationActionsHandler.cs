@@ -21,11 +21,11 @@ namespace Core.ApplicationAction
     {
         private readonly Dictionary<string, ApplicationAction> _applicationActions;
         private readonly Dictionary<string, ApplicationActionRun> _applicationActionRuns;
-        private readonly ApplicationActionRepository _applicationActionRepository;
+        private readonly Repository<ApplicationActionEntity> _applicationActionRepository;
         private readonly EventsHandler _eventsHandler;
 
         public ApplicationActionsHandler(
-            ApplicationActionRepository applicationActionRepository,
+            Repository<ApplicationActionEntity> applicationActionRepository,
             EventsHandler eventsHandler
         )
         {
@@ -61,7 +61,7 @@ namespace Core.ApplicationAction
 
         public void ReRunStopedApplicationActions(Repository<ApplicationEntity> applicationRepository)
         {
-            List<RunningApplicationActionEntity> runningActions = _applicationActionRepository.LoadRunningActions();
+            /*List<RunningApplicationActionEntity> runningActions = _applicationActionRepository.LoadRunningActions();
             foreach(RunningApplicationActionEntity runningAction in runningActions)
             {
                 ApplicationActionEnvironmentBase env = CreateStartActionEnvironment(runningAction.ActionGuid);
@@ -71,7 +71,7 @@ namespace Core.ApplicationAction
                     ActionParameters = runningAction.ActionParameters,
                     Guid = runningAction.ActionGuid,
                 }, env, runningAction);
-            }
+            }*/
         }
 
         public ApplicationActionRunResult RunAction(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env, RunningApplicationActionEntity savedRunningAction = null)
@@ -98,7 +98,7 @@ namespace Core.ApplicationAction
 
             ApplicationActionRun applicationActionRun = CreateApplicationActionRun(runActionParameter, env, savedRunningAction);
 
-            string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, applicationActionRun.RunNumber);
+            //string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, applicationActionRun.RunNumber);
 
             applicationActionRun.StartRun(applicationAction, runActionParameter, () => {
                 ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);
@@ -139,7 +139,7 @@ namespace Core.ApplicationAction
             ApplicationActionRun run = _applicationActionRuns[guid];
             _applicationActionRuns.Remove(guid);
 
-            _applicationActionRepository.RemoveRunningAction(guid);
+            //_applicationActionRepository.RemoveRunningAction(guid);
 
             run.Cancel();
 
@@ -165,9 +165,10 @@ namespace Core.ApplicationAction
         private int CreateNewActionRunNumber(string applicationRunGuid)
         {
             string actionRunsFilePath = ApplicationPaths.GetActionRunsDirectoryPath(applicationRunGuid);
-            int runNumber = _applicationActionRepository.GetAndIncrementActionRunNumberByBasePath(actionRunsFilePath);
-            _applicationActionRepository.SaveActionRunByBasePath(actionRunsFilePath, runNumber);
-            return runNumber;
+            //int runNumber = _applicationActionRepository.GetAndIncrementActionRunNumberByBasePath(actionRunsFilePath);
+            //_applicationActionRepository.SaveActionRunByBasePath(actionRunsFilePath, runNumber);
+            return 5;
+            //return runNumber;
         }
 
         private ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env, RunningApplicationActionEntity savedRunningAction = null)
@@ -181,13 +182,13 @@ namespace Core.ApplicationAction
                 applicationActionRunGUID = Utils.GenerateGuidFromEnumerable(_applicationActionRuns.Keys);
                 runNumber = CreateNewActionRunNumber(runActionParameter.Guid);
 
-                _applicationActionRepository.SaveRunningAction(new RunningApplicationActionEntity()
+                /*_applicationActionRepository.SaveRunningAction(new RunningApplicationActionEntity()
                 {
                     ActionGuid = runActionParameter.Guid,
                     Guid = applicationActionRunGUID,
                     ActionParameters = runActionParameter.ActionParameters,
                     RunNumber = runNumber
-                });
+                });*/
             } else
             {
                 applicationActionRunGUID = savedRunningAction.Guid;
@@ -216,7 +217,7 @@ namespace Core.ApplicationAction
                 return;
 
             _applicationActionRuns.Remove(run.Guid);
-            _applicationActionRepository.RemoveRunningAction(run.Guid);
+            //_applicationActionRepository.RemoveRunningAction(run.Guid);
 
             eventEnv.ApplicationActionResult = run.Result;
             eventEnv.ApplicationActionRunInfo = run.GetInfo();
@@ -230,7 +231,7 @@ namespace Core.ApplicationAction
                 return null;
             });
 
-            _applicationActionRepository.SaveActionRunResult(
+            /*_applicationActionRepository.SaveActionRunResult(
                 run.ActionGuid,
                 run.RunNumber,
                 new ApplicationActionResultEntity()
@@ -238,7 +239,7 @@ namespace Core.ApplicationAction
                     Status = run.Result.Status.ToString(),
                     Message = run.Result.Message
                 }
-            );
+            );*/
         }
 
         private ApplicationActionRunResult BeforeApplicationActionRun(ApplicationAction applicationAction, ActionRunEventHandlerEnvironment eventEnv)
