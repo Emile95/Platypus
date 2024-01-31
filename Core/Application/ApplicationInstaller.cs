@@ -39,10 +39,10 @@ namespace Core.Application
             ApplicationEntity entity = new ApplicationEntity()
             {
                 Guid = newGuid,
-                DirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(newGuid)
+                DirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(newGuid),
             };
 
-            Directory.CreateDirectory(entity.DirectoryPath);
+            //Directory.CreateDirectory(entity.DirectoryPath);
 
             ExtractPackage(entity, applicationPath);
 
@@ -129,13 +129,13 @@ namespace Core.Application
 
             entity.AssemblyRaw = File.ReadAllBytes(dllFiles[0]);
 
-            string[] directoriesPath = Directory.GetDirectories(temporaryDirectoryPath);
+            /*string[] directoriesPath = Directory.GetDirectories(temporaryDirectoryPath);
             if (directoriesPath.Length > 0)
                 foreach (string directoryPath in directoriesPath)
                 {
                     DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
                     Directory.Move(directoryPath, Path.Combine(entity.DirectoryPath, directoryInfo.Name));
-                }
+                }*/
         }
     }
 }

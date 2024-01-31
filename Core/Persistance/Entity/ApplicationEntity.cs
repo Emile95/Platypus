@@ -1,4 +1,5 @@
 ﻿using PlatypusRepository.Configuration;
+using PlatypusRepository.Folder.Configuration;
 
 namespace Core.Persistance.Entity
 {
@@ -6,7 +7,12 @@ namespace Core.Persistance.Entity
     {
         [RepositoryEntityID]
         public string Guid { get; set; }
+
+        [BinaryFile(
+            FileName = "application",
+            Extension = "dll")]
         public byte[] AssemblyRaw { get; set; }
+
         public string DirectoryPath { get; set; }
     }
 }

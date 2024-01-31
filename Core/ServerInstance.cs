@@ -14,6 +14,7 @@ using System.Net.Sockets;
 using Core.Persistance.Entity;
 using Core.Persistance.Repository;
 using Core.Persistance;
+using PlatypusRepository.Folder;
 
 namespace Core
 {
@@ -53,7 +54,7 @@ namespace Core
 
             _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
 
-            _applicationRepository = new ApplicationRepository();
+            _applicationRepository = new FolderRepository<ApplicationEntity>(ApplicationPaths.APPLICATIONSDIRECTORYPATHS);
 
             ApplicationInstaller applicationInstaller = new ApplicationInstaller(
                 _applicationRepository,

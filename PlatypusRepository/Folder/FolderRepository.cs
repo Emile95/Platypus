@@ -1,5 +1,4 @@
 ﻿using PlatypusRepository.Configuration;
-using PlatypusRepository.Folder.Configuration;
 using System.Reflection;
 
 namespace PlatypusRepository.Folder
@@ -7,26 +6,29 @@ namespace PlatypusRepository.Folder
     public class FolderRepository<EntityType> : Repository<EntityType>
         where EntityType : class
     {
-        private readonly Type _entityType;
-        private readonly PropertyInfo[] _propertyInfos;
+        
         private readonly DirectoryInfo _directoryInfo;
-        private readonly int _entityIdIndex;
+        private readonly FolderEntityHandler<EntityType> _folderEntityHandler;
+        private readonly Type _entityType;
+        private readonly PropertyInfo _propertyInfoEntityId;
+
 
         public FolderRepository(string directoryPath)
         {
-            _entityType = typeof(EntityType);
-            _propertyInfos = _entityType.GetProperties();
+            _directoryInfo = new DirectoryInfo(directoryPath);
+            _folderEntityHandler = new FolderEntityHandler<EntityType>();
 
-            for(int i = 0; i < _propertyInfos.Length; i++)
+            _entityType = typeof(EntityType);
+            PropertyInfo[] propertyInfos = type.GetProperties();
+
+            foreach (PropertyInfo propertyInfo in propertyInfos)
             {
-                if (_propertyInfos[i].GetCustomAttribute<RepositoryEntityIDAttribute>() != null)
+                if (propertyInfo.GetCustomAttribute<RepositoryEntityIDAttribute>() != null)
                 {
-                    _entityIdIndex = i;
+                    _propertyInfoEntityId = propertyInfo;
                     break;
                 }
             }
-
-            _directoryInfo = new DirectoryInfo(directoryPath);
         }
 
         public override EntityType Add(EntityType entity)
@@ -34,7 +36,7 @@ namespace PlatypusRepository.Folder
             string folderName = GetFolderName(entity);
             string entityDirectoryPath = Path.Combine(_directoryInfo.FullName, folderName);
             Directory.CreateDirectory(entityDirectoryPath);
-            Resolve(entity, entityDirectoryPath);
+            _folderEntityHandler.Resolve(_entityType, entity, entityDirectoryPath);
             return entity;
         }
 
@@ -42,7 +44,7 @@ namespace PlatypusRepository.Folder
         {
             string folderName = GetFolderName(entity);
             string entityDirectoryPath = Path.Combine(_directoryInfo.FullName, folderName);
-            Resolve(entity, entityDirectoryPath);
+            _folderEntityHandler.Resolve(_entityType, entity, entityDirectoryPath);
             return entity;
         }
 
@@ -55,41 +57,27 @@ namespace PlatypusRepository.Folder
 
         public override void Consume(Action<EntityType> consumer, Predicate<EntityType> condition = null)
         {
-            string[] directoryPaths = Directory.GetDirectories(_directoryInfo.FullName);
+            string[] entityDirectoryPaths = Directory.GetDirectories(_directoryInfo.FullName);
 
-            foreach(string directoryPath in directoryPaths)
+            foreach(string entityDirectoryPath in entityDirectoryPaths)
             {
-                EntityType entity = FetchEntity(directoryPath);
+                DirectoryInfo directoryInfo = new DirectoryInfo(entityDirectoryPath);
+                EntityType entity = _folderEntityHandler.Fetch(typeof(EntityType), entityDirectoryPath) as EntityType;
+                _propertyInfoEntityId.SetValue(entity, directoryInfo.Name);
+
+                if (entity == null) continue;
                 if (condition != null)
                 {
-                    if (condition(entity))
-                        consumer(entity);
+                    if (condition(entity)) consumer(entity);
                     continue;
                 }
                 consumer(entity);
             }
         }
 
-        private EntityType FetchEntity(string entityDirectoryPath)
+        public string GetFolderName(object entity)
         {
-            return null;
-        }
-
-        private void Resolve(EntityType entity, string entityDirectoryPath)
-        {
-            Type entityType = typeof(EntityType);
-
-            PropertyInfo[] propertyInfos = entityType.GetProperties();
-
-            foreach (PropertyInfo propertyInfo in propertyInfos)
-            {
-                BinaryFileAttribute attribute = propertyInfo.GetCustomAttribute<BinaryFileAttribute>();
-            }
-        }
-
-        private string GetFolderName(EntityType entity)
-        {
-            return _propertyInfos[_entityIdIndex].GetValue(entity).ToString();
+            return _propertyInfoEntityId.GetValue(entity).ToString();
         }
     }
 }

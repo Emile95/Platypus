@@ -1,6 +1,4 @@
 ﻿namespace PlatypusRepository.Configuration
 {
-    public class RepositoryEntityIDAttribute : Attribute
-    {
-    }
+    public class RepositoryEntityIDAttribute : Attribute {}
 }
