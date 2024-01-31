@@ -1,8 +1,14 @@
 ﻿namespace Persistance.Entity
 {
-    public class ApplicationEntity
+    public class ApplicationEntity : IEntity<string>
     {
         public string Guid { get; set; }
-        public string DllFilePath { get; set; }
+        public byte[] AssemblyRaw { get; set; }
+        public string DirectoryPath { get; set; }
+
+        public string GetID()
+        {
+            return Guid;
+        }
     }
 }

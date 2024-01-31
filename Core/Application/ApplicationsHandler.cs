@@ -7,19 +7,20 @@ using Core.Exceptions;
 using Core.Event;
 using PlatypusFramework.Core.Event;
 using PlatypusAPI.ServerFunctionParameter;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Core.Application
 {
     public class ApplicationsHandler
     {
-        private readonly ApplicationRepository _applicationRepository;
+        private readonly Repository<ApplicationEntity, string> _applicationRepository;
         private readonly ApplicationInstaller _applicationInstaller;
         private readonly ApplicationResolver _applicationResolver;
         private readonly EventsHandler _eventsHandler;
         private readonly Dictionary<string, PlatypusApplicationBase> _applications;
 
         public ApplicationsHandler(
-            ApplicationRepository applicationRepository,
+            Repository<ApplicationEntity, string> applicationRepository,
             ApplicationResolver applicationResolver,
             ApplicationInstaller applicationInstaller,
             EventsHandler eventsHandler
@@ -38,12 +39,11 @@ namespace Core.Application
 
         public void LoadApplications()
         {
-            List<ApplicationEntity> applications = _applicationRepository.LoadApplications();
-            foreach(ApplicationEntity application in applications)
-            {
-                PlatypusApplicationBase applicationBase = PluginResolver.InstanciateImplementationFromFile<PlatypusApplicationBase>(application.DllFilePath);
-                LoadApplication(applicationBase, application.Guid);
-            }
+            _applicationRepository.Consume((entity) => {
+
+                PlatypusApplicationBase applicationBase = PluginResolver.InstanciateImplementationFromRawBytes<PlatypusApplicationBase>(entity.AssemblyRaw);
+                LoadApplication(applicationBase, entity.Guid);
+            });
         }
 
         public void LoadApplication(PlatypusApplicationBase application, string applicationGuid)

@@ -1,5 +1,4 @@
 ﻿using Core.ApplicationAction;
-using Persistance.Repository;
 using PlatypusFramework.Core.Application;
 using PlatypusFramework.Configuration.Application;
 using PlatypusFramework.Configuration.ApplicationAction;
@@ -8,18 +7,20 @@ using Core.Event;
 using PlatypusFramework.Configuration.Event;
 using PlatypusFramework.Configuration.User;
 using Core.User;
+using Persistance.Entity;
+using Persistance;
 
 namespace Core.Application
 {
     public class ApplicationResolver
     {
-        private readonly ApplicationRepository _applicationRepository;
+        private readonly Repository<ApplicationEntity, string> _applicationRepository;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly EventsHandler _eventsHandler;
         private readonly UsersHandler _usersHandler;
 
         public ApplicationResolver(
-            ApplicationRepository applicationRepository,
+            Repository<ApplicationEntity, string> applicationRepository,
             ApplicationActionsHandler applicationActionsHandler,
             EventsHandler eventsHandler,
             UsersHandler usersHandler
@@ -37,7 +38,6 @@ namespace Core.Application
             MethodInfo[] methods = type.GetMethods();
 
             ApplicationInitializeEnvironment env = new ApplicationInitializeEnvironment();
-            env.ApplicationRepository = _applicationRepository;
             env.ApplicationGuid = applicationGuid;
 
             platypusApplication.Initialize(env);

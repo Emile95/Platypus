@@ -59,13 +59,12 @@ namespace Core.ApplicationAction
             return _applicationActions.ContainsKey(actionGuid);
         }
 
-        public void ReRunStopedApplicationActions(ApplicationRepository applicationRepository)
+        public void ReRunStopedApplicationActions(Repository<ApplicationEntity, string> applicationRepository)
         {
             List<RunningApplicationActionEntity> runningActions = _applicationActionRepository.LoadRunningActions();
             foreach(RunningApplicationActionEntity runningAction in runningActions)
             {
                 ApplicationActionEnvironmentBase env = CreateStartActionEnvironment(runningAction.ActionGuid);
-                env.ApplicationRepository = applicationRepository;
 
                 RunAction(new ApplicationActionRunParameter() { 
                     Async = true,

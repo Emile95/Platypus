@@ -12,6 +12,7 @@ using PlatypusAPI.User;
 using Core.Network.RestAPI;
 using Core.Network;
 using System.Net.Sockets;
+using Persistance.Entity;
 
 namespace Core
 {
@@ -24,7 +25,7 @@ namespace Core
         private EventsHandler _eventsHandler;
         private UsersHandler _usersHandler;
 
-        private ApplicationRepository _applicationRepository;
+        private Repository<ApplicationEntity, string> _applicationRepository;
         private LoggerManager _loggerManager;
 
         private ISeverPortListener _restAPIHandler;

@@ -7,17 +7,19 @@ using System.Reflection;
 using PlatypusUtils;
 using PlatypusFramework.Configuration.User;
 using Core.Exceptions;
+using Persistance;
+using System.IO.Compression;
 
 namespace Core.Application
 {
     public class ApplicationInstaller
     {
-        private readonly ApplicationRepository _applicationRepository;
+        private readonly Repository<ApplicationEntity, string> _applicationRepository;
         private readonly ApplicationActionRepository _applicationActionRepository;
         private readonly UserRepository _userRepository;
 
         public ApplicationInstaller(
-            ApplicationRepository applicationRepository,
+            Repository<ApplicationEntity, string> applicationRepository,
             ApplicationActionRepository applicationActionRepository,
             UserRepository userRepository
         )
@@ -33,14 +35,21 @@ namespace Core.Application
             if (applicationFileInfo.Extension != ".platypus")
                 throw new InvalidPlatypusApplicationPackageException(applicationFileInfo.Name, "wrong file extension");
 
-            string newDllFilePath = _applicationRepository.SaveApplication(new ApplicationEntity()
+            ApplicationEntity entity = new ApplicationEntity()
             {
-                Guid = newGuid
-            }, applicationPath);
+                Guid = newGuid,
+                DirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(newGuid)
+            };
+
+            Directory.CreateDirectory(entity.DirectoryPath);
+
+            ExtractPackage(entity, applicationPath);
+
+            _applicationRepository.Add(entity);
 
             try
             {
-                PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromFile<PlatypusApplicationBase>(newDllFilePath);
+                PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromRawBytes<PlatypusApplicationBase>(entity.AssemblyRaw);
 
                 Type type = platypusApplication.GetType();
                 MethodInfo[] methods = type.GetMethods();
@@ -52,7 +61,6 @@ namespace Core.Application
                 }
 
                 ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
-                env.ApplicationRepository = _applicationRepository;
                 env.ApplicationGuid = newGuid;
 
                 platypusApplication.Install(env);
@@ -60,7 +68,7 @@ namespace Core.Application
                 return platypusApplication;
             } catch(Exception)
             {
-                _applicationRepository.RemoveApplication(newGuid);
+                _applicationRepository.Remove(newGuid);
                 return null;
             }
         }
@@ -68,12 +76,11 @@ namespace Core.Application
         public UninstallApplicationDetails UninstallApplication(PlatypusApplicationBase application, string applicationGuid)
         {
             ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
-            env.ApplicationRepository = _applicationRepository;
             env.ApplicationGuid = applicationGuid;
 
             application.Uninstall(env);
 
-            _applicationRepository.RemoveApplication(applicationGuid);
+            _applicationRepository.Remove(applicationGuid);
 
             UninstallApplicationDetails details = new UninstallApplicationDetails()
             {
@@ -108,6 +115,26 @@ namespace Core.Application
             });
 
             return true;
+        }
+
+        private void ExtractPackage(ApplicationEntity entity, string sourceDirectoryPath)
+        {
+            string temporaryDirectoryPath = Path.Combine(Path.GetTempPath(), entity.Guid);
+            Directory.CreateDirectory(temporaryDirectoryPath);
+
+            ZipFile.ExtractToDirectory(sourceDirectoryPath, temporaryDirectoryPath);
+            string[] dllFiles = Directory.GetFiles(temporaryDirectoryPath, "*.dll");
+            if (dllFiles.Length == 0) return;
+
+            entity.AssemblyRaw = File.ReadAllBytes(dllFiles[0]);
+
+            string[] directoriesPath = Directory.GetDirectories(temporaryDirectoryPath);
+            if (directoriesPath.Length > 0)
+                foreach (string directoryPath in directoriesPath)
+                {
+                    DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
+                    Directory.Move(directoryPath, Path.Combine(entity.DirectoryPath, directoryInfo.Name));
+                }
         }
     }
 }

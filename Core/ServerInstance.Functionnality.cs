@@ -51,7 +51,6 @@ namespace Core
                 };
             }
             ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
-            env.ApplicationRepository = _applicationRepository;
 
             return _applicationActionsHandler.RunAction(runActionParameter, env);
         }

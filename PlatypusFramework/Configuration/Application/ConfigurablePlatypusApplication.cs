@@ -22,13 +22,13 @@ namespace PlatypusFramework.Configuration.Application
         public override void Install(ApplicationInstallEnvironment env)
         {
             Configuration = ParameterEditorObjectResolver.CreateDefaultObject<ConfigurationType>();
-            env.ApplicationRepository.SaveApplicationConfiguration(env.ApplicationGuid, GetConfigurationJsonObject());
+            //env.ApplicationRepository.SaveApplicationConfiguration(env.ApplicationGuid, GetConfigurationJsonObject());
         }
 
         public override void Initialize(ApplicationInitializeEnvironment env)
         {
-            string jsonObject = env.ApplicationRepository.GetConfigurationJsonObject(env.ApplicationGuid);
-            LoadConfigurationJsonObject(jsonObject);
+            /*string jsonObject = env.ApplicationRepository.GetConfigurationJsonObject(env.ApplicationGuid);
+            LoadConfigurationJsonObject(jsonObject);*/
         }
 
         public string GetConfigurationJsonObject()
@@ -55,7 +55,7 @@ namespace PlatypusFramework.Configuration.Application
             CheckIfLoadLogger();
 
             string jsonObject = JsonConvert.SerializeObject(Configuration);
-            env.ApplicationRepository.SaveApplicationConfigurationByBasePath(ApplicationDirectoryPath, jsonObject);
+            //env.ApplicationRepository.SaveApplicationConfigurationByBasePath(ApplicationDirectoryPath, jsonObject);
 
             OnConfigurationUpdate(previousConfig);
 
