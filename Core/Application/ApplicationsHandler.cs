@@ -12,14 +12,14 @@ namespace Core.Application
 {
     public class ApplicationsHandler
     {
-        private readonly Repository<ApplicationEntity, string> _applicationRepository;
+        private readonly Repository<ApplicationEntity> _applicationRepository;
         private readonly ApplicationInstaller _applicationInstaller;
         private readonly ApplicationResolver _applicationResolver;
         private readonly EventsHandler _eventsHandler;
         private readonly Dictionary<string, PlatypusApplicationBase> _applications;
 
         public ApplicationsHandler(
-            Repository<ApplicationEntity, string> applicationRepository,
+            Repository<ApplicationEntity> applicationRepository,
             ApplicationResolver applicationResolver,
             ApplicationInstaller applicationInstaller,
             EventsHandler eventsHandler

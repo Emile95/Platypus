@@ -1,17 +1,12 @@
 ﻿namespace PlatypusRepository
 {
-    public abstract class Repository<EntityType, IDType>
-        where EntityType : IEntity<IDType>
+    public abstract class Repository<EntityType>
+        where EntityType : class
     {
         public abstract EntityType Add(EntityType entity);
         public abstract EntityType Update(EntityType entity);
-        public abstract void Remove(IDType id);
+        public abstract void Remove(EntityType entity);
         public abstract void Consume(Action<EntityType> consumer, Predicate<EntityType> condition = null);
-
-        public void Remove(EntityType entity)
-        {
-            Remove(entity.GetID());
-        }
 
         public void Remove(Predicate<EntityType> condition)
         {

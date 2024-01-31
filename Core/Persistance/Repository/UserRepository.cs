@@ -3,7 +3,7 @@ using Core.Persistance.Entity;
 
 namespace Core.Persistance.Repository
 {
-    public class UserRepository : MemberOfApplicationRepository
+    public class UserRepository
     {
         public int AddUser(string connectionMethodGuid, UserEntity entity)
         {
@@ -84,7 +84,8 @@ namespace Core.Persistance.Repository
 
         public List<string> RemoveUserCredentialMethodOfApplication(string applicationGuid)
         {
-            return RemoveByApplicationGuid(ApplicationPaths.USERSDIRECTORYPATH, applicationGuid);
+            return null;
+            //return RemoveByApplicationGuid(ApplicationPaths.USERSDIRECTORYPATH, applicationGuid);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Core
         private EventsHandler _eventsHandler;
         private UsersHandler _usersHandler;
 
-        private Repository<ApplicationEntity, string> _applicationRepository;
+        private Repository<ApplicationEntity> _applicationRepository;
         private LoggerManager _loggerManager;
 
         private ISeverPortListener _restAPIHandler;

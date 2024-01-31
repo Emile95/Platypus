@@ -15,12 +15,12 @@ namespace Core.Application
 {
     public class ApplicationInstaller
     {
-        private readonly Repository<ApplicationEntity, string> _applicationRepository;
+        private readonly Repository<ApplicationEntity> _applicationRepository;
         private readonly ApplicationActionRepository _applicationActionRepository;
         private readonly UserRepository _userRepository;
 
         public ApplicationInstaller(
-            Repository<ApplicationEntity, string> applicationRepository,
+            Repository<ApplicationEntity> applicationRepository,
             ApplicationActionRepository applicationActionRepository,
             UserRepository userRepository
         )
@@ -69,7 +69,7 @@ namespace Core.Application
                 return platypusApplication;
             } catch(Exception)
             {
-                _applicationRepository.Remove(newGuid);
+                _applicationRepository.Remove(entity);
                 return null;
             }
         }
@@ -81,7 +81,7 @@ namespace Core.Application
 
             application.Uninstall(env);
 
-            _applicationRepository.Remove(applicationGuid);
+            _applicationRepository.Remove(new ApplicationEntity() { Guid = applicationGuid });
 
             UninstallApplicationDetails details = new UninstallApplicationDetails()
             {

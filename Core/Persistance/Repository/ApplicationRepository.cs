@@ -3,18 +3,17 @@ using Core.Persistance.Entity;
 
 namespace Core.Persistance.Repository
 {
-    public class ApplicationRepository : Repository<ApplicationEntity, string>
+    public class ApplicationRepository : Repository<ApplicationEntity>
     {
         public override ApplicationEntity Add(ApplicationEntity entity)
         {
             WriteApplicationDll(entity.Guid, entity.AssemblyRaw);
-
             return entity;
         }
 
-        public override void Remove(string applicationGuid)
+        public override void Remove(ApplicationEntity entity)
         {
-            string applicationDirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(applicationGuid);
+            string applicationDirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(entity.Guid);
             Directory.Delete(applicationDirectoryPath, true);
         }
 

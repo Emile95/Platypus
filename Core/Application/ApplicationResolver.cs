@@ -14,13 +14,13 @@ namespace Core.Application
 {
     public class ApplicationResolver
     {
-        private readonly Repository<ApplicationEntity, string> _applicationRepository;
+        private readonly Repository<ApplicationEntity> _applicationRepository;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly EventsHandler _eventsHandler;
         private readonly UsersHandler _usersHandler;
 
         public ApplicationResolver(
-            Repository<ApplicationEntity, string> applicationRepository,
+            Repository<ApplicationEntity> applicationRepository,
             ApplicationActionsHandler applicationActionsHandler,
             EventsHandler eventsHandler,
             UsersHandler usersHandler
