@@ -1,10 +1,11 @@
-﻿using Persistance.Entity;
+﻿using PlatypusFramework.Core.User;
+
 namespace PlatypusFramework.Configuration.User
 {
     public class UserConnectEnvironment<CredentialType>
     {
-        public List<UserEntity> Users { get; set; }
-        public UserEntity CorrespondingUser { get; set; }
+        public List<UserInformation> Users { get; set; }
+        public UserInformation CorrespondingUser { get; set; }
         public string LoginAttemptMessage { get; set; }
         public CredentialType Credential { get; set; }
     }

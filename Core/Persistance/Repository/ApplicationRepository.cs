@@ -1,6 +1,7 @@
-﻿using Persistance.Entity;
+﻿using PlatypusRepository;
+using Core.Persistance.Entity;
 
-namespace Persistance.Repository
+namespace Core.Persistance.Repository
 {
     public class ApplicationRepository : Repository<ApplicationEntity, string>
     {

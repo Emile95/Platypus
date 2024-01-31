@@ -1,11 +1,12 @@
-﻿using Persistance.Entity;
-using Persistance.Repository;
+﻿using Core.Persistance.Entity;
+using Core.Persistance.Repository;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.User;
 using PlatypusFramework.Configuration.Application;
 using PlatypusFramework.Configuration.User;
 using PlatypusFramework.Confugration;
+using PlatypusFramework.Core.User;
 using System.Reflection;
 
 namespace Core.User
@@ -113,7 +114,16 @@ namespace Core.User
             if(_connectionMethods.ContainsKey(parameter.ConnectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(parameter.ConnectionMethodGuid);
             string loginAttemtMessage = "";
             UserAccount userAccount = null;
-            List<UserEntity> users = _userRepository.GetUsersByConnectionMethod(parameter.ConnectionMethodGuid);
+            List<UserInformation> users = _userRepository.GetUsersByConnectionMethod(parameter.ConnectionMethodGuid).Select((o) => 
+                new UserInformation()
+                {
+                    ID = o.ID,
+                    Email = o.Email,
+                    FullName = o.FullName,
+                    Data = o.Data,
+                    UserPermissionFlag = (UserPermissionFlag)o.UserPermissionBits
+                }
+            ).ToList();
             bool success = _connectionMethods[parameter.ConnectionMethodGuid].Login(users, parameter.Credential, ref loginAttemtMessage, ref userAccount);
             if (success) return userAccount;
             throw new UserConnectionFailedException(loginAttemtMessage);

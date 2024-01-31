@@ -5,14 +5,15 @@ using Core.User;
 using PlatypusLogging;
 using PlatypusLogging.Loggers;
 using Newtonsoft.Json;
-using Persistance;
-using Persistance.Repository;
+using PlatypusRepository;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
 using Core.Network.RestAPI;
 using Core.Network;
 using System.Net.Sockets;
-using Persistance.Entity;
+using Core.Persistance.Entity;
+using Core.Persistance.Repository;
+using Core.Persistance;
 
 namespace Core
 {

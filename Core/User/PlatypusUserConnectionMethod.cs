@@ -1,6 +1,6 @@
 ﻿using Core.Ressource;
-using Persistance.Entity;
 using PlatypusFramework.Configuration.User;
+using PlatypusFramework.Core.User;
 
 namespace Core.User
 {
@@ -18,8 +18,8 @@ namespace Core.User
 
         protected override bool LoginImplementation(UserConnectEnvironment<PlatypusUserCredential> env)
         {
-            UserEntity foundUser = null;
-            foreach(UserEntity user in env.Users)
+            UserInformation foundUser = null;
+            foreach(UserInformation user in env.Users)
             {
                 if(user.Data["UserName"].Equals(env.Credential.UserName) &&
                    user.Data["Password"].Equals(env.Credential.Password))

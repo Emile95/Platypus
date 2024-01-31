@@ -7,8 +7,8 @@ using Core.Event;
 using PlatypusFramework.Configuration.Event;
 using PlatypusFramework.Configuration.User;
 using Core.User;
-using Persistance.Entity;
-using Persistance;
+using PlatypusRepository;
+using Core.Persistance.Entity;
 
 namespace Core.Application
 {

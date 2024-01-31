@@ -1,5 +1,4 @@
 ﻿using Core.ApplicationAction.Run;
-using Persistance.Repository;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusFramework.Core.ApplicationAction;
 using PlatypusFramework.Configuration.Application;
@@ -7,13 +6,14 @@ using PlatypusFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Core.Event;
 using PlatypusFramework.Core.Event;
-using Persistance.Entity;
-using Persistance;
+using PlatypusRepository;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ServerFunctionParameter;
-using PlatypusFramework.Core.ApplicationAction.Logger;
 using PlatypusUtils;
 using Core.Ressource;
+using Core.Persistance.Repository;
+using Core.Persistance;
+using Core.Persistance.Entity;
 
 namespace Core.ApplicationAction
 {
@@ -99,8 +99,6 @@ namespace Core.ApplicationAction
             ApplicationActionRun applicationActionRun = CreateApplicationActionRun(runActionParameter, env, savedRunningAction);
 
             string configFilePath = _applicationActionRepository.GetRunActionLogFilePath(runActionParameter.Guid, applicationActionRun.RunNumber);
-
-            env.RunningActionFileLogger = new RunningApplicationActionFileLogger(runActionParameter.Guid, applicationActionRun.RunNumber, 100000);
 
             applicationActionRun.StartRun(applicationAction, runActionParameter, () => {
                 ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);

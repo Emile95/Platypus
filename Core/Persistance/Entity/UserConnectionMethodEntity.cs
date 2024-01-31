@@ -1,4 +1,4 @@
-﻿namespace Persistance.Entity
+﻿namespace Core.Persistance.Entity
 {
     public class UserConnectionMethodEntity
     {

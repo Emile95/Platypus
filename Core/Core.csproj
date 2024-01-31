@@ -11,11 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistance\Persistance.csproj" />
     <ProjectReference Include="..\PlatypusAPI\PlatypusAPI.csproj" />
     <ProjectReference Include="..\PlatypusFramework\PlatypusFramework.csproj" />
     <ProjectReference Include="..\PlatypusLogging\PlatypusLogging.csproj" />
     <ProjectReference Include="..\PlatypusNetwork\PlatypusNetwork.csproj" />
+    <ProjectReference Include="..\PlatypusRepository\PlatypusRepository.csproj" />
     <ProjectReference Include="..\PlatypusUtils\PlatypusUtils.csproj" />
   </ItemGroup>
 

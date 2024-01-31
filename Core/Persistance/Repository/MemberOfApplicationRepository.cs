@@ -1,4 +1,4 @@
-﻿namespace Persistance.Repository
+﻿namespace Core.Persistance.Repository
 {
     public abstract class MemberOfApplicationRepository
     {

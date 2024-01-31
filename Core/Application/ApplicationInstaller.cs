@@ -1,5 +1,4 @@
-﻿using Persistance.Repository;
-using Persistance.Entity;
+﻿using Core.Persistance.Repository;
 using PlatypusFramework.Core.Application;
 using PlatypusFramework.Configuration.Application;
 using PlatypusFramework.Configuration.ApplicationAction;
@@ -7,8 +6,10 @@ using System.Reflection;
 using PlatypusUtils;
 using PlatypusFramework.Configuration.User;
 using Core.Exceptions;
-using Persistance;
+using PlatypusRepository;
 using System.IO.Compression;
+using Core.Persistance;
+using Core.Persistance.Entity;
 
 namespace Core.Application
 {

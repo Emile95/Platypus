@@ -1,4 +1,4 @@
-﻿namespace Persistance
+﻿namespace PlatypusRepository
 {
     public interface IEntity<IDType>
     {

@@ -1,4 +1,6 @@
-﻿namespace Persistance.Entity
+﻿using PlatypusRepository;
+
+namespace Core.Persistance.Entity
 {
     public class ApplicationEntity : IEntity<string>
     {

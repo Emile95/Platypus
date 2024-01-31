@@ -1,4 +1,4 @@
-﻿namespace Persistance
+﻿namespace Core.Persistance
 {
     public static class ApplicationPaths
     {
