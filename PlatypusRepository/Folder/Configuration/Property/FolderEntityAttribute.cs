@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 
-namespace PlatypusRepository.Folder.Configuration
+namespace PlatypusRepository.Folder.Configuration.Property
 {
-    public class FolderAttribute : FolderEntityPropertyAttribute
+    public class FolderEntityAttribute : FolderEntityPropertyAttribute
     {
         public string FolderName { get; set; }
 
@@ -17,7 +17,7 @@ namespace PlatypusRepository.Folder.Configuration
             string childObjectfolderPath = Path.Combine(directoryPath, FolderName);
             object value = recursion(propertyInfo.PropertyType, childObjectfolderPath);
             propertyInfo.SetValue(obj, value);
-            
+
         }
 
         public override void Resolve(object obj, PropertyInfo propertyInfo, string directoryPath, Action<Type, object, string> recursion = null)

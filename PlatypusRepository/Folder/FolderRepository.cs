@@ -28,8 +28,6 @@ namespace PlatypusRepository.Folder
                     break;
                 }
             }
-
-            Initialize();
         }
 
         public override EntityType Add(EntityType entity)
@@ -37,6 +35,7 @@ namespace PlatypusRepository.Folder
             string folderName = GetFolderName(entity);
             string entityDirectoryPath = Path.Combine(_directoryInfo.FullName, folderName);
             Directory.CreateDirectory(entityDirectoryPath);
+            _folderEntityHandler.Create(_entityType, entityDirectoryPath);
             _folderEntityHandler.Resolve(_entityType, entity, entityDirectoryPath);
             return entity;
         }
@@ -79,11 +78,6 @@ namespace PlatypusRepository.Folder
         public string GetFolderName(object entity)
         {
             return _propertyInfoEntityId.GetValue(entity).ToString();
-        }
-
-        private void Initialize()
-        {
-
         }
     }
 }

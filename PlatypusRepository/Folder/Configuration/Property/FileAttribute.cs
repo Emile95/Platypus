@@ -1,4 +1,4 @@
-﻿namespace PlatypusRepository.Folder.Configuration
+﻿namespace PlatypusRepository.Folder.Configuration.Property
 {
     public abstract class FileAttribute : FolderEntityPropertyAttribute
     {

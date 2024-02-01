@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace PlatypusRepository.Folder
+namespace PlatypusRepository.Folder.Configuration
 {
     public abstract class FolderEntityPropertyAttribute : Attribute
     {

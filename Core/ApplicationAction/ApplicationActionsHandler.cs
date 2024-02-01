@@ -74,7 +74,9 @@ namespace Core.ApplicationAction
             ApplicationActionRunResult result = BeforeApplicationActionRun(applicationAction, actionRunEventHandlerEnvironment);
             if (result is not null) return result;
 
-            ApplicationActionRun applicationActionRun = applicationAction.CreateApplicationActionRun(runActionParameter, env);
+            string applicationActionRunGUID = Utils.GenerateGuidFromEnumerable(_applicationActionRuns.Keys);
+
+            ApplicationActionRun applicationActionRun = applicationAction.CreateApplicationActionRun(runActionParameter, env, applicationActionRunGUID);
 
             _applicationActionRuns.Add(
                 applicationActionRun.Guid,

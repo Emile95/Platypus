@@ -1,21 +1,14 @@
-﻿using PlatypusAPI.ApplicationAction.Run;
-using PlatypusRepository.Configuration;
-using PlatypusRepository.Folder.Configuration;
+﻿using PlatypusRepository.Configuration;
+using PlatypusRepository.Folder.Configuration.Class;
 
 namespace Core.Persistance.Entity
 {
+    [CreateEmptyFile(
+        Name = "action",
+        Extension = "log")]
     internal class ApplicationActionRunEntity
     {
         [RepositoryEntityID]
         public int RunNumber { get; set; }
-
-        [JsonFile(FileName = "runInfo")]
-        public ApplicationActionRunInfo RunInfo { get; set; }
-
-        [TextFile(
-            FileName = "action",
-            Extension = "log"
-        )]
-        public string ActionLog { get; set; }
     }
 }

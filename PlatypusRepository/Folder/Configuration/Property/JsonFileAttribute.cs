@@ -1,30 +1,36 @@
-﻿using System.Reflection;
+﻿using Newtonsoft.Json;
+using System.Reflection;
 
-namespace PlatypusRepository.Folder.Configuration
+namespace PlatypusRepository.Folder.Configuration.Property
 {
-    public class BinaryFileAttribute : FileAttribute
+    public class JsonFileAttribute : FileAttribute
     {
-        public new string Extension { get; set; }
+        public JsonFileAttribute()
+        {
+            Extension = "json";
+        }
 
         protected override bool PropertyTypeIsValid(PropertyInfo propertyInfo)
         {
-            return propertyInfo.PropertyType.IsEquivalentTo(typeof(byte[]));
+            return propertyInfo.PropertyType.IsClass == true ||
+                   propertyInfo.PropertyType.IsEquivalentTo(typeof(string)) == false;
         }
 
         public override void Fetch(object obj, PropertyInfo propertyInfo, string directoryPath, Func<Type, string, object> recursion = null)
         {
             if (PropertyTypeIsValid(propertyInfo) == false) return;
             string filePath = Path.Combine(directoryPath, FileName + "." + Extension);
-            byte[] value = File.ReadAllBytes(filePath);
+            string jsonObject = File.ReadAllText(filePath);
+            object value = JsonConvert.DeserializeObject(jsonObject);
             propertyInfo.SetValue(obj, value);
         }
 
         public override void Resolve(object obj, PropertyInfo propertyInfo, string directoryPath, Action<Type, object, string> recursion = null)
         {
             if (PropertyTypeIsValid(propertyInfo) == false) return;
-            byte[] value = propertyInfo.GetValue(obj) as byte[];
+            string value = JsonConvert.SerializeObject(propertyInfo.GetValue(obj));
             string filePath = Path.Combine(directoryPath, FileName + "." + Extension);
-            File.WriteAllBytes(filePath, value);
+            File.WriteAllText(filePath, value);
         }
     }
 }

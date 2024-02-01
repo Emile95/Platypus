@@ -9,6 +9,10 @@ using PlatypusFramework.Confugration;
 using PlatypusUtils;
 using Core.Ressource;
 using Core.ApplicationAction.Run;
+using PlatypusRepository;
+using Core.Persistance.Entity;
+using PlatypusRepository.Folder;
+using Core.Persistance;
 
 namespace Core.ApplicationAction
 {
@@ -20,6 +24,8 @@ namespace Core.ApplicationAction
         public Type EnvironmentParameterType { get; private set; }
         public Type ParameterType { get; private set; }
         public bool ParameterRequired { get; private set; }
+
+        private readonly Repository<ApplicationActionRunEntity> _applicationActionRunRepository;
 
         public ApplicationAction(PlatypusApplicationBase application, ActionDefinitionAttribute actionDefinitionAttribute, MethodInfo methodInfo, string guid)
         {
@@ -35,6 +41,8 @@ namespace Core.ApplicationAction
             ParameterRequired = actionDefinitionAttribute.ParameterRequired;
 
             Exec = (env) => BuildAction(application, env, methodInfo);
+
+            _applicationActionRunRepository = new FolderRepository<ApplicationActionRunEntity>(ApplicationPaths.GetActionRunsDirectoryPath(Guid));
         }
 
         public void ResolveActionParameter(ApplicationActionEnvironmentBase env, Dictionary<string, object> parameters)
@@ -135,18 +143,23 @@ namespace Core.ApplicationAction
             return (ApplicationActionEnvironmentBase)Activator.CreateInstance(EnvironmentParameterType);
         }
 
-        public ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
+        public ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env, string actionRunGuid)
         {
-            string applicationActionRunGUID = Utils.GenerateGuidFromEnumerable(_applicationActionRuns.Keys);
+            
             int runNumber = 5;
 
             ApplicationActionRun applicationActionRun = new ApplicationActionRun()
             {
                 ActionGuid = runActionParameter.Guid,
-                Guid = applicationActionRunGUID,
+                Guid = actionRunGuid,
                 RunNumber = runNumber,
                 Env = env
             };
+
+            _applicationActionRunRepository.Add(new ApplicationActionRunEntity()
+            {
+                RunNumber = runNumber
+            });
 
             return applicationActionRun;
         }
