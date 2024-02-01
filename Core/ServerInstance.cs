@@ -32,16 +32,13 @@ namespace Core
 
             ApplicationRepository applicationRepository = new ApplicationRepository();
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
-            
+            UserRepository userRepository = new UserRepository();
+
             _eventsHandler = new EventsHandler();
 
             _applicationActionsHandler = new ApplicationActionsHandler(_eventsHandler);
-
-            UserRepository userRepository = new UserRepository();
-            _usersHandler = new UsersHandler(
-                userRepository
-             );
-
+     
+            _usersHandler = new UsersHandler(userRepository);
             _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
 
             ApplicationInstaller applicationInstaller = new ApplicationInstaller(

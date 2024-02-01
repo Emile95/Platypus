@@ -17,9 +17,11 @@ namespace PlatypusRepository.Folder.Operator
 
             foreach (string entityDirectoryPath in entityDirectoryPaths)
             {
+                DirectoryInfo directoryInfo = new DirectoryInfo(entityDirectoryPath);
+
                 EntityType entity = Fetch(_entityType, entityDirectoryPath) as EntityType;
 
-                _folderEntityHandler.SetID(entity, entityDirectoryPath);
+                _folderEntityHandler.SetID(entity, directoryInfo.Name);
 
                 if (entity == null) continue;
                 if (condition != null)

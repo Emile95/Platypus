@@ -11,8 +11,7 @@ using Core.Ressource;
 using Core.ApplicationAction.Run;
 using PlatypusRepository;
 using Core.Persistance.Entity;
-using PlatypusRepository.Folder;
-using Core.Persistance;
+using Core.Persistance.Repository;
 
 namespace Core.ApplicationAction
 {
@@ -25,7 +24,7 @@ namespace Core.ApplicationAction
         public Type ParameterType { get; private set; }
         public bool ParameterRequired { get; private set; }
 
-        private readonly IRepository<ApplicationActionRunEntity> _applicationActionRunRepository;
+        private readonly IRepositoryAddOperator<ApplicationActionRunEntity> _applicationActionRunRepositoryAddOperator;
 
         public ApplicationAction(PlatypusApplicationBase application, ActionDefinitionAttribute actionDefinitionAttribute, MethodInfo methodInfo, string guid)
         {
@@ -42,7 +41,7 @@ namespace Core.ApplicationAction
 
             Exec = (env) => BuildAction(application, env, methodInfo);
 
-            _applicationActionRunRepository = new FolderRepository<ApplicationActionRunEntity>(ApplicationPaths.GetActionRunsDirectoryPath(Guid));
+            _applicationActionRunRepositoryAddOperator = new ApplicationActionRunRepository(Guid);
         }
 
         public void ResolveActionParameter(ApplicationActionEnvironmentBase env, Dictionary<string, object> parameters)
@@ -145,7 +144,6 @@ namespace Core.ApplicationAction
 
         public ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env, string actionRunGuid)
         {
-            
             int runNumber = 5;
 
             ApplicationActionRun applicationActionRun = new ApplicationActionRun()
@@ -156,7 +154,7 @@ namespace Core.ApplicationAction
                 Env = env
             };
 
-            _applicationActionRunRepository.Add(new ApplicationActionRunEntity()
+            _applicationActionRunRepositoryAddOperator.Add(new ApplicationActionRunEntity()
             {
                 RunNumber = runNumber
             });
