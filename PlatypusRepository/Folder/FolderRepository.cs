@@ -12,7 +12,6 @@ namespace PlatypusRepository.Folder
         private readonly Type _entityType;
         private readonly PropertyInfo _propertyInfoEntityId;
 
-
         public FolderRepository(string directoryPath)
         {
             _directoryInfo = new DirectoryInfo(directoryPath);
@@ -29,6 +28,8 @@ namespace PlatypusRepository.Folder
                     break;
                 }
             }
+
+            Initialize();
         }
 
         public override EntityType Add(EntityType entity)
@@ -78,6 +79,11 @@ namespace PlatypusRepository.Folder
         public string GetFolderName(object entity)
         {
             return _propertyInfoEntityId.GetValue(entity).ToString();
+        }
+
+        private void Initialize()
+        {
+
         }
     }
 }

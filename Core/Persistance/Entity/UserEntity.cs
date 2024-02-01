@@ -2,7 +2,7 @@
 
 namespace Core.Persistance.Entity
 {
-    public class UserEntity
+    internal class UserEntity
     {
         [RepositoryEntityID]
         public int ID { get; set; }

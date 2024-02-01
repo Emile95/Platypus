@@ -2,7 +2,7 @@
 
 namespace Core.Persistance.Entity
 {
-    public class ApplicationActionEntity
+    internal class ApplicationActionEntity
     {
         [RepositoryEntityID]
         public string Guid { get; set; }

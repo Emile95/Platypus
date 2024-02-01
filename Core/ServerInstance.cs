@@ -2,8 +2,6 @@
 using Core.ApplicationAction;
 using Core.Event;
 using Core.User;
-using PlatypusLogging;
-using PlatypusLogging.Loggers;
 using Newtonsoft.Json;
 using PlatypusRepository;
 using PlatypusAPI.Exceptions;
@@ -27,9 +25,6 @@ namespace Core
         private EventsHandler _eventsHandler;
         private UsersHandler _usersHandler;
 
-        private Repository<ApplicationEntity> _applicationRepository;
-        private LoggerManager _loggerManager;
-
         private ISeverPortListener _restAPIHandler;
         private ISeverPortListener _tcpServerSocketHandler;
 
@@ -39,13 +34,11 @@ namespace Core
             _config = JsonConvert.DeserializeObject<ServerConfig>(json);
 
             Repository<ApplicationActionEntity> applicationActionRepository = new FolderRepository<ApplicationActionEntity>(ApplicationPaths.ACTIONSDIRECTORYPATH);
+            Repository<ApplicationEntity> applicationRepository = new FolderRepository<ApplicationEntity>(ApplicationPaths.APPLICATIONSDIRECTORYPATHS);
 
             _eventsHandler = new EventsHandler();
 
-            _applicationActionsHandler = new ApplicationActionsHandler(
-                applicationActionRepository,
-                _eventsHandler
-            );
+            _applicationActionsHandler = new ApplicationActionsHandler(_eventsHandler);
 
             UserRepository userRepository = new UserRepository();
             _usersHandler = new UsersHandler(
@@ -54,30 +47,25 @@ namespace Core
 
             _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
 
-            _applicationRepository = new FolderRepository<ApplicationEntity>(ApplicationPaths.APPLICATIONSDIRECTORYPATHS);
-
             ApplicationInstaller applicationInstaller = new ApplicationInstaller(
-                _applicationRepository,
+                applicationRepository,
                 applicationActionRepository,
                 userRepository
             );
 
             ApplicationResolver applicationResolver = new ApplicationResolver(
-                _applicationRepository,
+                applicationRepository,
                 _applicationActionsHandler,
                 _eventsHandler,
                 _usersHandler
             );
 
             _applicationsHandler = new ApplicationsHandler(
-                _applicationRepository,
+                applicationRepository,
                 applicationResolver,
                 applicationInstaller,
                 _eventsHandler
             );
-
-            _loggerManager = new LoggerManager();
-            _loggerManager.CreateLogger<ConsoleLogger>();
 
             _restAPIHandler = new RestAPIHandler(this, args, _config.RestAPIUserTokenTimeout);
             _tcpServerSocketHandler = new PlatypusServerSocketHandler(this, ProtocolType.Tcp);
@@ -87,7 +75,7 @@ namespace Core
         {
             _applicationsHandler.LoadApplications();
 
-            _applicationActionsHandler.ReRunStopedApplicationActions(_applicationRepository);
+            //_applicationActionsHandler.ReRunStopedApplicationActions(_applicationRepository);
 
             _tcpServerSocketHandler.InitializeServerPortListener(_config.TcpSocketPort);
             _restAPIHandler.InitializeServerPortListener(_config.HttpPort);

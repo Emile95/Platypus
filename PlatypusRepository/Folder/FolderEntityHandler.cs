@@ -17,14 +17,14 @@ namespace PlatypusRepository.Folder
             return obj;
         }
 
-        private void IterateProperties(Type type, Action<FolderRepositoryAttributeHandler, PropertyInfo> consumer)
+        private void IterateProperties(Type type, Action<FolderEntityPropertyAttribute, PropertyInfo> consumer)
         {
             PropertyInfo[] propertyInfos = type.GetProperties();
 
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {
-                FolderRepositoryAttributeHandler attributeHandler = propertyInfo.GetCustomAttribute<FolderRepositoryAttributeHandler>();
-                if (attributeHandler != null) consumer(attributeHandler, propertyInfo);
+                FolderEntityPropertyAttribute attribute = propertyInfo.GetCustomAttribute<FolderEntityPropertyAttribute>();
+                if (attribute != null) consumer(attribute, propertyInfo);
             }
         }
     }

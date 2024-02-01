@@ -2,7 +2,7 @@
 
 namespace PlatypusRepository.Folder
 {
-    public abstract class FolderRepositoryAttributeHandler : Attribute
+    public abstract class FolderEntityPropertyAttribute : Attribute
     {
         protected abstract bool PropertyTypeIsValid(PropertyInfo propertyInfo);
         public abstract void Fetch(object obj, PropertyInfo propertyInfo, string directoryPath, Func<Type, string, object> recursion = null);

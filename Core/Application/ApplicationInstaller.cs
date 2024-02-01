@@ -13,13 +13,13 @@ using Core.Persistance.Entity;
 
 namespace Core.Application
 {
-    public class ApplicationInstaller
+    internal class ApplicationInstaller
     {
         private readonly Repository<ApplicationEntity> _applicationRepository;
         private readonly Repository<ApplicationActionEntity> _applicationActionRepository;
         private readonly UserRepository _userRepository;
 
-        public ApplicationInstaller(
+        internal ApplicationInstaller(
             Repository<ApplicationEntity> applicationRepository,
             Repository<ApplicationActionEntity> applicationActionRepository,
             UserRepository userRepository
@@ -30,7 +30,7 @@ namespace Core.Application
             _userRepository = userRepository;
         }
 
-        public PlatypusApplicationBase InstallApplication(string newGuid, string applicationPath)
+        internal PlatypusApplicationBase InstallApplication(string newGuid, string applicationPath)
         {
             FileInfo applicationFileInfo = new FileInfo(applicationPath);
             if (applicationFileInfo.Extension != ".platypus")
@@ -74,7 +74,7 @@ namespace Core.Application
             }
         }
 
-        public void UninstallApplication(PlatypusApplicationBase application, string applicationGuid)
+        internal void UninstallApplication(PlatypusApplicationBase application, string applicationGuid)
         {
             ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
             env.ApplicationGuid = applicationGuid;
@@ -103,7 +103,7 @@ namespace Core.Application
             return true;
         }
 
-        public bool InstallUserConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
+        internal bool InstallUserConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
         {
             UserConnectionMethodCreatorAttribute userConnectionMethodCreatorAttribute = methodInfo.GetCustomAttribute<UserConnectionMethodCreatorAttribute>();
             if (userConnectionMethodCreatorAttribute == null) return false;

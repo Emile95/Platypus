@@ -2,7 +2,7 @@
 
 namespace PlatypusRepository.Folder.Configuration
 {
-    public class FolderAttribute : FolderRepositoryAttributeHandler
+    public class FolderAttribute : FolderEntityPropertyAttribute
     {
         public string FolderName { get; set; }
 

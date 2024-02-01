@@ -3,9 +3,9 @@ using Core.Persistance.Entity;
 
 namespace Core.Persistance.Repository
 {
-    public class UserRepository
+    internal class UserRepository
     {
-        public int AddUser(string connectionMethodGuid, UserEntity entity)
+        internal int AddUser(string connectionMethodGuid, UserEntity entity)
         {
             int lastID = Convert.ToInt32(File.ReadAllText(ApplicationPaths.LASTUSERIDFILEPATH));
             int newID = (lastID + 1);
@@ -17,7 +17,7 @@ namespace Core.Persistance.Repository
             return entity.ID;
         }
 
-        public void SaveUser(string connectionMethodGuid, UserEntity entity)
+        internal void SaveUser(string connectionMethodGuid, UserEntity entity)
         {
             string userDirectoryPath = ApplicationPaths.GetUserDirectoryPath(connectionMethodGuid, entity.ID);
 
@@ -30,7 +30,7 @@ namespace Core.Persistance.Repository
             File.WriteAllText(userFilePath, json);
         }
 
-        public void RemoveUser(string connectionMethodGuid, int userID)
+        internal void RemoveUser(string connectionMethodGuid, int userID)
         {
             string userDirectoryPath = ApplicationPaths.GetUserDirectoryPath(connectionMethodGuid, userID);
 
@@ -40,7 +40,7 @@ namespace Core.Persistance.Repository
 
         }
 
-        public UserEntity GetUserByData(string userConnectionMethodGuid, Predicate<UserEntity> predicate)
+        internal UserEntity GetUserByData(string userConnectionMethodGuid, Predicate<UserEntity> predicate)
         {
             string[] userDirectories =  Directory.GetDirectories(ApplicationPaths.GetUsersByConnectionMethodDirectory(userConnectionMethodGuid));
             
@@ -57,7 +57,7 @@ namespace Core.Persistance.Repository
             return null;
         }
 
-        public List<UserEntity> GetUsersByConnectionMethod(string connectionMethodGuid)
+        internal List<UserEntity> GetUsersByConnectionMethod(string connectionMethodGuid)
         {
             List<UserEntity> users = new List<UserEntity>();
             string credentialMethodDirectoryPath = Path.Combine(ApplicationPaths.USERSDIRECTORYPATH, connectionMethodGuid);
@@ -72,7 +72,7 @@ namespace Core.Persistance.Repository
             return users;
         }
 
-        public void SaveUserConnectionMethod(UserConnectionMethodEntity entity)
+        internal void SaveUserConnectionMethod(UserConnectionMethodEntity entity)
         {
             string credentialMethodDirectoryPath = Path.Combine(ApplicationPaths.USERSDIRECTORYPATH, entity.Guid);
             if (Directory.Exists(credentialMethodDirectoryPath) == false)
@@ -82,7 +82,7 @@ namespace Core.Persistance.Repository
             File.WriteAllText(definitionFilePath, json);
         }
 
-        public List<string> RemoveUserCredentialMethodOfApplication(string applicationGuid)
+        internal List<string> RemoveUserCredentialMethodOfApplication(string applicationGuid)
         {
             return null;
             //return RemoveByApplicationGuid(ApplicationPaths.USERSDIRECTORYPATH, applicationGuid);

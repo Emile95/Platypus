@@ -11,12 +11,12 @@ using System.Reflection;
 
 namespace Core.User
 {
-    public class UsersHandler
+    internal class UsersHandler
     {
         private readonly Dictionary<string, IUserConnectionMethod> _connectionMethods;
         private readonly UserRepository _userRepository;
 
-        public UsersHandler(
+        internal UsersHandler(
             UserRepository userRepository
         )
         {
@@ -24,31 +24,31 @@ namespace Core.User
             _userRepository = userRepository;
         }
 
-        public void AddConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
+        internal void AddConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
         {
             IUserConnectionMethod credentialMethod = methodInfo.Invoke(application, new object[] { }) as IUserConnectionMethod;
             AddConnectionMethod(credentialMethod, applicationGuid);
         }
 
-        public void AddBuiltInConnectionMethod(IUserConnectionMethod credentialMethod, string guid)
+        internal void AddBuiltInConnectionMethod(IUserConnectionMethod credentialMethod, string guid)
         {
             _connectionMethods.Add(guid, credentialMethod);
         }
 
-        public string AddConnectionMethod(IUserConnectionMethod connectionMethod, string applicationGuid)
+        internal string AddConnectionMethod(IUserConnectionMethod connectionMethod, string applicationGuid)
         {
             string newGuid = connectionMethod.GetName() + applicationGuid;
             _connectionMethods.Add(newGuid, connectionMethod);
             return newGuid;
         }
 
-        public void RemoveConnectionMethod(string connectionMethodGuid)
+        internal void RemoveConnectionMethod(string connectionMethodGuid)
         {
             if( _connectionMethods.ContainsKey(connectionMethodGuid))
                 _connectionMethods.Remove(connectionMethodGuid);
         }
 
-        public UserAccount AddUser(UserCreationParameter parameter)
+        internal UserAccount AddUser(UserCreationParameter parameter)
         {
             UserEntity userEntity = new UserEntity()
             {
@@ -61,7 +61,7 @@ namespace Core.User
             return SaveUser(parameter.ConnectionMethodGuid, userEntity, true);
         }
 
-        public UserAccount UpdateUser(UserUpdateParameter parameter)
+        internal UserAccount UpdateUser(UserUpdateParameter parameter)
         {
             UserEntity userEntity = new UserEntity()
             {
@@ -75,13 +75,13 @@ namespace Core.User
             return SaveUser(parameter.ConnectionMethodGuid, userEntity, false);
         }
 
-        public void RemoveUser(RemoveUserParameter parameter)
+        internal void RemoveUser(RemoveUserParameter parameter)
         {
             _userRepository.RemoveUser(parameter.ConnectionMethodGuid, parameter.ID);
         }
 
 
-        public UserAccount SaveUser(string connectionMethod, UserEntity userEntity, bool isNew)
+        internal UserAccount SaveUser(string connectionMethod, UserEntity userEntity, bool isNew)
         {
             if (_connectionMethods.ContainsKey(connectionMethod) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethod);
 

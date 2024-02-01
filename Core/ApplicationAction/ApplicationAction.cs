@@ -8,6 +8,7 @@ using PlatypusAPI.ApplicationAction;
 using PlatypusFramework.Confugration;
 using PlatypusUtils;
 using Core.Ressource;
+using Core.ApplicationAction.Run;
 
 namespace Core.ApplicationAction
 {
@@ -90,7 +91,7 @@ namespace Core.ApplicationAction
                     Status = ApplicationActionRunResultStatus.Success,
                     Message = message,
                     ResultObject = objectResult
-                }; ;
+                };
             }
             catch (TargetInvocationException ex)
             {
@@ -132,6 +133,22 @@ namespace Core.ApplicationAction
                 return new ApplicationActionEnvironmentBase();
 
             return (ApplicationActionEnvironmentBase)Activator.CreateInstance(EnvironmentParameterType);
+        }
+
+        public ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
+        {
+            string applicationActionRunGUID = Utils.GenerateGuidFromEnumerable(_applicationActionRuns.Keys);
+            int runNumber = 5;
+
+            ApplicationActionRun applicationActionRun = new ApplicationActionRun()
+            {
+                ActionGuid = runActionParameter.Guid,
+                Guid = applicationActionRunGUID,
+                RunNumber = runNumber,
+                Env = env
+            };
+
+            return applicationActionRun;
         }
 
         private string GetParentApplicationGuid()

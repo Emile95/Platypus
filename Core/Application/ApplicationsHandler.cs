@@ -10,7 +10,7 @@ using Core.Persistance;
 
 namespace Core.Application
 {
-    public class ApplicationsHandler
+    internal class ApplicationsHandler
     {
         private readonly Repository<ApplicationEntity> _applicationRepository;
         private readonly ApplicationInstaller _applicationInstaller;
@@ -18,7 +18,7 @@ namespace Core.Application
         private readonly EventsHandler _eventsHandler;
         private readonly Dictionary<string, PlatypusApplicationBase> _applications;
 
-        public ApplicationsHandler(
+        internal ApplicationsHandler(
             Repository<ApplicationEntity> applicationRepository,
             ApplicationResolver applicationResolver,
             ApplicationInstaller applicationInstaller,
@@ -36,7 +36,7 @@ namespace Core.Application
             _applications = new Dictionary<string, PlatypusApplicationBase>();
         }
 
-        public void LoadApplications()
+        internal void LoadApplications()
         {
             _applicationRepository.Consume((entity) => {
 
@@ -45,14 +45,14 @@ namespace Core.Application
             });
         }
 
-        public void LoadApplication(PlatypusApplicationBase application, string applicationGuid)
+        internal void LoadApplication(PlatypusApplicationBase application, string applicationGuid)
         {
             _applicationResolver.ResolvePlatypusApplication(application, applicationGuid);
             application.ApplicationDirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(applicationGuid);
             _applications.Add(applicationGuid, application);
         }
 
-        public bool InstallApplication(InstallApplicationParameter parameter)
+        internal bool InstallApplication(InstallApplicationParameter parameter)
         {
             string newGuid = Utils.GenerateGuidFromEnumerable(_applications.Keys);
 
@@ -74,7 +74,7 @@ namespace Core.Application
             return true;
         }
 
-        public void UninstallApplication(UninstallApplicationParameter parameter)
+        internal void UninstallApplication(UninstallApplicationParameter parameter)
         {
             if (_applications.ContainsKey(parameter.ApplicationGuid) == false)
                 throw new ApplicationInexistantException(parameter.ApplicationGuid);

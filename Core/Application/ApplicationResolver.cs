@@ -12,14 +12,14 @@ using Core.Persistance.Entity;
 
 namespace Core.Application
 {
-    public class ApplicationResolver
+    internal class ApplicationResolver
     {
         private readonly Repository<ApplicationEntity> _applicationRepository;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly EventsHandler _eventsHandler;
         private readonly UsersHandler _usersHandler;
 
-        public ApplicationResolver(
+        internal ApplicationResolver(
             Repository<ApplicationEntity> applicationRepository,
             ApplicationActionsHandler applicationActionsHandler,
             EventsHandler eventsHandler,
@@ -32,7 +32,7 @@ namespace Core.Application
             _usersHandler = usersHandler;
         }
 
-        public void ResolvePlatypusApplication(PlatypusApplicationBase platypusApplication, string applicationGuid)
+        internal void ResolvePlatypusApplication(PlatypusApplicationBase platypusApplication, string applicationGuid)
         {
             Type type = platypusApplication.GetType();
             MethodInfo[] methods = type.GetMethods();

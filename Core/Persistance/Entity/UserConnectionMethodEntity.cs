@@ -1,6 +1,6 @@
 ﻿namespace Core.Persistance.Entity
 {
-    public class UserConnectionMethodEntity
+    internal class UserConnectionMethodEntity
     {
         public string Guid { get; set; }
         public string Name { get; set; }
