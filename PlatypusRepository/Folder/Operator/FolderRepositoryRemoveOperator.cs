@@ -2,18 +2,21 @@
 
 namespace PlatypusRepository.Folder.Operator
 {
-    public class FolderRepositoryRemoveOperator<EntityType> : FolderRepositoryOperator<EntityType>, IRepositoryRemoveOperator<EntityType>
+    public class FolderRepositoryRemoveOperator<EntityType, IDType> : FolderRepositoryOperator<EntityType, IDType>, IRepositoryRemoveOperator<EntityType>
         where EntityType : class
     {
         public FolderRepositoryRemoveOperator(string repositoryDirectoryPath)
-            : base(repositoryDirectoryPath, new FolderRepositoryEntityHandler<EntityType>()) { }
+           : base(typeof(EntityType), repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
 
-        public FolderRepositoryRemoveOperator(string repositoryDirectoryPath, FolderRepositoryEntityHandler<EntityType> folderEntityHandler)
-            : base(repositoryDirectoryPath, folderEntityHandler) { }
+        public FolderRepositoryRemoveOperator(Type entityType, string repositoryDirectoryPath)
+            : base(entityType, repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
+
+        public FolderRepositoryRemoveOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, IDType> folderEntityHandler)
+            : base(entityType, repositoryDirectoryPath, folderEntityHandler) { }
 
         public void Remove(EntityType entity)
         {
-            string entityDirectoryPath = _folderEntityHandler.GetFolderEntityPath(entity, _repositoryDirectoryPath);
+            string entityDirectoryPath = Path.Combine(_repositoryDirectoryPath, _entityHandler.GetID(entity).ToString());
             Directory.Delete(entityDirectoryPath, true);
         }
     }

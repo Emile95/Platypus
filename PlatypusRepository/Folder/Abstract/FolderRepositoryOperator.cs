@@ -1,20 +1,23 @@
 ﻿namespace PlatypusRepository.Folder.Abstract
 {
-    public abstract class FolderRepositoryOperator<EntityType>
+    public abstract class FolderRepositoryOperator<EntityType, IDType>
         where EntityType : class
     {
         protected readonly Type _entityType;
         protected readonly string _repositoryDirectoryPath;
-        protected readonly FolderRepositoryEntityHandler<EntityType> _folderEntityHandler;
+        protected readonly RepositoryEntityHandler<EntityType, IDType> _entityHandler;
 
         public FolderRepositoryOperator(string repositoryDirectoryPath)
-            : this(repositoryDirectoryPath, new FolderRepositoryEntityHandler<EntityType>()) { }
+            : this(typeof(EntityType), repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
 
-        internal FolderRepositoryOperator(string repositoryDirectoryPath, FolderRepositoryEntityHandler<EntityType> folderEntityHandler)
+        public FolderRepositoryOperator(Type entityType, string repositoryDirectoryPath)
+            : this(entityType, repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
+
+        public FolderRepositoryOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, IDType> entityHandler)
         {
-            _entityType = typeof(EntityType);
+            _entityType = entityType;
             _repositoryDirectoryPath = repositoryDirectoryPath;
-            _folderEntityHandler = folderEntityHandler;
+            _entityHandler = entityHandler;
         }
     }
 }

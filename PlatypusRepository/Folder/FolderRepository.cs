@@ -2,7 +2,7 @@
 
 namespace PlatypusRepository.Folder
 {
-    public class FolderRepository<EntityType> : IRepository<EntityType>
+    public class FolderRepository<EntityType, IDType> : IRepository<EntityType>
         where EntityType : class
     {
         private readonly IRepositoryAddOperator<EntityType> _addOperator;
@@ -12,12 +12,14 @@ namespace PlatypusRepository.Folder
 
         public FolderRepository(string directoryPath)
         {
-            FolderRepositoryEntityHandler<EntityType> _folderEntityHandler = new FolderRepositoryEntityHandler<EntityType>();
+            RepositoryEntityHandler<EntityType, IDType> _folderEntityHandler = new RepositoryEntityHandler<EntityType, IDType>();
 
-            _addOperator = new FolderRepositoryAddOperator<EntityType>(directoryPath, _folderEntityHandler);
-            _updateOperator = new FolderRepositoryUpdateOperator<EntityType>(directoryPath, _folderEntityHandler);
-            _removeOperator = new FolderRepositoryRemoveOperator<EntityType>(directoryPath, _folderEntityHandler);
-            _consumeOperator = new FolderRepositoryConsumeOperator<EntityType>(directoryPath, _folderEntityHandler);
+            Type entityType = typeof(EntityType);
+
+            _addOperator = new FolderRepositoryAddOperator<EntityType, IDType>(entityType, directoryPath, _folderEntityHandler);
+            _updateOperator = new FolderRepositoryUpdateOperator<EntityType, IDType>(entityType, directoryPath, _folderEntityHandler);
+            _removeOperator = new FolderRepositoryRemoveOperator<EntityType, IDType>(entityType, directoryPath, _folderEntityHandler);
+            _consumeOperator = new FolderRepositoryConsumeOperator<EntityType, IDType>(entityType, directoryPath, _folderEntityHandler);
         }
 
         public EntityType Add(EntityType entity)

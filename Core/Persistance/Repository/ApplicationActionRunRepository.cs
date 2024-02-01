@@ -6,7 +6,7 @@ using PlatypusRepository.Folder.Operator;
 namespace Core.Persistance.Repository
 {
     internal class ApplicationActionRunRepository :
-        FolderRepositoryOperator<ApplicationActionRunEntity>,
+        FolderRepositoryOperator<ApplicationActionRunEntity, int>,
         IRepositoryAddOperator<ApplicationActionRunEntity>
     {
         private readonly IRepositoryAddOperator<ApplicationActionRunEntity> _addOperator;
@@ -14,7 +14,7 @@ namespace Core.Persistance.Repository
         internal ApplicationActionRunRepository(string applicationActionGuid)
             : base(ApplicationPaths.GetActionRunsDirectoryPath(applicationActionGuid))
         {
-            _addOperator = new FolderRepositoryAddOperator<ApplicationActionRunEntity>(_repositoryDirectoryPath, _folderEntityHandler);
+            _addOperator = new FolderRepositoryAddOperator<ApplicationActionRunEntity, int>(_entityType, _repositoryDirectoryPath, _entityHandler);
         }
 
         public ApplicationActionRunEntity Add(ApplicationActionRunEntity entity)

@@ -1,15 +1,19 @@
 ﻿using PlatypusRepository.Folder.Abstract;
+using PlatypusRepository.Folder.Configuration;
 
 namespace PlatypusRepository.Folder.Operator
 {
-    public class FolderRepositoryConsumeOperator<EntityType> : FolderRepositoryOperator<EntityType>, IRepositoryConsumeOperator<EntityType>
+    public class FolderRepositoryConsumeOperator<EntityType, IDType> : FolderRepositoryOperator<EntityType, IDType>, IRepositoryConsumeOperator<EntityType>
         where EntityType : class
     {
         public FolderRepositoryConsumeOperator(string repositoryDirectoryPath)
-            : base(repositoryDirectoryPath, new FolderRepositoryEntityHandler<EntityType>()) { }
+            : base(typeof(EntityType), repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
 
-        public FolderRepositoryConsumeOperator(string repositoryDirectoryPath, FolderRepositoryEntityHandler<EntityType> folderEntityHandler)
-            : base(repositoryDirectoryPath, folderEntityHandler) { }
+        public FolderRepositoryConsumeOperator(Type entityType, string repositoryDirectoryPath)
+            : base(entityType, repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
+
+        public FolderRepositoryConsumeOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, IDType> folderEntityHandler)
+            : base(entityType, repositoryDirectoryPath, folderEntityHandler) { }
 
         public void Consume(Action<EntityType> consumer, Predicate<EntityType> condition = null)
         {
@@ -21,7 +25,7 @@ namespace PlatypusRepository.Folder.Operator
 
                 EntityType entity = Fetch(_entityType, entityDirectoryPath) as EntityType;
 
-                _folderEntityHandler.SetID(entity, directoryInfo.Name);
+                _entityHandler.SetID(entity, directoryInfo.Name);
 
                 if (entity == null) continue;
                 if (condition != null)
@@ -36,7 +40,7 @@ namespace PlatypusRepository.Folder.Operator
         internal object Fetch(Type type, string directoryPath)
         {
             object obj = Activator.CreateInstance(type);
-            _folderEntityHandler.IterateFolderEntityPropertyAttributes(typeof(EntityType), (attribute, propertyInfo) => {
+            _entityHandler.IterateAttributesOfProperties<FolderEntityPropertyAttribute>((attribute, propertyInfo) => {
                 IFolderEntityPropertyFetcher fetcher = attribute as IFolderEntityPropertyFetcher;
                 fetcher?.Fetch(obj, propertyInfo, directoryPath, Fetch);
             });
