@@ -7,25 +7,26 @@ using PlatypusFramework.Core.Event;
 using PlatypusAPI.ServerFunctionParameter;
 using Core.Persistance.Entity;
 using Core.Persistance;
+using Core.Persistance.Repository;
 
 namespace Core.Application
 {
     internal class ApplicationsHandler
     {
-        private readonly Repository<ApplicationEntity> _applicationRepository;
+        private readonly IRepositoryConsumeOperator<ApplicationEntity> _applicationRepositoryConsumeOperator;
         private readonly ApplicationInstaller _applicationInstaller;
         private readonly ApplicationResolver _applicationResolver;
         private readonly EventsHandler _eventsHandler;
         private readonly Dictionary<string, PlatypusApplicationBase> _applications;
 
         internal ApplicationsHandler(
-            Repository<ApplicationEntity> applicationRepository,
+            ApplicationRepository applicationRepository,
             ApplicationResolver applicationResolver,
             ApplicationInstaller applicationInstaller,
             EventsHandler eventsHandler
         )
         {
-            _applicationRepository = applicationRepository;
+            _applicationRepositoryConsumeOperator = applicationRepository;
 
             _applicationResolver = applicationResolver;
 
@@ -38,7 +39,7 @@ namespace Core.Application
 
         internal void LoadApplications()
         {
-            _applicationRepository.Consume((entity) => {
+            _applicationRepositoryConsumeOperator.Consume((entity) => {
 
                 PlatypusApplicationBase applicationBase = PluginResolver.InstanciateImplementationFromRawBytes<PlatypusApplicationBase>(entity.AssemblyRaw);
                 LoadApplication(applicationBase, entity.Guid);

@@ -3,16 +3,13 @@ using Core.ApplicationAction;
 using Core.Event;
 using Core.User;
 using Newtonsoft.Json;
-using PlatypusRepository;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
 using Core.Network.RestAPI;
 using Core.Network;
 using System.Net.Sockets;
-using Core.Persistance.Entity;
 using Core.Persistance.Repository;
 using Core.Persistance;
-using PlatypusRepository.Folder;
 
 namespace Core
 {
@@ -33,9 +30,9 @@ namespace Core
             string json = File.ReadAllText(ApplicationPaths.CONFIGFILEPATH);
             _config = JsonConvert.DeserializeObject<ServerConfig>(json);
 
-            Repository<ApplicationActionEntity> applicationActionRepository = new FolderRepository<ApplicationActionEntity>(ApplicationPaths.ACTIONSDIRECTORYPATH);
-            Repository<ApplicationEntity> applicationRepository = new FolderRepository<ApplicationEntity>(ApplicationPaths.APPLICATIONSDIRECTORYPATHS);
-
+            ApplicationRepository applicationRepository = new ApplicationRepository();
+            ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
+            
             _eventsHandler = new EventsHandler();
 
             _applicationActionsHandler = new ApplicationActionsHandler(_eventsHandler);
@@ -54,7 +51,6 @@ namespace Core
             );
 
             ApplicationResolver applicationResolver = new ApplicationResolver(
-                applicationRepository,
                 _applicationActionsHandler,
                 _eventsHandler,
                 _usersHandler

@@ -25,7 +25,7 @@ namespace Core.ApplicationAction
         public Type ParameterType { get; private set; }
         public bool ParameterRequired { get; private set; }
 
-        private readonly Repository<ApplicationActionRunEntity> _applicationActionRunRepository;
+        private readonly IRepository<ApplicationActionRunEntity> _applicationActionRunRepository;
 
         public ApplicationAction(PlatypusApplicationBase application, ActionDefinitionAttribute actionDefinitionAttribute, MethodInfo methodInfo, string guid)
         {

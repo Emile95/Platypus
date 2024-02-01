@@ -12,7 +12,5 @@ namespace Core.Persistance.Entity
             FileName = "application",
             Extension = "dll")]
         public byte[] AssemblyRaw { get; set; }
-
-        public string DirectoryPath { get; set; }
     }
 }

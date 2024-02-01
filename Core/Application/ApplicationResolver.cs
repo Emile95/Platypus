@@ -7,26 +7,21 @@ using Core.Event;
 using PlatypusFramework.Configuration.Event;
 using PlatypusFramework.Configuration.User;
 using Core.User;
-using PlatypusRepository;
-using Core.Persistance.Entity;
 
 namespace Core.Application
 {
     internal class ApplicationResolver
     {
-        private readonly Repository<ApplicationEntity> _applicationRepository;
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly EventsHandler _eventsHandler;
         private readonly UsersHandler _usersHandler;
 
         internal ApplicationResolver(
-            Repository<ApplicationEntity> applicationRepository,
             ApplicationActionsHandler applicationActionsHandler,
             EventsHandler eventsHandler,
             UsersHandler usersHandler
         )
         {
-            _applicationRepository = applicationRepository;
             _applicationActionsHandler = applicationActionsHandler;
             _eventsHandler = eventsHandler;
             _usersHandler = usersHandler;

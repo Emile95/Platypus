@@ -8,25 +8,32 @@ using PlatypusFramework.Configuration.User;
 using Core.Exceptions;
 using PlatypusRepository;
 using System.IO.Compression;
-using Core.Persistance;
 using Core.Persistance.Entity;
 
 namespace Core.Application
 {
     internal class ApplicationInstaller
     {
-        private readonly Repository<ApplicationEntity> _applicationRepository;
-        private readonly Repository<ApplicationActionEntity> _applicationActionRepository;
+        private readonly IRepositoryAddOperator<ApplicationEntity> _applicationRepositoryAddOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationEntity> _applicationRepositoryRemoveOperator;
+
+        private readonly IRepositoryAddOperator<ApplicationActionEntity> _applicationActionRepositoryAddOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationActionEntity> _applicationActionRepositoryRemoveOperator;
+
         private readonly UserRepository _userRepository;
 
         internal ApplicationInstaller(
-            Repository<ApplicationEntity> applicationRepository,
-            Repository<ApplicationActionEntity> applicationActionRepository,
+            ApplicationRepository applicationRepository,
+            ApplicationActionRepository applicationActionRepository,
             UserRepository userRepository
         )
         {
-            _applicationRepository = applicationRepository;
-            _applicationActionRepository = applicationActionRepository;
+            _applicationRepositoryAddOperator = applicationRepository;
+            _applicationRepositoryRemoveOperator = applicationRepository;
+
+            _applicationActionRepositoryAddOperator = applicationActionRepository;
+            _applicationActionRepositoryRemoveOperator = applicationActionRepository;
+
             _userRepository = userRepository;
         }
 
@@ -38,15 +45,14 @@ namespace Core.Application
 
             ApplicationEntity entity = new ApplicationEntity()
             {
-                Guid = newGuid,
-                DirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(newGuid),
+                Guid = newGuid
             };
 
             //Directory.CreateDirectory(entity.DirectoryPath);
 
             ExtractPackage(entity, applicationPath);
 
-            _applicationRepository.Add(entity);
+            _applicationRepositoryAddOperator.Add(entity);
 
             try
             {
@@ -69,7 +75,7 @@ namespace Core.Application
                 return platypusApplication;
             } catch(Exception)
             {
-                _applicationRepository.Remove(entity);
+                _applicationRepositoryRemoveOperator.Remove(entity);
                 return null;
             }
         }
@@ -81,11 +87,11 @@ namespace Core.Application
 
             application.Uninstall(env);
 
-            _applicationRepository.Remove(new ApplicationEntity() { Guid = applicationGuid });
+            _applicationRepositoryRemoveOperator.Remove(new ApplicationEntity() { Guid = applicationGuid });
 
             string[] applicationActionsNames = application.GetAllApplicationActionNames();
             foreach(string applicationActionsName in applicationActionsNames)
-                _applicationActionRepository.Remove(new ApplicationActionEntity()
+                _applicationActionRepositoryRemoveOperator.Remove(new ApplicationActionEntity()
                 {
                     Guid = applicationActionsName + applicationGuid
                 });
@@ -96,10 +102,9 @@ namespace Core.Application
             ActionDefinitionAttribute actionDefinition = methodInfo.GetCustomAttribute<ActionDefinitionAttribute>();
             if (actionDefinition == null) return false;
 
-            _applicationActionRepository.Add(new ApplicationActionEntity() { 
+            _applicationActionRepositoryAddOperator.Add(new ApplicationActionEntity() { 
                 Guid = actionDefinition.Name + applicationGuid
             });
-            //_applicationActionRepository.SaveAction(actionDefinition.Name+ applicationGuid);
             return true;
         }
 
