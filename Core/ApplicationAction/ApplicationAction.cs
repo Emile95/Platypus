@@ -144,20 +144,16 @@ namespace Core.ApplicationAction
 
         public ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env, string actionRunGuid)
         {
-            int runNumber = 5;
-
             ApplicationActionRun applicationActionRun = new ApplicationActionRun()
             {
                 ActionGuid = runActionParameter.Guid,
-                Guid = actionRunGuid,
-                RunNumber = runNumber,
                 Env = env
             };
 
-            _applicationActionRunRepositoryAddOperator.Add(new ApplicationActionRunEntity()
-            {
-                RunNumber = runNumber
-            });
+            ApplicationActionRunEntity entity = new ApplicationActionRunEntity();
+            _applicationActionRunRepositoryAddOperator.Add(entity);
+
+            applicationActionRun.Guid = runActionParameter.Guid + "-" + entity.Guid;
 
             return applicationActionRun;
         }

@@ -7,7 +7,6 @@ namespace Core.ApplicationAction.Run
     {
         public string ActionGuid { get; set; }
         public string Guid { get; set; }
-        public int RunNumber { get; set; }
         public ApplicationActionEnvironmentBase Env { get; set; }
         public ApplicationActionRunInfoStatus Status { get; private set; }
         public ApplicationActionRunResult Result { get; private set; }
@@ -27,8 +26,7 @@ namespace Core.ApplicationAction.Run
             return new ApplicationActionRunInfo()
             {
                 Guid = this.Guid,
-                Status = this.Status,
-                RunNumber = this.RunNumber,
+                Status = this.Status
             };
         }
 

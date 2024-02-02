@@ -6,7 +6,7 @@ namespace Core.Persistance.Entity
     internal class ApplicationActionRunEntity
     {
         [RepositoryEntityID]
-        public int RunNumber { get; set; }
+        public string Guid { get; set; }
 
         [TextFile(
             FileName = "action",
