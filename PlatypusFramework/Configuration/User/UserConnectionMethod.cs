@@ -24,7 +24,7 @@ namespace PlatypusFramework.Configuration.User
             if(env.CorrespondingUser != null)
                 userAccount = new UserAccount()
                 {
-                    ID = env.CorrespondingUser.ID,
+                    Guid = env.CorrespondingUser.Guid,
                     FullName = env.CorrespondingUser.FullName,
                     Email = env.CorrespondingUser.Email,
                     UserPermissionFlags = env.CorrespondingUser.UserPermissionFlag

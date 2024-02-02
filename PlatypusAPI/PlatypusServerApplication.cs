@@ -71,7 +71,7 @@ namespace PlatypusAPI
                 RequestType.UpdateUser,
                 (clientRequest) => {
                     clientRequest.UserAccount = ConnectedUser;
-                    clientRequest.UserID = parameter.ID;
+                    clientRequest.Guid = parameter.Guid;
                     clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
                     clientRequest.FullName = parameter.FullName;
                     clientRequest.Email = parameter.Email;
@@ -88,8 +88,7 @@ namespace PlatypusAPI
                 RequestType.RemoveUser,
                 (clientRequest) => {
                     clientRequest.UserAccount = ConnectedUser;
-                    clientRequest.ID = parameter.ID;
-                    clientRequest.ConnectionMethodGuid = parameter.ConnectionMethodGuid;
+                    clientRequest.Guid = parameter.Guid;
                 }
             );
         }

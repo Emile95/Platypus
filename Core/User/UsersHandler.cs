@@ -1,18 +1,16 @@
 ﻿using Core.Persistance.Entity;
-using Core.Persistance.Repository;
 using Core.User.Abstract;
-using PlatypusAPI.ServerFunctionParameter;
-using PlatypusAPI.User;
+using PlatypusRepository;
 
 namespace Core.User
 {
-    internal class UsersHandler
+    internal class UsersHandler : IRepository<UserEntity>
     {
-        private readonly UserRepository _userRepository;
+        private readonly IRepository<UserEntity> _userRepository;
         private readonly IUserValidator _userValidator;
 
         internal UsersHandler(
-            UserRepository userRepository,
+            IRepository<UserEntity> userRepository,
             IUserValidator userValidator
         )
         {
@@ -20,69 +18,26 @@ namespace Core.User
             _userValidator = userValidator;
         }
 
-        internal UserAccount AddUser(UserCreationParameter parameter)
+        public UserEntity Add(UserEntity entity)
         {
-            UserEntity userEntity = new UserEntity()
-            {
-                FullName = parameter.FullName,
-                Email = parameter.Email,
-                Data = parameter.Data,
-                UserPermissionBits = (int)CreateUserPermissionFlasgWithList(parameter.UserPermissionFlags)
-            };
-
-            return SaveUser(parameter.ConnectionMethodGuid, userEntity, true);
+            _userValidator.Validate(entity.ConnectionMethodGuid, entity.Data);
+            return _userRepository.Add(entity);
         }
 
-        internal UserAccount UpdateUser(UserUpdateParameter parameter)
+        public UserEntity Update(UserEntity entity)
         {
-            UserEntity userEntity = new UserEntity()
-            {
-                ID = parameter.ID,
-                FullName = parameter.FullName,
-                Email = parameter.Email,
-                Data = parameter.Data,
-                UserPermissionBits = (int)CreateUserPermissionFlasgWithList(parameter.UserPermissionFlags)
-            };
-
-            return SaveUser(parameter.ConnectionMethodGuid, userEntity, false);
+            _userValidator.Validate(entity.ConnectionMethodGuid, entity.Data);
+            return _userRepository.Update(entity);
         }
 
-        internal void RemoveUser(RemoveUserParameter parameter)
+        public void Remove(UserEntity entity)
         {
-            _userRepository.RemoveUser(parameter.ConnectionMethodGuid, parameter.ID);
+            _userRepository.Remove(entity);
         }
 
-
-        internal UserAccount SaveUser(string connectionMethod, UserEntity userEntity, bool isNew)
+        public void Consume(Action<UserEntity> consumer, Predicate<UserEntity> condition = null)
         {
-            _userValidator.Validate(connectionMethod, userEntity.Data);
-
-            UserAccount userAccount = new UserAccount()
-            {
-                ID = userEntity.ID,
-                FullName = userEntity.FullName,
-                Email = userEntity.Email
-            };
-
-            if (isNew)
-            {
-                _userRepository.AddUser(connectionMethod, userEntity);
-                return userAccount;
-            }
-
-            _userRepository.SaveUser(connectionMethod, userEntity);
-
-            return userAccount;
+            _userRepository.Consume(consumer, condition);
         }
-
-        private UserPermissionFlag CreateUserPermissionFlasgWithList(List<UserPermissionFlag> userPermissionFlags)
-        {
-            UserPermissionFlag flags = 0;
-            foreach (UserPermissionFlag userPermissionFlag in userPermissionFlags)
-                flags |= userPermissionFlag;
-            return flags;
-        }
-
-        
     }
 }

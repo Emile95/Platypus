@@ -1,5 +1,5 @@
 ﻿using Core.Abstract;
-using Core.Persistance.Repository;
+using Core.Persistance.Entity;
 using Core.User.Abstract;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.User;
@@ -7,20 +7,21 @@ using PlatypusFramework.Configuration.Application;
 using PlatypusFramework.Configuration.User;
 using PlatypusFramework.Confugration;
 using PlatypusFramework.Core.User;
+using PlatypusRepository;
 using System.Reflection;
 
-namespace Core
+namespace Core.User
 {
-    internal class ServerConnectionHandler :
+    internal class UserAuthentificationHandler :
         IApplicationAttributeMethodResolver<UserConnectionMethodCreatorAttribute>,
-        IUserValidator,
-        IServerConnector
+        IUserAuthentificator,
+        IUserValidator
     {
         private readonly Dictionary<string, IUserConnectionMethod> _connectionMethods;
-        private readonly UserRepository _userRepository;
+        private readonly IRepository<UserEntity> _userRepository;
 
-        internal ServerConnectionHandler(
-            UserRepository userRepository
+        internal UserAuthentificationHandler(
+            IRepository<UserEntity> userRepository
         )
         {
             _connectionMethods = new Dictionary<string, IUserConnectionMethod>();
@@ -32,16 +33,23 @@ namespace Core
             if (_connectionMethods.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
             string loginAttemtMessage = "";
             UserAccount userAccount = null;
-            List<UserInformation> users = _userRepository.GetUsersByConnectionMethod(connectionMethodGuid).Select((o) =>
-                new UserInformation()
+
+            List<UserInformation> users = new List<UserInformation>();
+            _userRepository.Consume(
+                (userEntity) =>
                 {
-                    ID = o.ID,
-                    Email = o.Email,
-                    FullName = o.FullName,
-                    Data = o.Data,
-                    UserPermissionFlag = (UserPermissionFlag)o.UserPermissionBits
-                }
-            ).ToList();
+                    users.Add(new UserInformation()
+                    {
+                        Guid = userEntity.Guid,
+                        Email = userEntity.Email,
+                        FullName = userEntity.FullName,
+                        Data = userEntity.Data,
+                        UserPermissionFlag = userEntity.UserPermissionBits
+                    });
+                },
+                (userEntity) => userEntity.ConnectionMethodGuid == connectionMethodGuid
+            );
+
             bool success = _connectionMethods[connectionMethodGuid].Login(users, credentials, ref loginAttemtMessage, ref userAccount);
             if (success) return userAccount;
             throw new UserConnectionFailedException(loginAttemtMessage);

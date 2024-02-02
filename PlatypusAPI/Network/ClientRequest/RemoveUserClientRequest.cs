@@ -3,6 +3,6 @@
     public class RemoveUserClientRequest : PlatypusClientRequest
     {
         public string ConnectionMethodGuid { get; set; }
-        public int ID { get; set; }
+        public string Guid { get; set; }
     }
 }

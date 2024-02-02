@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
-using Core.Persistance.Entity;
+﻿using Core.Persistance.Entity;
+using PlatypusRepository.Json;
 
 namespace Core.Persistance.Repository
 {
-    internal class UserRepository
+    /*
+    internal class UserRepository : JsonRepository<UserEntity>
     {
+        
         internal int AddUser(string connectionMethodGuid, UserEntity entity)
         {
             int lastID = Convert.ToInt32(File.ReadAllText(ApplicationPaths.LASTUSERIDFILEPATH));
@@ -87,5 +89,5 @@ namespace Core.Persistance.Repository
             return null;
             //return RemoveByApplicationGuid(ApplicationPaths.USERSDIRECTORYPATH, applicationGuid);
         }
-    }
+    }*/
 }

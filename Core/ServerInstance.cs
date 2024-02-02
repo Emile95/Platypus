@@ -13,6 +13,10 @@ using Core.Persistance;
 using Core.Abstract;
 using Core.Application.Abstract;
 using PlatypusFramework.Configuration.Application;
+using Core.User.Abstract;
+using PlatypusRepository;
+using Core.Persistance.Entity;
+using PlatypusRepository.Json;
 
 namespace Core
 {
@@ -25,7 +29,7 @@ namespace Core
         private UsersHandler _usersHandler;
 
         private List<IServerStarter> _serverStarters;
-        private IServerConnector _serverConnector;
+        private IUserAuthentificator _serverConnector;
         private ISeverPortListener _restAPIHandler;
         private ISeverPortListener _tcpServerSocketHandler;
         private IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
@@ -42,12 +46,14 @@ namespace Core
             ApplicationRepository applicationRepository = new ApplicationRepository();
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
             RunningApplicationActionRepository runningApplicationActionRepository = new RunningApplicationActionRepository();
-            UserRepository userRepository = new UserRepository();
+            IRepository<UserEntity> userRepository = new JsonRepository<UserEntity>(ApplicationPaths.USERSDIRECTORYPATH);
 
-            ServerConnectionHandler serverConnectionHandler = new ServerConnectionHandler(userRepository);
+            UserAuthentificationHandler serverConnectionHandler = new UserAuthentificationHandler(userRepository);
             serverConnectionHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
 
             _eventsHandler = new EventsHandler();
+
+            _serverConnector = serverConnectionHandler;
 
             _usersHandler = new UsersHandler(
                 userRepository,
@@ -62,8 +68,7 @@ namespace Core
             ApplicationInstaller applicationInstaller = new ApplicationInstaller(
                 applicationRepository,
                 applicationRepository,
-                applicationActionRepository,
-                userRepository
+                applicationActionRepository
             );
 
             ApplicationResolver applicationResolver = new ApplicationResolver(
@@ -88,6 +93,7 @@ namespace Core
             _applicationPackageUninstaller = applicationsHandler;
 
             _serverStarters.Add(applicationsHandler);
+            _serverStarters.Add(_applicationActionsHandler);
         }
 
         public void Start()

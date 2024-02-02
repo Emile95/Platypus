@@ -1,8 +1,8 @@
 ﻿using PlatypusAPI.User;
 
-namespace Core.Abstract
+namespace Core.User.Abstract
 {
-    internal interface IServerConnector
+    internal interface IUserAuthentificator
     {
         UserAccount Connect(string connectionMethodGuid, Dictionary<string, object> credentials);
     }

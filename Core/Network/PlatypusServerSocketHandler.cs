@@ -80,7 +80,7 @@ namespace Core.Network
                     clientRequest.UserAccount,
                     new UserUpdateParameter()
                     {
-                        ID = clientRequest.UserID,
+                        Guid = clientRequest.Guid,
                         ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
                         Email = clientRequest.Email,
                         Data = clientRequest.Data,
@@ -96,8 +96,7 @@ namespace Core.Network
                     clientRequest.UserAccount,
                     new RemoveUserParameter()
                     {
-                        ID = clientRequest.ID,
-                        ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
+                        Guid = clientRequest.Guid,
                     }
                 );
             });

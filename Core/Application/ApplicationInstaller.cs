@@ -1,10 +1,8 @@
-﻿using Core.Persistance.Repository;
-using PlatypusFramework.Core.Application;
+﻿using PlatypusFramework.Core.Application;
 using PlatypusFramework.Configuration.Application;
 using PlatypusFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using PlatypusUtils;
-using PlatypusFramework.Configuration.User;
 using Core.Exceptions;
 using PlatypusRepository;
 using System.IO.Compression;
@@ -18,19 +16,16 @@ namespace Core.Application
         private readonly IRepositoryAddOperator<ApplicationEntity> _applicationRepositoryAddOperator;
         private readonly IRepositoryRemoveOperator<ApplicationEntity> _applicationRepositoryRemoveOperator;
         private readonly IRepositoryAddOperator<ApplicationActionEntity> _applicationActionRepositoryAddOperator;
-        private readonly UserRepository _userRepository;
 
         internal ApplicationInstaller(
             IRepositoryAddOperator<ApplicationEntity> applicationRepositoryAddOperator,
             IRepositoryRemoveOperator<ApplicationEntity> applicationRepositoryRemoveOperator,
-            IRepositoryAddOperator<ApplicationActionEntity> applicationActionRepositoryAddOperator,
-            UserRepository userRepository
+            IRepositoryAddOperator<ApplicationActionEntity> applicationActionRepositoryAddOperator
         )
         {
             _applicationRepositoryAddOperator = applicationRepositoryAddOperator;
             _applicationRepositoryRemoveOperator = applicationRepositoryRemoveOperator;
             _applicationActionRepositoryAddOperator = applicationActionRepositoryAddOperator;
-            _userRepository = userRepository;
         }
 
         public PlatypusApplicationBase Install(string sourcePath)
@@ -57,7 +52,6 @@ namespace Core.Application
                 foreach (MethodInfo method in methods)
                 {
                     if (InstallAction(entity.Guid, method)) continue;
-                    if (InstallUserConnectionMethod(platypusApplication, entity.Guid, method)) continue;
                 }
 
                 ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
@@ -82,23 +76,6 @@ namespace Core.Application
             _applicationActionRepositoryAddOperator.Add(new ApplicationActionEntity() { 
                 Guid = actionDefinition.Name + applicationGuid
             });
-            return true;
-        }
-
-        private bool InstallUserConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
-        {
-            UserConnectionMethodCreatorAttribute userConnectionMethodCreatorAttribute = methodInfo.GetCustomAttribute<UserConnectionMethodCreatorAttribute>();
-            if (userConnectionMethodCreatorAttribute == null) return false;
-
-            IUserConnectionMethod connectionMethod = methodInfo.Invoke(application, new object[] { }) as IUserConnectionMethod;
-            string connectionMethodName = connectionMethod.GetName();
-            _userRepository.SaveUserConnectionMethod(new UserConnectionMethodEntity()
-            {
-                Description = connectionMethod.GetDescription(),
-                Name = connectionMethodName,
-                Guid = connectionMethodName+applicationGuid
-            });
-
             return true;
         }
 
