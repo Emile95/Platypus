@@ -18,13 +18,14 @@ namespace Core
         public bool InstallApplication(UserAccount userAccount, InstallApplicationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
-            return _applicationsHandler.InstallApplication(parameter);
+            _applicationPackageInstaller.Install(parameter.DllFilePath);
+            return true;
         }
 
         public void UninstalApplication(UserAccount userAccount, UninstallApplicationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
-            _applicationsHandler.UninstallApplication(parameter);
+            _applicationPackageUninstaller.Uninstall(parameter.ApplicationGuid);
         }
 
         public ApplicationActionRunResult RunAction(UserAccount userAccount, ApplicationActionRunParameter runActionParameter)

@@ -7,10 +7,11 @@ using Core.Event;
 using PlatypusFramework.Configuration.Event;
 using PlatypusFramework.Configuration.User;
 using Core.User;
+using Core.Application.Abstract;
 
 namespace Core.Application
 {
-    internal class ApplicationResolver
+    internal class ApplicationResolver : IApplicationResolver<PlatypusApplicationBase>
     {
         private readonly ApplicationActionsHandler _applicationActionsHandler;
         private readonly EventsHandler _eventsHandler;
@@ -27,21 +28,21 @@ namespace Core.Application
             _usersHandler = usersHandler;
         }
 
-        internal void ResolvePlatypusApplication(PlatypusApplicationBase platypusApplication, string applicationGuid)
+        public void Resolve(PlatypusApplicationBase platypusApplication)
         {
             Type type = platypusApplication.GetType();
             MethodInfo[] methods = type.GetMethods();
 
             ApplicationInitializeEnvironment env = new ApplicationInitializeEnvironment();
-            env.ApplicationGuid = applicationGuid;
+            env.ApplicationGuid = platypusApplication.ApplicationGuid;
 
             platypusApplication.Initialize(env);
 
             foreach (MethodInfo methodInfo in methods)
             {
-                if(ResolvePlatypusApplicationMethod<ActionDefinitionAttribute>(methodInfo, (attribute) => _applicationActionsHandler.AddAction(platypusApplication, applicationGuid, attribute, methodInfo) )) continue;
+                if(ResolvePlatypusApplicationMethod<ActionDefinitionAttribute>(methodInfo, (attribute) => _applicationActionsHandler.AddAction(platypusApplication, platypusApplication.ApplicationGuid, attribute, methodInfo) )) continue;
                 if(ResolvePlatypusApplicationMethod<EventHandlerAttribute>(methodInfo, (attribute) => _eventsHandler.AddEventHandler(platypusApplication, attribute, methodInfo) )) continue;
-                if(ResolvePlatypusApplicationMethod<UserConnectionMethodCreatorAttribute>(methodInfo, (attribute) => _usersHandler.AddConnectionMethod(platypusApplication, applicationGuid, methodInfo))) continue;
+                if(ResolvePlatypusApplicationMethod<UserConnectionMethodCreatorAttribute>(methodInfo, (attribute) => _usersHandler.AddConnectionMethod(platypusApplication, platypusApplication.ApplicationGuid, methodInfo))) continue;
             }
         }
 

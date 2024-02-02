@@ -4,86 +4,113 @@ using PlatypusRepository;
 using Core.Exceptions;
 using Core.Event;
 using PlatypusFramework.Core.Event;
-using PlatypusAPI.ServerFunctionParameter;
 using Core.Persistance.Entity;
-using Core.Persistance.Repository;
+using Core.Abstract;
+using Core.Application.Abstract;
+using PlatypusFramework.Core.Application;
 
 namespace Core.Application
 {
-    internal class ApplicationsHandler
+    internal class ApplicationsHandler : 
+        IApplicationResolver<PlatypusApplicationBase>, 
+        IApplicationPackageInstaller<PlatypusApplicationBase>,
+        IApplicationPackageUninstaller<string>,
+        IServerStarter
     {
-        private readonly IRepositoryConsumeOperator<ApplicationEntity> _applicationRepositoryConsumeOperator;
-        private readonly ApplicationInstaller _applicationInstaller;
-        private readonly ApplicationResolver _applicationResolver;
-        private readonly EventsHandler _eventsHandler;
         private readonly Dictionary<string, PlatypusApplicationBase> _applications;
 
+        private readonly IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
+
+        private readonly IApplicationResolver<PlatypusApplicationBase> _applicationResolver;
+
+        private readonly IRepositoryConsumeOperator<ApplicationEntity> _applicationRepositoryConsumeOperator;
+        private readonly IRepositoryRemoveOperator<string> _applicationRepositoryRemoveOperator;
+
+        private readonly IRepositoryRemoveOperator<string> _applicationActionRepositoryRemoveOperator;
+
+        private readonly EventsHandler _eventsHandler;
+
         internal ApplicationsHandler(
-            ApplicationRepository applicationRepository,
-            ApplicationResolver applicationResolver,
-            ApplicationInstaller applicationInstaller,
+            IRepositoryConsumeOperator<ApplicationEntity> applicationRepositoryConsumeOperator,
+            IRepositoryRemoveOperator<string> applicationRepositoryRemoveOperator,
+            IApplicationResolver<PlatypusApplicationBase> applicationResolver,
+            IApplicationPackageInstaller<PlatypusApplicationBase> applicationPackageInstaller,
+            IRepositoryRemoveOperator<string> applicationActionRepositoryRemoveOperator,
             EventsHandler eventsHandler
         )
         {
-            _applicationRepositoryConsumeOperator = applicationRepository;
+            _applicationRepositoryConsumeOperator = applicationRepositoryConsumeOperator;
+            _applicationRepositoryRemoveOperator = applicationRepositoryRemoveOperator;
+
+            _applications = new Dictionary<string, PlatypusApplicationBase>();
+
+            _applicationPackageInstaller = applicationPackageInstaller;
 
             _applicationResolver = applicationResolver;
 
-            _applicationInstaller = applicationInstaller;
+            _applicationActionRepositoryRemoveOperator = applicationActionRepositoryRemoveOperator;
 
             _eventsHandler = eventsHandler;
-
-            _applications = new Dictionary<string, PlatypusApplicationBase>();
         }
 
-        internal void LoadApplications()
+        public void Resolve(PlatypusApplicationBase application)
+        {
+            _applicationResolver.Resolve(application);
+            _applications.Add(application.ApplicationGuid, application);
+        }
+
+        public void Start()
         {
             _applicationRepositoryConsumeOperator.Consume((entity) => {
 
                 PlatypusApplicationBase applicationBase = PluginResolver.InstanciateImplementationFromRawBytes<PlatypusApplicationBase>(entity.AssemblyRaw);
-                LoadApplication(applicationBase, entity.Guid);
+                applicationBase.ApplicationGuid = entity.Guid;
+                Resolve(applicationBase);
             });
         }
 
-        internal void LoadApplication(PlatypusApplicationBase application, string applicationGuid)
-        {
-            _applicationResolver.ResolvePlatypusApplication(application, applicationGuid);
-            _applications.Add(applicationGuid, application);
-        }
-
-        internal bool InstallApplication(InstallApplicationParameter parameter)
+        public PlatypusApplicationBase Install(string sourcePath)
         {
             InstallApplicationEventHandlerEnvironment eventEnv = new InstallApplicationEventHandlerEnvironment();
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeInstallApplication, eventEnv, (exception) => throw exception);
 
-            PlatypusApplicationBase application = _applicationInstaller.InstallApplication(parameter.DllFilePath);
+            PlatypusApplicationBase application = _applicationPackageInstaller.Install(sourcePath);
 
-            if (application == null) return false;
+            if (application == null) return null;
 
-            LoadApplication(application, application.ApplicationGuid);
+            Resolve(application);
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterInstallApplication, eventEnv, (exception) => throw exception);
 
-            return true;
+            return application;
         }
 
-        internal void UninstallApplication(UninstallApplicationParameter parameter)
+        public void Uninstall(string applicationIdentifier)
         {
-            if (_applications.ContainsKey(parameter.ApplicationGuid) == false)
-                throw new ApplicationInexistantException(parameter.ApplicationGuid);
+            if (_applications.ContainsKey(applicationIdentifier) == false)
+                throw new ApplicationInexistantException(applicationIdentifier);
 
             UninstallApplicationEventHandlerEnvironment eventEnv = new UninstallApplicationEventHandlerEnvironment()
             {
-                ApplicationGuid = parameter.ApplicationGuid
+                ApplicationGuid = applicationIdentifier
             };
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeUninstallApplication, eventEnv, (exception) => throw exception);
 
-            PlatypusApplicationBase application = _applications[parameter.ApplicationGuid];
-            _applications.Remove(parameter.ApplicationGuid);
+            PlatypusApplicationBase application = _applications[applicationIdentifier];
+            _applications.Remove(applicationIdentifier);
 
-            _applicationInstaller.UninstallApplication(application, parameter.ApplicationGuid);
+            ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
+            env.ApplicationGuid = applicationIdentifier;
+
+            application.Uninstall(env);
+
+            _applicationRepositoryRemoveOperator.Remove(applicationIdentifier);
+
+            string[] applicationActionsNames = application.GetAllApplicationActionNames();
+            foreach (string applicationActionsName in applicationActionsNames)
+                _applicationActionRepositoryRemoveOperator.Remove(applicationActionsName + applicationIdentifier);
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterUninstallApplication, eventEnv, (exception) => throw exception);
         }

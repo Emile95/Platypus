@@ -10,6 +10,9 @@ using Core.Network;
 using System.Net.Sockets;
 using Core.Persistance.Repository;
 using Core.Persistance;
+using Core.Abstract;
+using Core.Application.Abstract;
+using PlatypusFramework.Configuration.Application;
 
 namespace Core
 {
@@ -17,7 +20,6 @@ namespace Core
     {
         private ServerConfig _config;
 
-        private ApplicationsHandler _applicationsHandler;
         private ApplicationActionsHandler _applicationActionsHandler;
         private EventsHandler _eventsHandler;
         private UsersHandler _usersHandler;
@@ -25,10 +27,17 @@ namespace Core
         private ISeverPortListener _restAPIHandler;
         private ISeverPortListener _tcpServerSocketHandler;
 
+        private IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
+        private IApplicationPackageUninstaller<string> _applicationPackageUninstaller;
+
+        private List<IServerStarter> _serverStarters;
+
         public void Initialize(string[] args)
         {
             string json = File.ReadAllText(ApplicationPaths.CONFIGFILEPATH);
             _config = JsonConvert.DeserializeObject<ServerConfig>(json);
+
+            _serverStarters = new List<IServerStarter>();
 
             ApplicationRepository applicationRepository = new ApplicationRepository();
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
@@ -46,6 +55,7 @@ namespace Core
      
             ApplicationInstaller applicationInstaller = new ApplicationInstaller(
                 applicationRepository,
+                applicationRepository,
                 applicationActionRepository,
                 userRepository
             );
@@ -56,22 +66,31 @@ namespace Core
                 _usersHandler
             );
 
-            _applicationsHandler = new ApplicationsHandler(
+            ApplicationsHandler applicationsHandler = new ApplicationsHandler(
+                applicationRepository,
                 applicationRepository,
                 applicationResolver,
                 applicationInstaller,
+                applicationActionRepository,
                 _eventsHandler
             );
 
             _restAPIHandler = new RestAPIHandler(this, args, _config.RestAPIUserTokenTimeout);
             _tcpServerSocketHandler = new PlatypusServerSocketHandler(this, ProtocolType.Tcp);
 
+            _applicationPackageInstaller = applicationsHandler;
+            _applicationPackageUninstaller = applicationsHandler;
+
+            _serverStarters.Add(applicationsHandler);
+
             _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
         }
 
         public void Start()
         {
-            _applicationsHandler.LoadApplications();
+            foreach(IServerStarter serverStarter in _serverStarters)
+                serverStarter.Start();
+
             _tcpServerSocketHandler.InitializeServerPortListener(_config.TcpSocketPort);
             _restAPIHandler.InitializeServerPortListener(_config.HttpPort);
         }

@@ -9,43 +9,44 @@ using Core.Exceptions;
 using PlatypusRepository;
 using System.IO.Compression;
 using Core.Persistance.Entity;
+using Core.Application.Abstract;
 
 namespace Core.Application
 {
-    internal class ApplicationInstaller
+    internal class ApplicationInstaller : IApplicationPackageInstaller<PlatypusApplicationBase>
     {
         private readonly IRepositoryAddOperator<ApplicationEntity> _applicationRepositoryAddOperator;
         private readonly IRepositoryRemoveOperator<string> _applicationRepositoryRemoveOperator;
 
         private readonly IRepositoryAddOperator<ApplicationActionEntity> _applicationActionRepositoryAddOperator;
-        private readonly IRepositoryRemoveOperator<string> _applicationActionRepositoryRemoveOperator;
+        
 
         private readonly UserRepository _userRepository;
 
         internal ApplicationInstaller(
-            ApplicationRepository applicationRepository,
-            ApplicationActionRepository applicationActionRepository,
+            IRepositoryAddOperator<ApplicationEntity> applicationRepositoryAddOperator,
+            IRepositoryRemoveOperator<string> applicationRepositoryRemoveOperator,
+            IRepositoryAddOperator<ApplicationActionEntity> applicationActionRepositoryAddOperator,
             UserRepository userRepository
         )
         {
-            _applicationRepositoryAddOperator = applicationRepository;
-            _applicationRepositoryRemoveOperator = applicationRepository;
+            _applicationRepositoryAddOperator = applicationRepositoryAddOperator;
+            _applicationRepositoryRemoveOperator = applicationRepositoryRemoveOperator;
 
-            _applicationActionRepositoryAddOperator = applicationActionRepository;
-            _applicationActionRepositoryRemoveOperator = applicationActionRepository;
+            _applicationActionRepositoryAddOperator = applicationActionRepositoryAddOperator;
 
             _userRepository = userRepository;
         }
 
-        internal PlatypusApplicationBase InstallApplication(string applicationPath)
+        public PlatypusApplicationBase Install(string sourcePath)
         {
-            FileInfo applicationFileInfo = new FileInfo(applicationPath);
+            FileInfo applicationFileInfo = new FileInfo(sourcePath);
             if (applicationFileInfo.Extension != ".platypus")
                 throw new InvalidPlatypusApplicationPackageException(applicationFileInfo.Name, "wrong file extension");
 
             ApplicationEntity entity = new ApplicationEntity();
 
-            ExtractPackage(entity, applicationPath);
+            ExtractPackage(entity, sourcePath);
 
             _applicationRepositoryAddOperator.Add(entity);
 
@@ -70,25 +71,12 @@ namespace Core.Application
                 platypusApplication.Install(env);
 
                 return platypusApplication;
-            } catch(Exception)
+            }
+            catch (Exception)
             {
                 _applicationRepositoryRemoveOperator.Remove(entity.Guid);
                 return null;
             }
-        }
-
-        internal void UninstallApplication(PlatypusApplicationBase application, string applicationGuid)
-        {
-            ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
-            env.ApplicationGuid = applicationGuid;
-
-            application.Uninstall(env);
-
-            _applicationRepositoryRemoveOperator.Remove(applicationGuid);
-
-            string[] applicationActionsNames = application.GetAllApplicationActionNames();
-            foreach (string applicationActionsName in applicationActionsNames)
-                _applicationActionRepositoryRemoveOperator.Remove(applicationActionsName + applicationGuid);
         }
 
         private bool InstallAction(string applicationGuid, MethodInfo methodInfo)
@@ -102,7 +90,7 @@ namespace Core.Application
             return true;
         }
 
-        internal bool InstallUserConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
+        private bool InstallUserConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
         {
             UserConnectionMethodCreatorAttribute userConnectionMethodCreatorAttribute = methodInfo.GetCustomAttribute<UserConnectionMethodCreatorAttribute>();
             if (userConnectionMethodCreatorAttribute == null) return false;
@@ -140,5 +128,7 @@ namespace Core.Application
                     Directory.Move(directoryPath, Path.Combine(entity.DirectoryPath, directoryInfo.Name));
                 }*/
         }
+
+        
     }
 }
