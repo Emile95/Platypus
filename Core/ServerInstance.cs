@@ -37,14 +37,13 @@ namespace Core
 
             _eventsHandler = new EventsHandler();
 
+            _usersHandler = new UsersHandler(userRepository);
+
             _applicationActionsHandler = new ApplicationActionsHandler(
                 runningApplicationActionRepository,
                 _eventsHandler
             );
      
-            _usersHandler = new UsersHandler(userRepository);
-            _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
-
             ApplicationInstaller applicationInstaller = new ApplicationInstaller(
                 applicationRepository,
                 applicationActionRepository,
@@ -66,12 +65,13 @@ namespace Core
 
             _restAPIHandler = new RestAPIHandler(this, args, _config.RestAPIUserTokenTimeout);
             _tcpServerSocketHandler = new PlatypusServerSocketHandler(this, ProtocolType.Tcp);
+
+            _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
         }
 
         public void Start()
         {
             _applicationsHandler.LoadApplications();
-
             _tcpServerSocketHandler.InitializeServerPortListener(_config.TcpSocketPort);
             _restAPIHandler.InitializeServerPortListener(_config.HttpPort);
         }
