@@ -16,13 +16,13 @@ namespace Core.Application
     internal class ApplicationInstaller : IApplicationPackageInstaller<PlatypusApplicationBase>
     {
         private readonly IRepositoryAddOperator<ApplicationEntity> _applicationRepositoryAddOperator;
-        private readonly IRepositoryRemoveOperator<string> _applicationRepositoryRemoveOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationEntity> _applicationRepositoryRemoveOperator;
         private readonly IRepositoryAddOperator<ApplicationActionEntity> _applicationActionRepositoryAddOperator;
         private readonly UserRepository _userRepository;
 
         internal ApplicationInstaller(
             IRepositoryAddOperator<ApplicationEntity> applicationRepositoryAddOperator,
-            IRepositoryRemoveOperator<string> applicationRepositoryRemoveOperator,
+            IRepositoryRemoveOperator<ApplicationEntity> applicationRepositoryRemoveOperator,
             IRepositoryAddOperator<ApplicationActionEntity> applicationActionRepositoryAddOperator,
             UserRepository userRepository
         )
@@ -69,7 +69,7 @@ namespace Core.Application
             }
             catch (Exception)
             {
-                _applicationRepositoryRemoveOperator.Remove(entity.Guid);
+                _applicationRepositoryRemoveOperator.Remove(entity);
                 return null;
             }
         }

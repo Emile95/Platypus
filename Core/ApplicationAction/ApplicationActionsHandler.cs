@@ -18,13 +18,14 @@ using Core.Abstract;
 namespace Core.ApplicationAction
 {
     internal class ApplicationActionsHandler : 
-        IApplicationAttributeMethodResolver<ActionDefinitionAttribute>
+        IApplicationAttributeMethodResolver<ActionDefinitionAttribute>,
+        IServerStarter
     {
         private readonly Dictionary<string, ApplicationAction> _applicationActions;
         private readonly Dictionary<string, ApplicationActionRun> _applicationActionRuns;
        
         private readonly IRepositoryAddOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryAddOperator;
-        private readonly IRepositoryRemoveOperator<string> _runningApplicationActionRepositoryRemoveOperator;
+        private readonly IRepositoryRemoveOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryRemoveOperator;
         private readonly IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryConsumeOperator;
 
         private readonly EventsHandler _eventsHandler;
@@ -143,7 +144,7 @@ namespace Core.ApplicationAction
             ApplicationActionRun run = _applicationActionRuns[guid];
             _applicationActionRuns.Remove(guid);
 
-            _runningApplicationActionRepositoryRemoveOperator.Remove(guid);
+            _runningApplicationActionRepositoryRemoveOperator.Remove(new RunningApplicationActionEntity() { Guid = guid });
 
             run.Cancel();
 
@@ -172,7 +173,7 @@ namespace Core.ApplicationAction
                 return;
 
             _applicationActionRuns.Remove(run.Guid);
-            _runningApplicationActionRepositoryRemoveOperator.Remove(run.Guid);
+            _runningApplicationActionRepositoryRemoveOperator.Remove(new RunningApplicationActionEntity() { Guid = run.Guid });
 
             eventEnv.ApplicationActionResult = run.Result;
             eventEnv.ApplicationActionRunInfo = run.GetInfo();
@@ -202,6 +203,9 @@ namespace Core.ApplicationAction
             return null;
         }
 
-        
+        public void Start()
+        {
+            
+        }
     }
 }

@@ -24,13 +24,13 @@ namespace Core
         private EventsHandler _eventsHandler;
         private UsersHandler _usersHandler;
 
+        private List<IServerStarter> _serverStarters;
+        private IServerConnector _serverConnector;
         private ISeverPortListener _restAPIHandler;
         private ISeverPortListener _tcpServerSocketHandler;
-
         private IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
         private IApplicationPackageUninstaller<string> _applicationPackageUninstaller;
-
-        private List<IServerStarter> _serverStarters;
+        
 
         public void Initialize(string[] args)
         {
@@ -44,9 +44,15 @@ namespace Core
             RunningApplicationActionRepository runningApplicationActionRepository = new RunningApplicationActionRepository();
             UserRepository userRepository = new UserRepository();
 
+            ServerConnectionHandler serverConnectionHandler = new ServerConnectionHandler(userRepository);
+            serverConnectionHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
+
             _eventsHandler = new EventsHandler();
 
-            _usersHandler = new UsersHandler(userRepository);
+            _usersHandler = new UsersHandler(
+                userRepository,
+                serverConnectionHandler
+             );
 
             _applicationActionsHandler = new ApplicationActionsHandler(
                 runningApplicationActionRepository,
@@ -63,7 +69,7 @@ namespace Core
             ApplicationResolver applicationResolver = new ApplicationResolver(
                 _applicationActionsHandler,
                 _eventsHandler,
-                _usersHandler
+                serverConnectionHandler
             );
 
             ApplicationsHandler applicationsHandler = new ApplicationsHandler(
@@ -82,8 +88,6 @@ namespace Core
             _applicationPackageUninstaller = applicationsHandler;
 
             _serverStarters.Add(applicationsHandler);
-
-            _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
         }
 
         public void Start()

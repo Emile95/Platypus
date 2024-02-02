@@ -19,18 +19,18 @@ namespace Core.Application
     {
         private readonly Dictionary<string, PlatypusApplicationBase> _applications;
         private readonly IRepositoryConsumeOperator<ApplicationEntity> _applicationRepositoryConsumeOperator;
-        private readonly IRepositoryRemoveOperator<string> _applicationRepositoryRemoveOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationEntity> _applicationRepositoryRemoveOperator;
         private readonly IApplicationResolver<PlatypusApplicationBase> _applicationResolver;
         private readonly IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
-        private readonly IRepositoryRemoveOperator<string> _applicationActionRepositoryRemoveOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationActionEntity> _applicationActionRepositoryRemoveOperator;
         private readonly EventsHandler _eventsHandler;
 
         internal ApplicationsHandler(
             IRepositoryConsumeOperator<ApplicationEntity> applicationRepositoryConsumeOperator,
-            IRepositoryRemoveOperator<string> applicationRepositoryRemoveOperator,
+            IRepositoryRemoveOperator<ApplicationEntity> applicationRepositoryRemoveOperator,
             IApplicationResolver<PlatypusApplicationBase> applicationResolver,
             IApplicationPackageInstaller<PlatypusApplicationBase> applicationPackageInstaller,
-            IRepositoryRemoveOperator<string> applicationActionRepositoryRemoveOperator,
+            IRepositoryRemoveOperator<ApplicationActionEntity> applicationActionRepositoryRemoveOperator,
             EventsHandler eventsHandler
         )
         {
@@ -96,11 +96,11 @@ namespace Core.Application
 
             application.Uninstall(env);
 
-            _applicationRepositoryRemoveOperator.Remove(applicationIdentifier);
+            _applicationRepositoryRemoveOperator.Remove(new ApplicationEntity() { Guid = applicationIdentifier});
 
             string[] applicationActionsNames = application.GetAllApplicationActionNames();
             foreach (string applicationActionsName in applicationActionsNames)
-                _applicationActionRepositoryRemoveOperator.Remove(applicationActionsName + applicationIdentifier);
+                _applicationActionRepositoryRemoveOperator.Remove(new ApplicationActionEntity() { Guid = applicationActionsName + applicationIdentifier });
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterUninstallApplication, eventEnv, (exception) => throw exception);
         }

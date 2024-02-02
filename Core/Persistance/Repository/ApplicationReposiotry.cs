@@ -9,11 +9,11 @@ namespace Core.Persistance.Repository
         FolderRepositoryOperator<ApplicationEntity>, 
         IRepositoryAddOperator<ApplicationEntity>, 
         IRepositoryConsumeOperator<ApplicationEntity>, 
-        IRepositoryRemoveOperator<string>
+        IRepositoryRemoveOperator<ApplicationEntity>
     {
         private readonly IRepositoryAddOperator<ApplicationEntity> _addOperator;
         private readonly IRepositoryConsumeOperator<ApplicationEntity> _consumeOperator;
-        private readonly IRepositoryRemoveOperator<string> _removeOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationEntity> _removeOperator;
 
         internal ApplicationRepository()
             : base(ApplicationPaths.APPLICATIONSDIRECTORYPATHS)
@@ -33,9 +33,9 @@ namespace Core.Persistance.Repository
             _consumeOperator.Consume(consumer, condition);
         }
 
-        public void Remove(string id)
+        public void Remove(ApplicationEntity entity)
         {
-            _removeOperator.Remove(id);
+            _removeOperator.Remove(entity);
         }
     }
 }

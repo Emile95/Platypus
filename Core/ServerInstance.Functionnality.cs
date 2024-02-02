@@ -12,7 +12,7 @@ namespace Core
     {
         public UserAccount UserConnect(UserConnectionParameter parameter)
         {
-            return _usersHandler.Connect(parameter);
+            return _serverConnector.Connect(parameter.ConnectionMethodGuid, parameter.Credential);
         }
 
         public bool InstallApplication(UserAccount userAccount, InstallApplicationParameter parameter)

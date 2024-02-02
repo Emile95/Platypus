@@ -8,10 +8,10 @@ namespace Core.Persistance.Repository
     internal class ApplicationActionRepository :
         FolderRepositoryOperator<ApplicationActionEntity>,
         IRepositoryAddOperator<ApplicationActionEntity>,
-        IRepositoryRemoveOperator<string>
+        IRepositoryRemoveOperator<ApplicationActionEntity>
     {
         private readonly IRepositoryAddOperator<ApplicationActionEntity> _addOperator;
-        private readonly IRepositoryRemoveOperator<string> _removeOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationActionEntity> _removeOperator;
 
         internal ApplicationActionRepository()
             : base(ApplicationPaths.ACTIONSDIRECTORYPATH)
@@ -25,9 +25,9 @@ namespace Core.Persistance.Repository
             return _addOperator.Add(entity);
         }
 
-        public void Remove(string id)
+        public void Remove(ApplicationActionEntity entity)
         {
-            _removeOperator.Remove(id);
+            _removeOperator.Remove(entity);
         }
     }
 }
