@@ -6,7 +6,6 @@ using Core.Event;
 using PlatypusFramework.Core.Event;
 using PlatypusAPI.ServerFunctionParameter;
 using Core.Persistance.Entity;
-using Core.Persistance;
 using Core.Persistance.Repository;
 
 namespace Core.Application

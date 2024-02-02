@@ -24,6 +24,7 @@ namespace Core.ApplicationAction
        
         private readonly IRepositoryAddOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryAddOperator;
         private readonly IRepositoryRemoveOperator<string> _runningApplicationActionRepositoryRemoveOperator;
+        private readonly IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryConsumeOperator;
 
         private readonly EventsHandler _eventsHandler;
 
@@ -37,6 +38,7 @@ namespace Core.ApplicationAction
 
             _runningApplicationActionRepositoryAddOperator = runningApplicationActionRepository;
             _runningApplicationActionRepositoryRemoveOperator = runningApplicationActionRepository;
+            _runningApplicationActionRepositoryConsumeOperator = runningApplicationActionRepository;
 
             _eventsHandler = eventsHandler;
         }

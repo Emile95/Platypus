@@ -10,8 +10,6 @@ using Core.Network;
 using System.Net.Sockets;
 using Core.Persistance.Repository;
 using Core.Persistance;
-using PlatypusRepository;
-using Core.Persistance.Entity;
 
 namespace Core
 {
@@ -23,8 +21,6 @@ namespace Core
         private ApplicationActionsHandler _applicationActionsHandler;
         private EventsHandler _eventsHandler;
         private UsersHandler _usersHandler;
-
-        private IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryConsumeOperator;
 
         private ISeverPortListener _restAPIHandler;
         private ISeverPortListener _tcpServerSocketHandler;
@@ -40,8 +36,6 @@ namespace Core
             UserRepository userRepository = new UserRepository();
 
             _eventsHandler = new EventsHandler();
-
-            _runningApplicationActionRepositoryConsumeOperator = runningApplicationActionRepository;
 
             _applicationActionsHandler = new ApplicationActionsHandler(
                 runningApplicationActionRepository,
