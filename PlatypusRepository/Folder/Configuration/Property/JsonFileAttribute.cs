@@ -16,7 +16,7 @@ namespace PlatypusRepository.Folder.Configuration.Property
                    propertyInfo.PropertyType.IsEquivalentTo(typeof(string)) == false;
         }
 
-        public override void Fetch(object obj, PropertyInfo propertyInfo, string directoryPath, Func<Type, string, object> recursion = null)
+        public override void Fetch(object obj, PropertyInfo propertyInfo, string directoryPath)
         {
             if (Validate(propertyInfo) == false) return;
             string filePath = Path.Combine(directoryPath, FileName + "." + Extension);
@@ -25,7 +25,7 @@ namespace PlatypusRepository.Folder.Configuration.Property
             propertyInfo.SetValue(obj, value);
         }
 
-        public override void Resolve(object obj, PropertyInfo propertyInfo, string directoryPath, Action<Type, object, string> recursion = null)
+        public override void Save(object obj, PropertyInfo propertyInfo, string directoryPath)
         {
             if (Validate(propertyInfo) == false) return;
             string value = JsonConvert.SerializeObject(propertyInfo.GetValue(obj));

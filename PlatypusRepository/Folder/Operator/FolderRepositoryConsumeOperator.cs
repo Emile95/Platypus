@@ -3,16 +3,16 @@ using PlatypusRepository.Folder.Configuration;
 
 namespace PlatypusRepository.Folder.Operator
 {
-    public class FolderRepositoryConsumeOperator<EntityType, IDType> : FolderRepositoryOperator<EntityType, IDType>, IRepositoryConsumeOperator<EntityType>
+    public class FolderRepositoryConsumeOperator<EntityType> : FolderRepositoryOperator<EntityType>, IRepositoryConsumeOperator<EntityType>
         where EntityType : class
     {
         public FolderRepositoryConsumeOperator(string repositoryDirectoryPath)
-            : base(typeof(EntityType), repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
+            : base(typeof(EntityType), repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, string>()) { }
 
         public FolderRepositoryConsumeOperator(Type entityType, string repositoryDirectoryPath)
-            : base(entityType, repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
+            : base(entityType, repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, string>()) { }
 
-        public FolderRepositoryConsumeOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, IDType> folderEntityHandler)
+        public FolderRepositoryConsumeOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, string> folderEntityHandler)
             : base(entityType, repositoryDirectoryPath, folderEntityHandler) { }
 
         public void Consume(Action<EntityType> consumer, Predicate<EntityType> condition = null)
@@ -23,7 +23,12 @@ namespace PlatypusRepository.Folder.Operator
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(entityDirectoryPath);
 
-                EntityType entity = Fetch(_entityType, entityDirectoryPath) as EntityType;
+                EntityType entity = Activator.CreateInstance<EntityType>();
+
+                _entityHandler.IterateAttributesOfProperties<FolderEntityPropertyAttribute>((attribute, propertyInfo) => {
+                    IFolderEntityPropertyFetcher fetcher = attribute as IFolderEntityPropertyFetcher;
+                    fetcher?.Fetch(entity, propertyInfo, entityDirectoryPath);
+                });
 
                 _entityHandler.SetID(entity, directoryInfo.Name);
 
@@ -35,16 +40,6 @@ namespace PlatypusRepository.Folder.Operator
                 }
                 consumer(entity);
             }
-        }
-
-        internal object Fetch(Type type, string directoryPath)
-        {
-            object obj = Activator.CreateInstance(type);
-            _entityHandler.IterateAttributesOfProperties<FolderEntityPropertyAttribute>((attribute, propertyInfo) => {
-                IFolderEntityPropertyFetcher fetcher = attribute as IFolderEntityPropertyFetcher;
-                fetcher?.Fetch(obj, propertyInfo, directoryPath, Fetch);
-            });
-            return obj;
         }
     }
 }

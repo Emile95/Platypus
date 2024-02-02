@@ -1,8 +1,7 @@
 ﻿namespace PlatypusRepository
 {
-    public interface IRepositoryRemoveOperator<EntityType>
-        where EntityType : class
+    public interface IRepositoryRemoveOperator<IDType>
     {
-        void Remove(EntityType entity);
+        void Remove(IDType id);
     }
 }

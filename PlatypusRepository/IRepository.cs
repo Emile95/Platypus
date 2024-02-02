@@ -1,9 +1,9 @@
 ﻿namespace PlatypusRepository
 {
-    public interface IRepository<EntityType> : 
+    public interface IRepository<EntityType, IDType> : 
         IRepositoryAddOperator<EntityType>, 
         IRepositoryUpdateOperator<EntityType>, 
-        IRepositoryRemoveOperator<EntityType>, 
+        IRepositoryRemoveOperator<IDType>, 
         IRepositoryConsumeOperator<EntityType>
         where EntityType : class {}
 }

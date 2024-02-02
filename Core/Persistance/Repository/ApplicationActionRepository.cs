@@ -6,18 +6,18 @@ using PlatypusRepository.Folder.Operator;
 namespace Core.Persistance.Repository
 {
     internal class ApplicationActionRepository :
-        FolderRepositoryOperator<ApplicationActionEntity, string>,
+        FolderRepositoryOperator<ApplicationActionEntity>,
         IRepositoryAddOperator<ApplicationActionEntity>,
-        IRepositoryRemoveOperator<ApplicationActionEntity>
+        IRepositoryRemoveOperator<string>
     {
         private readonly IRepositoryAddOperator<ApplicationActionEntity> _addOperator;
-        private readonly IRepositoryRemoveOperator<ApplicationActionEntity> _removeOperator;
+        private readonly IRepositoryRemoveOperator<string> _removeOperator;
 
         internal ApplicationActionRepository()
             : base(ApplicationPaths.ACTIONSDIRECTORYPATH)
         {
-            _addOperator = new FolderRepositoryAddOperator<ApplicationActionEntity, string>(_entityType, _repositoryDirectoryPath, _entityHandler);
-            _removeOperator = new FolderRepositoryRemoveOperator<ApplicationActionEntity, string>(_entityType, _repositoryDirectoryPath, _entityHandler);
+            _addOperator = new FolderRepositoryAddOperator<ApplicationActionEntity>(_entityType, _repositoryDirectoryPath, _entityHandler);
+            _removeOperator = new FolderRepositoryRemoveOperator<ApplicationActionEntity>(_entityType, _repositoryDirectoryPath, _entityHandler);
         }
 
         public ApplicationActionEntity Add(ApplicationActionEntity entity)
@@ -25,9 +25,9 @@ namespace Core.Persistance.Repository
             return _addOperator.Add(entity);
         }
 
-        public void Remove(ApplicationActionEntity entity)
+        public void Remove(string id)
         {
-            _removeOperator.Remove(entity);
+            _removeOperator.Remove(id);
         }
     }
 }

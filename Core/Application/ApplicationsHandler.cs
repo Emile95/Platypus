@@ -49,26 +49,20 @@ namespace Core.Application
         internal void LoadApplication(PlatypusApplicationBase application, string applicationGuid)
         {
             _applicationResolver.ResolvePlatypusApplication(application, applicationGuid);
-            application.ApplicationDirectoryPath = ApplicationPaths.GetApplicationDirectoryPath(applicationGuid);
             _applications.Add(applicationGuid, application);
         }
 
         internal bool InstallApplication(InstallApplicationParameter parameter)
         {
-            string newGuid = Utils.GenerateGuidFromEnumerable(_applications.Keys);
-
-            InstallApplicationEventHandlerEnvironment eventEnv = new InstallApplicationEventHandlerEnvironment()
-            {
-                ApplicationGuid = newGuid
-            };
+            InstallApplicationEventHandlerEnvironment eventEnv = new InstallApplicationEventHandlerEnvironment();
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeInstallApplication, eventEnv, (exception) => throw exception);
 
-            PlatypusApplicationBase application = _applicationInstaller.InstallApplication(newGuid, parameter.DllFilePath);
+            PlatypusApplicationBase application = _applicationInstaller.InstallApplication(parameter.DllFilePath);
 
             if (application == null) return false;
 
-            LoadApplication(application, newGuid);
+            LoadApplication(application, application.ApplicationGuid);
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterInstallApplication, eventEnv, (exception) => throw exception);
 

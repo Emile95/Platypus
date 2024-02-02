@@ -3,40 +3,55 @@ using PlatypusRepository.Folder.Configuration;
 
 namespace PlatypusRepository.Folder.Operator
 {
-    public class FolderRepositoryAddOperator<EntityType, IDType> : FolderRepositoryOperator<EntityType, IDType>, IRepositoryAddOperator<EntityType>
+    public class FolderRepositoryAddOperator<EntityType> : FolderRepositoryOperator<EntityType>, IRepositoryAddOperator<EntityType>
         where EntityType : class
     {
         public FolderRepositoryAddOperator(string repositoryDirectoryPath)
-            : base(typeof(EntityType), repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
+            : base(typeof(EntityType), repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, string>()) { }
 
         public FolderRepositoryAddOperator(Type entityType, string repositoryDirectoryPath)
-            : base(entityType, repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, IDType>()) { }
+            : base(entityType, repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, string>()) { }
 
-        public FolderRepositoryAddOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, IDType> folderEntityHandler)
-            : base(entityType, repositoryDirectoryPath, folderEntityHandler) { }
+        public FolderRepositoryAddOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, string> folderEntityHandler)
+            : base(entityType, repositoryDirectoryPath, folderEntityHandler) 
+        {
+            if(Directory.Exists(_repositoryDirectoryPath) == false) 
+                Directory.CreateDirectory(_repositoryDirectoryPath);
+        }
 
         public EntityType Add(EntityType entity)
         {
-            string entityDirectoryPath = Path.Combine(_repositoryDirectoryPath, _entityHandler.GetID(entity).ToString());
+            string newGuid = GenerateGuid();
+            _entityHandler.SetID(entity, newGuid);
+
+            string entityDirectoryPath = Path.Combine(_repositoryDirectoryPath, newGuid);
             Directory.CreateDirectory(entityDirectoryPath);
 
-            Resolve(_entityType, entity, entityDirectoryPath);
-
-            _entityHandler.IterateAttributesOfClass<FolderEntityClassAttribute>((attribute) => {
-                IFolderEntityClassResolver resolver = attribute as IFolderEntityClassResolver;
-                resolver?.Resolve(entityDirectoryPath);
+            _entityHandler.IterateAttributesOfProperties<FolderEntityPropertyAttribute>((attribute, propertyInfo) =>
+            {
+                IFolderEntityPropertySaver saver = attribute as IFolderEntityPropertySaver;
+                saver?.Save(entity, propertyInfo, entityDirectoryPath);
             });
 
             return entity;
         }
 
-        private void Resolve(Type type, object obj, string entityDirectoryPath)
+        private string GenerateGuid()
         {
-            _entityHandler.IterateAttributesOfProperties<FolderEntityPropertyAttribute>((attribute, propertyInfo) =>
+            string[] directories = Directory.GetDirectories(_repositoryDirectoryPath);
+
+            HashSet<string> existingGuids = new HashSet<string>();
+            foreach (string directory in directories)
             {
-                IFolderEntityPropertyResolver resolver = attribute as IFolderEntityPropertyResolver;
-                resolver?.Resolve(obj, propertyInfo, entityDirectoryPath, Resolve);
-            });
+                DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+                existingGuids.Add(directoryInfo.Name);
+            }
+
+            string guid = Guid.NewGuid().ToString();
+            while (existingGuids.Contains(guid))
+                guid = Guid.NewGuid().ToString();
+
+            return guid;
         }
     }
 }

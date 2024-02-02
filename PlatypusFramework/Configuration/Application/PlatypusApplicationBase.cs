@@ -6,7 +6,7 @@ namespace PlatypusFramework.Configuration.Application
 {
     public abstract class PlatypusApplicationBase
     {
-        public string ApplicationDirectoryPath { get; set; }
+        public string ApplicationGuid { get; set; }
         public virtual void Install(ApplicationInstallEnvironment env) { }
         public virtual void Uninstall(ApplicationInstallEnvironment env) { }
         public virtual void Initialize(ApplicationInitializeEnvironment env) { }

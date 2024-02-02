@@ -11,7 +11,7 @@ namespace PlatypusRepository.Folder.Configuration.Property
             return propertyInfo.PropertyType.IsEquivalentTo(typeof(string));
         }
 
-        public override void Fetch(object obj, PropertyInfo propertyInfo, string directoryPath, Func<Type, string, object> recursion = null)
+        public override void Fetch(object obj, PropertyInfo propertyInfo, string directoryPath)
         {
             if (Validate(propertyInfo) == false) return;
             string filePath = Path.Combine(directoryPath, FileName + "." + Extension);
@@ -19,12 +19,12 @@ namespace PlatypusRepository.Folder.Configuration.Property
             propertyInfo.SetValue(obj, value);
         }
 
-        public override void Resolve(object obj, PropertyInfo propertyInfo, string directoryPath, Action<Type, object, string> recursion = null)
+        public override void Save(object obj, PropertyInfo propertyInfo, string directoryPath)
         {
             if (Validate(propertyInfo) == false) return;
-            string value = propertyInfo.GetValue(obj).ToString();
+            object value = propertyInfo.GetValue(obj);
             string filePath = Path.Combine(directoryPath, FileName + "." + Extension);
-            File.WriteAllText(filePath, value);
+            File.WriteAllText(filePath, value == null ? "" : value.ToString());
         }
     }
 }

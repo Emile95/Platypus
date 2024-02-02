@@ -15,10 +15,10 @@ namespace Core.Application
     internal class ApplicationInstaller
     {
         private readonly IRepositoryAddOperator<ApplicationEntity> _applicationRepositoryAddOperator;
-        private readonly IRepositoryRemoveOperator<ApplicationEntity> _applicationRepositoryRemoveOperator;
+        private readonly IRepositoryRemoveOperator<string> _applicationRepositoryRemoveOperator;
 
         private readonly IRepositoryAddOperator<ApplicationActionEntity> _applicationActionRepositoryAddOperator;
-        private readonly IRepositoryRemoveOperator<ApplicationActionEntity> _applicationActionRepositoryRemoveOperator;
+        private readonly IRepositoryRemoveOperator<string> _applicationActionRepositoryRemoveOperator;
 
         private readonly UserRepository _userRepository;
 
@@ -37,18 +37,13 @@ namespace Core.Application
             _userRepository = userRepository;
         }
 
-        internal PlatypusApplicationBase InstallApplication(string newGuid, string applicationPath)
+        internal PlatypusApplicationBase InstallApplication(string applicationPath)
         {
             FileInfo applicationFileInfo = new FileInfo(applicationPath);
             if (applicationFileInfo.Extension != ".platypus")
                 throw new InvalidPlatypusApplicationPackageException(applicationFileInfo.Name, "wrong file extension");
 
-            ApplicationEntity entity = new ApplicationEntity()
-            {
-                Guid = newGuid
-            };
-
-            //Directory.CreateDirectory(entity.DirectoryPath);
+            ApplicationEntity entity = new ApplicationEntity();
 
             ExtractPackage(entity, applicationPath);
 
@@ -58,24 +53,26 @@ namespace Core.Application
             {
                 PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromRawBytes<PlatypusApplicationBase>(entity.AssemblyRaw);
 
+                platypusApplication.ApplicationGuid = entity.Guid;
+
                 Type type = platypusApplication.GetType();
                 MethodInfo[] methods = type.GetMethods();
 
                 foreach (MethodInfo method in methods)
                 {
-                    if (InstallAction(newGuid, method)) continue;
-                    if (InstallUserConnectionMethod(platypusApplication, newGuid, method)) continue;
+                    if (InstallAction(entity.Guid, method)) continue;
+                    if (InstallUserConnectionMethod(platypusApplication, entity.Guid, method)) continue;
                 }
 
                 ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
-                env.ApplicationGuid = newGuid;
+                env.ApplicationGuid = entity.Guid;
 
                 platypusApplication.Install(env);
 
                 return platypusApplication;
             } catch(Exception)
             {
-                _applicationRepositoryRemoveOperator.Remove(entity);
+                _applicationRepositoryRemoveOperator.Remove(entity.Guid);
                 return null;
             }
         }
@@ -87,14 +84,11 @@ namespace Core.Application
 
             application.Uninstall(env);
 
-            _applicationRepositoryRemoveOperator.Remove(new ApplicationEntity() { Guid = applicationGuid });
+            _applicationRepositoryRemoveOperator.Remove(applicationGuid);
 
             string[] applicationActionsNames = application.GetAllApplicationActionNames();
-            foreach(string applicationActionsName in applicationActionsNames)
-                _applicationActionRepositoryRemoveOperator.Remove(new ApplicationActionEntity()
-                {
-                    Guid = applicationActionsName + applicationGuid
-                });
+            foreach (string applicationActionsName in applicationActionsNames)
+                _applicationActionRepositoryRemoveOperator.Remove(applicationActionsName + applicationGuid);
         }
 
         private bool InstallAction(string applicationGuid, MethodInfo methodInfo)
@@ -127,7 +121,7 @@ namespace Core.Application
 
         private void ExtractPackage(ApplicationEntity entity, string sourceDirectoryPath)
         {
-            string temporaryDirectoryPath = Path.Combine(Path.GetTempPath(), entity.Guid);
+            string temporaryDirectoryPath = Path.Combine(Path.GetTempPath(), "platyPusInstall");
             Directory.CreateDirectory(temporaryDirectoryPath);
 
             ZipFile.ExtractToDirectory(sourceDirectoryPath, temporaryDirectoryPath);
@@ -135,6 +129,8 @@ namespace Core.Application
             if (dllFiles.Length == 0) return;
 
             entity.AssemblyRaw = File.ReadAllBytes(dllFiles[0]);
+
+            Directory.Delete(temporaryDirectoryPath, true);
 
             /*string[] directoriesPath = Directory.GetDirectories(temporaryDirectoryPath);
             if (directoriesPath.Length > 0)
