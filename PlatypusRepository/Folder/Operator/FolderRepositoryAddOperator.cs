@@ -21,10 +21,13 @@ namespace PlatypusRepository.Folder.Operator
 
         public EntityType Add(EntityType entity)
         {
-            string newGuid = GenerateGuid();
-            _entityHandler.SetID(entity, newGuid);
+            string id = _entityHandler.GetID(entity);
+            if(string.IsNullOrEmpty(id))
+                id = GenerateGuid();
 
-            string entityDirectoryPath = Path.Combine(_repositoryDirectoryPath, newGuid);
+            _entityHandler.SetID(entity, id);
+
+            string entityDirectoryPath = Path.Combine(_repositoryDirectoryPath, id);
             Directory.CreateDirectory(entityDirectoryPath);
 
             _entityHandler.IterateAttributesOfProperties<FolderEntityPropertyAttribute>((attribute, propertyInfo) =>
