@@ -10,6 +10,10 @@ using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.ServerFunctionParameter;
 using PlatypusUtils;
 using Core.Ressource;
+using PlatypusRepository;
+using Core.Persistance.Entity;
+using Core.Persistance.Repository;
+using System;
 
 namespace Core.ApplicationAction
 {
@@ -17,14 +21,23 @@ namespace Core.ApplicationAction
     {
         private readonly Dictionary<string, ApplicationAction> _applicationActions;
         private readonly Dictionary<string, ApplicationActionRun> _applicationActionRuns;
+       
+        private readonly IRepositoryAddOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryAddOperator;
+        private readonly IRepositoryRemoveOperator<string> _runningApplicationActionRepositoryRemoveOperator;
+
         private readonly EventsHandler _eventsHandler;
 
         internal ApplicationActionsHandler(
+            RunningApplicationActionRepository runningApplicationActionRepository,
             EventsHandler eventsHandler
         )
         {
             _applicationActions = new Dictionary<string, ApplicationAction>();
             _applicationActionRuns = new Dictionary<string, ApplicationActionRun>();
+
+            _runningApplicationActionRepositoryAddOperator = runningApplicationActionRepository;
+            _runningApplicationActionRepositoryRemoveOperator = runningApplicationActionRepository;
+
             _eventsHandler = eventsHandler;
         }
 
@@ -74,17 +87,22 @@ namespace Core.ApplicationAction
             ApplicationActionRunResult result = BeforeApplicationActionRun(applicationAction, actionRunEventHandlerEnvironment);
             if (result is not null) return result;
 
-            string applicationActionRunGUID = Utils.GenerateGuidFromEnumerable(_applicationActionRuns.Keys);
+            ApplicationActionRun applicationActionRun = applicationAction.CreateApplicationActionRun(runActionParameter, env);
 
-            ApplicationActionRun applicationActionRun = applicationAction.CreateApplicationActionRun(runActionParameter, env, applicationActionRunGUID);
+            applicationActionRun.StartRun(applicationAction, runActionParameter, () => {
+                ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);
+            });
 
             _applicationActionRuns.Add(
                 applicationActionRun.Guid,
                 applicationActionRun
             );
 
-            applicationActionRun.StartRun(applicationAction, runActionParameter, () => {
-                ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);
+            _runningApplicationActionRepositoryAddOperator.Add(new RunningApplicationActionEntity()
+            {
+                Guid = applicationActionRun.Guid,
+                ActionGuid = applicationActionRun.ActionGuid,
+                Parameters = runActionParameter.ActionParameters
             });
 
             if (runActionParameter.Async)
@@ -122,7 +140,7 @@ namespace Core.ApplicationAction
             ApplicationActionRun run = _applicationActionRuns[guid];
             _applicationActionRuns.Remove(guid);
 
-            //_applicationActionRepository.RemoveRunningAction(guid);
+            _runningApplicationActionRepositoryRemoveOperator.Remove(guid);
 
             run.Cancel();
 
@@ -151,7 +169,7 @@ namespace Core.ApplicationAction
                 return;
 
             _applicationActionRuns.Remove(run.Guid);
-            //_applicationActionRepository.RemoveRunningAction(run.Guid);
+            _runningApplicationActionRepositoryRemoveOperator.Remove(run.Guid);
 
             eventEnv.ApplicationActionResult = run.Result;
             eventEnv.ApplicationActionRunInfo = run.GetInfo();

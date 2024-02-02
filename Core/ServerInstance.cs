@@ -10,6 +10,8 @@ using Core.Network;
 using System.Net.Sockets;
 using Core.Persistance.Repository;
 using Core.Persistance;
+using PlatypusRepository;
+using Core.Persistance.Entity;
 
 namespace Core
 {
@@ -22,6 +24,8 @@ namespace Core
         private EventsHandler _eventsHandler;
         private UsersHandler _usersHandler;
 
+        private IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryConsumeOperator;
+
         private ISeverPortListener _restAPIHandler;
         private ISeverPortListener _tcpServerSocketHandler;
 
@@ -32,11 +36,17 @@ namespace Core
 
             ApplicationRepository applicationRepository = new ApplicationRepository();
             ApplicationActionRepository applicationActionRepository = new ApplicationActionRepository();
+            RunningApplicationActionRepository runningApplicationActionRepository = new RunningApplicationActionRepository();
             UserRepository userRepository = new UserRepository();
 
             _eventsHandler = new EventsHandler();
 
-            _applicationActionsHandler = new ApplicationActionsHandler(_eventsHandler);
+            _runningApplicationActionRepositoryConsumeOperator = runningApplicationActionRepository;
+
+            _applicationActionsHandler = new ApplicationActionsHandler(
+                runningApplicationActionRepository,
+                _eventsHandler
+            );
      
             _usersHandler = new UsersHandler(userRepository);
             _usersHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
@@ -67,8 +77,6 @@ namespace Core
         public void Start()
         {
             _applicationsHandler.LoadApplications();
-
-            //_applicationActionsHandler.ReRunStopedApplicationActions(_applicationRepository);
 
             _tcpServerSocketHandler.InitializeServerPortListener(_config.TcpSocketPort);
             _restAPIHandler.InitializeServerPortListener(_config.HttpPort);

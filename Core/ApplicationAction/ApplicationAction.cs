@@ -142,7 +142,7 @@ namespace Core.ApplicationAction
             return (ApplicationActionEnvironmentBase)Activator.CreateInstance(EnvironmentParameterType);
         }
 
-        public ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env, string actionRunGuid)
+        public ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
         {
             ApplicationActionRun applicationActionRun = new ApplicationActionRun()
             {
