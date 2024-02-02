@@ -23,18 +23,15 @@ namespace Core
     public partial class ServerInstance
     {
         private ServerConfig _config;
-
-        private ApplicationActionsHandler _applicationActionsHandler;
-        private EventsHandler _eventsHandler;
-        private UsersHandler _usersHandler;
-
         private List<IServerStarter> _serverStarters;
         private IUserAuthentificator _serverConnector;
+        private IRepository<UserEntity> _usersHandler;
         private ISeverPortListener _restAPIHandler;
         private ISeverPortListener _tcpServerSocketHandler;
         private IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
         private IApplicationPackageUninstaller<string> _applicationPackageUninstaller;
-        
+        private ApplicationActionsHandler _applicationActionsHandler;
+        private EventsHandler _eventsHandler;
 
         public void Initialize(string[] args)
         {
