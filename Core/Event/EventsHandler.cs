@@ -1,12 +1,15 @@
-﻿using Core.Exceptions;
+﻿using Core.Abstract;
+using Core.Exceptions;
 using PlatypusFramework.Configuration.Application;
+using PlatypusFramework.Configuration.ApplicationAction;
 using PlatypusFramework.Configuration.Event;
 using PlatypusFramework.Core.Event;
 using System.Reflection;
 
 namespace Core.Event
 {
-    public class EventsHandler
+    public class EventsHandler :
+        IApplicationAttributeMethodResolver<EventHandlerAttribute>
     {
         private readonly Dictionary<EventHandlerType, List<EventHandler>> _eventHandlers;
 
@@ -18,10 +21,10 @@ namespace Core.Event
                 _eventHandlers.Add(eventHandlerType, new List<EventHandler>());
         }
 
-        public void AddEventHandler(PlatypusApplicationBase application, EventHandlerAttribute eventHandlerAttribute, MethodInfo methodInfo)
+        public void Resolve(PlatypusApplicationBase application, EventHandlerAttribute attribute, MethodInfo method)
         {
-            EventHandler eventhandler = new EventHandler(application, eventHandlerAttribute, methodInfo);
-            _eventHandlers[eventHandlerAttribute.EventHandlerType].Add(eventhandler);
+            EventHandler eventhandler = new EventHandler(application, attribute, method);
+            _eventHandlers[attribute.EventHandlerType].Add(eventhandler);
         }
 
         public T RunEventHandlers<T>(EventHandlerType eventHandlerType, EventHandlerEnvironment eventEnv, Func<EventHandlerException, T> exceptionObjectCreator)

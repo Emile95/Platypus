@@ -1,31 +1,29 @@
-﻿using Core.ApplicationAction;
-using PlatypusFramework.Core.Application;
+﻿using PlatypusFramework.Core.Application;
 using PlatypusFramework.Configuration.Application;
 using PlatypusFramework.Configuration.ApplicationAction;
 using System.Reflection;
-using Core.Event;
 using PlatypusFramework.Configuration.Event;
 using PlatypusFramework.Configuration.User;
-using Core.User;
 using Core.Application.Abstract;
+using Core.Abstract;
 
 namespace Core.Application
 {
     internal class ApplicationResolver : IApplicationResolver<PlatypusApplicationBase>
     {
-        private readonly ApplicationActionsHandler _applicationActionsHandler;
-        private readonly EventsHandler _eventsHandler;
-        private readonly UsersHandler _usersHandler;
+        private readonly IApplicationAttributeMethodResolver<ActionDefinitionAttribute> _applicationActionResolver;
+        private readonly IApplicationAttributeMethodResolver<EventHandlerAttribute> _eventsHandlerResolver;
+        private readonly IApplicationAttributeMethodResolver<UserConnectionMethodCreatorAttribute> _connectionMethodResolver;
 
         internal ApplicationResolver(
-            ApplicationActionsHandler applicationActionsHandler,
-            EventsHandler eventsHandler,
-            UsersHandler usersHandler
+            IApplicationAttributeMethodResolver<ActionDefinitionAttribute> applicationActionResolver,
+            IApplicationAttributeMethodResolver<EventHandlerAttribute> eventsHandlerResolver,
+            IApplicationAttributeMethodResolver<UserConnectionMethodCreatorAttribute> connectionMethodResolver
         )
         {
-            _applicationActionsHandler = applicationActionsHandler;
-            _eventsHandler = eventsHandler;
-            _usersHandler = usersHandler;
+            _applicationActionResolver = applicationActionResolver;
+            _eventsHandlerResolver = eventsHandlerResolver;
+            _connectionMethodResolver = connectionMethodResolver;
         }
 
         public void Resolve(PlatypusApplicationBase platypusApplication)
@@ -40,13 +38,13 @@ namespace Core.Application
 
             foreach (MethodInfo methodInfo in methods)
             {
-                if(ResolvePlatypusApplicationMethod<ActionDefinitionAttribute>(methodInfo, (attribute) => _applicationActionsHandler.AddAction(platypusApplication, platypusApplication.ApplicationGuid, attribute, methodInfo) )) continue;
-                if(ResolvePlatypusApplicationMethod<EventHandlerAttribute>(methodInfo, (attribute) => _eventsHandler.AddEventHandler(platypusApplication, attribute, methodInfo) )) continue;
-                if(ResolvePlatypusApplicationMethod<UserConnectionMethodCreatorAttribute>(methodInfo, (attribute) => _usersHandler.AddConnectionMethod(platypusApplication, platypusApplication.ApplicationGuid, methodInfo))) continue;
+                if(ResolveMethod<ActionDefinitionAttribute>(methodInfo, (attribute) => _applicationActionResolver.Resolve(platypusApplication, attribute, methodInfo) )) continue;
+                if(ResolveMethod<EventHandlerAttribute>(methodInfo, (attribute) => _eventsHandlerResolver.Resolve(platypusApplication, attribute, methodInfo) )) continue;
+                if(ResolveMethod<UserConnectionMethodCreatorAttribute>(methodInfo, (attribute) => _connectionMethodResolver.Resolve(platypusApplication, attribute, methodInfo))) continue;
             }
         }
 
-        private bool ResolvePlatypusApplicationMethod<AttributeType>(MethodInfo methodInfo, Action<AttributeType> consumer)
+        private bool ResolveMethod<AttributeType>(MethodInfo methodInfo, Action<AttributeType> consumer)
             where AttributeType : Attribute
         {
             AttributeType attribute = methodInfo.GetCustomAttribute<AttributeType>();

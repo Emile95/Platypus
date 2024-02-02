@@ -18,16 +18,11 @@ namespace Core.Application
         IServerStarter
     {
         private readonly Dictionary<string, PlatypusApplicationBase> _applications;
-
-        private readonly IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
-
-        private readonly IApplicationResolver<PlatypusApplicationBase> _applicationResolver;
-
         private readonly IRepositoryConsumeOperator<ApplicationEntity> _applicationRepositoryConsumeOperator;
         private readonly IRepositoryRemoveOperator<string> _applicationRepositoryRemoveOperator;
-
+        private readonly IApplicationResolver<PlatypusApplicationBase> _applicationResolver;
+        private readonly IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
         private readonly IRepositoryRemoveOperator<string> _applicationActionRepositoryRemoveOperator;
-
         private readonly EventsHandler _eventsHandler;
 
         internal ApplicationsHandler(
@@ -39,17 +34,12 @@ namespace Core.Application
             EventsHandler eventsHandler
         )
         {
+            _applications = new Dictionary<string, PlatypusApplicationBase>();
             _applicationRepositoryConsumeOperator = applicationRepositoryConsumeOperator;
             _applicationRepositoryRemoveOperator = applicationRepositoryRemoveOperator;
-
-            _applications = new Dictionary<string, PlatypusApplicationBase>();
-
-            _applicationPackageInstaller = applicationPackageInstaller;
-
             _applicationResolver = applicationResolver;
-
+            _applicationPackageInstaller = applicationPackageInstaller;
             _applicationActionRepositoryRemoveOperator = applicationActionRepositoryRemoveOperator;
-
             _eventsHandler = eventsHandler;
         }
 

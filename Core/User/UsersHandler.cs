@@ -1,4 +1,5 @@
-﻿using Core.Persistance.Entity;
+﻿using Core.Abstract;
+using Core.Persistance.Entity;
 using Core.Persistance.Repository;
 using PlatypusAPI.Exceptions;
 using PlatypusAPI.ServerFunctionParameter;
@@ -11,7 +12,8 @@ using System.Reflection;
 
 namespace Core.User
 {
-    internal class UsersHandler
+    internal class UsersHandler :
+        IApplicationAttributeMethodResolver<UserConnectionMethodCreatorAttribute>
     {
         private readonly Dictionary<string, IUserConnectionMethod> _connectionMethods;
         private readonly UserRepository _userRepository;
@@ -24,10 +26,10 @@ namespace Core.User
             _userRepository = userRepository;
         }
 
-        internal void AddConnectionMethod(PlatypusApplicationBase application, string applicationGuid, MethodInfo methodInfo)
+        public void Resolve(PlatypusApplicationBase application, UserConnectionMethodCreatorAttribute attribute, MethodInfo method)
         {
-            IUserConnectionMethod credentialMethod = methodInfo.Invoke(application, new object[] { }) as IUserConnectionMethod;
-            AddConnectionMethod(credentialMethod, applicationGuid);
+            IUserConnectionMethod credentialMethod = method.Invoke(application, new object[] { }) as IUserConnectionMethod;
+            AddConnectionMethod(credentialMethod, application.ApplicationGuid);
         }
 
         internal void AddBuiltInConnectionMethod(IUserConnectionMethod credentialMethod, string guid)
@@ -136,5 +138,7 @@ namespace Core.User
                 flags |= userPermissionFlag;
             return flags;
         }
+
+        
     }
 }

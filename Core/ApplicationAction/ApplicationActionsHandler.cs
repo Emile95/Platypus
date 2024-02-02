@@ -13,11 +13,12 @@ using Core.Ressource;
 using PlatypusRepository;
 using Core.Persistance.Entity;
 using Core.Persistance.Repository;
-using System;
+using Core.Abstract;
 
 namespace Core.ApplicationAction
 {
-    internal class ApplicationActionsHandler
+    internal class ApplicationActionsHandler : 
+        IApplicationAttributeMethodResolver<ActionDefinitionAttribute>
     {
         private readonly Dictionary<string, ApplicationAction> _applicationActions;
         private readonly Dictionary<string, ApplicationActionRun> _applicationActionRuns;
@@ -43,12 +44,12 @@ namespace Core.ApplicationAction
             _eventsHandler = eventsHandler;
         }
 
-        internal void AddAction(PlatypusApplicationBase application, string applicationGuid, ActionDefinitionAttribute actionDefinition, MethodInfo methodInfo)
+        public void Resolve(PlatypusApplicationBase application, ActionDefinitionAttribute attribute, MethodInfo method)
         {
-            string actionGuid = actionDefinition.Name+applicationGuid;
+            string actionGuid = attribute.Name + application.ApplicationGuid;
             if (_applicationActions.ContainsKey(actionGuid)) return;
 
-            ApplicationAction applicationAction = new ApplicationAction(application,actionDefinition,methodInfo,actionGuid);
+            ApplicationAction applicationAction = new ApplicationAction(application, attribute, method, actionGuid);
             _applicationActions.Add(actionGuid, applicationAction);
         }
 
@@ -200,5 +201,7 @@ namespace Core.ApplicationAction
 
             return null;
         }
+
+        
     }
 }

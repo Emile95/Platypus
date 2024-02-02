@@ -17,10 +17,7 @@ namespace Core.Application
     {
         private readonly IRepositoryAddOperator<ApplicationEntity> _applicationRepositoryAddOperator;
         private readonly IRepositoryRemoveOperator<string> _applicationRepositoryRemoveOperator;
-
         private readonly IRepositoryAddOperator<ApplicationActionEntity> _applicationActionRepositoryAddOperator;
-        
-
         private readonly UserRepository _userRepository;
 
         internal ApplicationInstaller(
@@ -32,9 +29,7 @@ namespace Core.Application
         {
             _applicationRepositoryAddOperator = applicationRepositoryAddOperator;
             _applicationRepositoryRemoveOperator = applicationRepositoryRemoveOperator;
-
             _applicationActionRepositoryAddOperator = applicationActionRepositoryAddOperator;
-
             _userRepository = userRepository;
         }
 
