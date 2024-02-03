@@ -9,14 +9,14 @@ namespace PlatypusUtils
             where PluginType : class
         {
             byte[] bytesRaw = File.ReadAllBytes(filePath);
-            return InstanciateImplementationFromRawBytes<PluginType>(bytesRaw);
+            return InstanciateImplementationFromRawBytes<PluginType>(bytesRaw, exceptionIfNotFound);
         }
 
         public static PluginType InstanciateImplementationFromRawBytes<PluginType>(byte[] rawBytes, bool exceptionIfNotFound = false)
             where PluginType : class
         {
             Assembly assembly = Assembly.Load(rawBytes);
-            return InstanciateImplementationFromAssembly<PluginType>(assembly);
+            return InstanciateImplementationFromAssembly<PluginType>(assembly, exceptionIfNotFound);
         }
 
         public static PluginType InstanciateImplementationFromAssembly<PluginType>(Assembly assembly, bool exceptionIfNotFound = false)

@@ -1,4 +1,4 @@
-﻿namespace Core.Network
+﻿namespace Core.Network.Abstract
 {
     public interface ISeverPortListener<Type>
     {
