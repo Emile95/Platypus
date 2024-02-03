@@ -16,19 +16,19 @@ IHostBuilder builder = Host.CreateDefaultBuilder(args);
 builder.ConfigureServices((configure) => {
     configure.AddHostedService<ServerInstance>();
 
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance(configure, new ApplicationRepository());
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance(configure, new ApplicationActionRepository());
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance(configure, new RunningApplicationActionRepository());
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance(configure, new JsonRepository<UserEntity>(ApplicationPaths.USERSDIRECTORYPATH));
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationResolver>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationUninstaller>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationInstaller>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<EventsHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationsHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationActionsHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<RunningApplicationActionsHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<UserAuthentificationHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<UsersHandler>(configure);
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference(configure, new ApplicationRepository());
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference(configure, new ApplicationActionRepository());
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference(configure, new RunningApplicationActionRepository());
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference(configure, new JsonRepository<UserEntity>(ApplicationPaths.USERSDIRECTORYPATH));
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference<ApplicationResolver>(configure);
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference<ApplicationUninstaller>(configure);
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference<ApplicationInstaller>(configure);
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference<EventsHandler>(configure);
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference<ApplicationsHandler>(configure);
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference<ApplicationActionsHandler>(configure);
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference<RunningApplicationActionsHandler>(configure);
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference<UserAuthentificationHandler>(configure);
+    DepencenyInjectionHelper.AddServiceInterfacesSharedReference<UsersHandler>(configure);
 });
 
 

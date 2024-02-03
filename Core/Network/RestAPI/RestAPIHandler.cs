@@ -133,7 +133,7 @@ namespace Core.Network.RestAPI
 
             app.MapRazorPages();
 
-            app.Run($"https://localhost:{httpPort}");
+            app.RunAsync($"https://localhost:{httpPort}");
         }
 
         private RequestDelegate CreateRequestDelegate<BodyType>(bool needUser, Func<IHeaderDictionary, UserAccount, BodyType, object> action)

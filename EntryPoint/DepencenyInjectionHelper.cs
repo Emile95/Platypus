@@ -4,19 +4,19 @@ namespace EntryPoint
 {
     internal static class DepencenyInjectionHelper
     {
-        internal static void InjectAllInterfacesFromTypeWithSameInstance<ClassType>(IServiceCollection services)
+        internal static void AddServiceInterfacesSharedReference<ClassType>(IServiceCollection services)
             where ClassType : class
         {
-            Type[] interfaces = typeof(ClassType).GetInterfaces();
-
-            if (interfaces == null || interfaces.Length == 0) return;
-
-            services.AddSingleton<ClassType>();
-            foreach (Type i in interfaces)
-                services.AddSingleton(i, provider => provider.GetRequiredService<ClassType>());
+            AddServiceInterfacesSharedReference<ClassType>(services, (i) => services.AddSingleton(i, provider => provider.GetRequiredService<ClassType>()));
         }
 
-        internal static void InjectAllInterfacesFromTypeWithSameInstance<ClassType>(IServiceCollection services, ClassType instance)
+        internal static void AddServiceInterfacesSharedReference<ClassType>(IServiceCollection services, ClassType instance)
+            where ClassType : class
+        {
+            AddServiceInterfacesSharedReference<ClassType>(services ,(i) => services.AddSingleton(i, instance));
+        }
+
+        private static void AddServiceInterfacesSharedReference<ClassType>(IServiceCollection services, Action<Type> interfaceConsumer)
             where ClassType : class
         {
             Type[] interfaces = typeof(ClassType).GetInterfaces();
@@ -25,7 +25,7 @@ namespace EntryPoint
 
             services.AddSingleton<ClassType>();
             foreach (Type i in interfaces)
-                services.AddSingleton(i, instance);
+                interfaceConsumer(i);
         }
     }
 }
