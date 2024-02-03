@@ -11,7 +11,7 @@ namespace PlatypusRepository.Folder.Configuration.Property
         }
 
         public override bool Validate(PropertyInfo propertyInfo)
-        {
+        { 
             return propertyInfo.PropertyType.IsClass == true ||
                    propertyInfo.PropertyType.IsEquivalentTo(typeof(string)) == false;
         }
@@ -21,7 +21,7 @@ namespace PlatypusRepository.Folder.Configuration.Property
             if (Validate(propertyInfo) == false) return;
             string filePath = Path.Combine(directoryPath, FileName + "." + Extension);
             string jsonObject = File.ReadAllText(filePath);
-            object value = JsonConvert.DeserializeObject(jsonObject);
+            object value = JsonConvert.DeserializeObject(jsonObject, propertyInfo.PropertyType);
             propertyInfo.SetValue(obj, value);
         }
 

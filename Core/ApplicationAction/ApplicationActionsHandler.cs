@@ -20,10 +20,12 @@ namespace Core.ApplicationAction
         IApplicationAttributeMethodResolver<ActionDefinitionAttribute>,
         IRepositoryConsumeOperator<ApplicationActionInfo>,
         IRepositoryRemoveOperator<ApplicationAction, string>,
-        IApplicationActionRunner
+        IApplicationActionRunner,
+        IServerStarter<RunningApplicationActionEntity>
     {
         private readonly Dictionary<string, ApplicationAction> _applicationActions;
         private readonly IRepositoryConsumeOperator<ApplicationActionEntity> _applicationActionRepositoryConsumeOperator;
+        private readonly IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionEntityConsumeOperator;
         private readonly IRepositoryRemoveOperator<ApplicationActionEntity, string> _applicationActionRepositoryRemoveOperator;
         private readonly IRepositoryAddOperator<ApplicationActionRun> _applicationActionRunAddOperator;
         private readonly IRepositoryRemoveOperator<ApplicationActionRun,string> _applicationActionRunRemoveOperator;
@@ -31,6 +33,7 @@ namespace Core.ApplicationAction
 
         public ApplicationActionsHandler(
             IRepositoryConsumeOperator<ApplicationActionEntity> applicationActionRepositoryConsumeOperator,
+            IRepositoryConsumeOperator<RunningApplicationActionEntity> runningApplicationActionEntityConsumeOperator,
             IRepositoryRemoveOperator<ApplicationActionEntity, string> applicationActionRepositoryRemoveOperator,
             IRepositoryAddOperator<ApplicationActionRun> applicationActionRunAddOperator,
             IRepositoryRemoveOperator<ApplicationActionRun, string> applicationActionRunRemoveOperator,
@@ -39,6 +42,7 @@ namespace Core.ApplicationAction
         {
             _applicationActions = new Dictionary<string, ApplicationAction>();
             _applicationActionRepositoryConsumeOperator = applicationActionRepositoryConsumeOperator;
+            _runningApplicationActionEntityConsumeOperator = runningApplicationActionEntityConsumeOperator;
             _applicationActionRepositoryRemoveOperator = applicationActionRepositoryRemoveOperator;
             _applicationActionRunAddOperator = applicationActionRunAddOperator;
             _applicationActionRunRemoveOperator = applicationActionRunRemoveOperator;
@@ -163,6 +167,13 @@ namespace Core.ApplicationAction
             });
 
             return null;
+        }
+
+        public void Start()
+        {
+            _runningApplicationActionEntityConsumeOperator.Consume((entity) => { 
+                
+            });
         }
     }
 }

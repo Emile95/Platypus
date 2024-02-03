@@ -12,8 +12,7 @@ namespace Core.ApplicationAction
         IRepositoryRemoveOperator<ApplicationActionRun, string>,
         IRepositoryConsumeOperator<ApplicationActionRunInfo>,
         IRepositoryConsumeOperator<ApplicationActionRun>,
-        IRepositoryAddOperator<ApplicationActionRun>,
-        IServerStarter<RunningApplicationActionsHandler>
+        IRepositoryAddOperator<ApplicationActionRun>
     {
         private readonly Dictionary<string, ApplicationActionRun> _applicationActionRuns;
         private readonly IRepositoryRemoveOperator<RunningApplicationActionEntity, string> _runningApplicationActionEntityRemoveOperator;

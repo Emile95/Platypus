@@ -18,6 +18,7 @@ using Core.Persistance;
 using Newtonsoft.Json;
 using System.Net.Sockets;
 using Microsoft.Extensions.Hosting;
+using Core.Persistance.Entity;
 
 namespace Core
 {
@@ -25,7 +26,7 @@ namespace Core
     {
         private readonly ServerConfig _config;
         private readonly IServerStarter<ApplicationsHandler> _applicationsServerStarter;
-        private readonly IServerStarter<RunningApplicationActionsHandler> _runningApplicationActionsServerStarter;
+        private readonly IServerStarter<RunningApplicationActionEntity> _runningApplicationActionsServerStarter;
         private readonly ISeverPortListener<RestAPIHandler> _restAPIHandler;
         private readonly ISeverPortListener<PlatypusServerSocketHandler> _tcpServerSocketHandler;
         private readonly IUserAuthentificator _userAuthentificator;
@@ -42,7 +43,7 @@ namespace Core
 
         public ServerInstance(
             IServerStarter<ApplicationsHandler> applicationsServerStarter,
-            IServerStarter<RunningApplicationActionsHandler> runningApplicationActionsServerStarter,
+            IServerStarter<RunningApplicationActionEntity> runningApplicationActionsServerStarter,
             IUserAuthentificator userAuthentificator,
             IRepositoryAddOperator<UserCreationParameter> userAddOperator,
             IRepositoryUpdateOperator<UserUpdateParameter> userUpdateOperator,
@@ -80,10 +81,11 @@ namespace Core
         {
             return Task.Run(() =>
             {
-                _applicationsServerStarter.Start();
-                _runningApplicationActionsServerStarter.Start();
                 _tcpServerSocketHandler.InitializeServerPortListener(_config.TcpSocketPort);
                 _restAPIHandler.InitializeServerPortListener(_config.HttpPort);
+
+                _applicationsServerStarter.Start();
+                _runningApplicationActionsServerStarter.Start();
             });
         }
 
