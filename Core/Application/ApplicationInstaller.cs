@@ -33,7 +33,7 @@ namespace Core.Application
             _eventhHandlerRunner = eventhHandlerRunner;
         }
 
-        public PlatypusApplicationBase Install(string sourcePath)
+        public void Install(string sourcePath)
         {
             InstallApplicationEventHandlerEnvironment eventEnv = new InstallApplicationEventHandlerEnvironment();
 
@@ -66,13 +66,11 @@ namespace Core.Application
 
                 platypusApplication.Install(env);
 
-            if (platypusApplication == null) return null;
+            if (platypusApplication == null) return;
 
             _applicationAddOperator.Add(platypusApplication);
 
             _eventhHandlerRunner.Run<object>(EventHandlerType.AfterInstallApplication, eventEnv, (exception) => throw exception);
-
-            return platypusApplication;
         }
 
         private bool InstallAction(string applicationGuid, MethodInfo methodInfo)

@@ -4,7 +4,7 @@ namespace EntryPoint
 {
     internal static class DepencenyInjectionHelper
     {
-        internal static void InjectAllInterfacesFromType<ClassType>(IServiceCollection services)
+        internal static void InjectAllInterfacesFromTypeWithSameInstance<ClassType>(IServiceCollection services)
             where ClassType : class
         {
             Type[] interfaces = typeof(ClassType).GetInterfaces();
@@ -16,7 +16,7 @@ namespace EntryPoint
                 services.AddSingleton(i, provider => provider.GetRequiredService<ClassType>());
         }
 
-        internal static void InjectAllInterfacesFromType<ClassType>(IServiceCollection services, ClassType instance)
+        internal static void InjectAllInterfacesFromTypeWithSameInstance<ClassType>(IServiceCollection services, ClassType instance)
             where ClassType : class
         {
             Type[] interfaces = typeof(ClassType).GetInterfaces();

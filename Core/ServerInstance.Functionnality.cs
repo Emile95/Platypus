@@ -2,7 +2,6 @@
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.User;
 using PlatypusAPI.ServerFunctionParameter;
-using PlatypusFramework.Configuration.Application;
 
 namespace Core
 {
@@ -16,8 +15,7 @@ namespace Core
         public bool InstallApplication(UserAccount userAccount, InstallApplicationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
-            PlatypusApplicationBase application = _applicationPackageInstaller.Install(parameter.DllFilePath);
-            _applicationAddOperator.Add(application);
+            _applicationPackageInstaller.Install(parameter.DllFilePath);
             return true;
         }
 

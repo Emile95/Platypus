@@ -16,19 +16,19 @@ IHostBuilder builder = Host.CreateDefaultBuilder(args);
 builder.ConfigureServices((configure) => {
     configure.AddHostedService<ServerInstance>();
 
-    DepencenyInjectionHelper.InjectAllInterfacesFromType(configure, new ApplicationRepository());
-    DepencenyInjectionHelper.InjectAllInterfacesFromType(configure, new ApplicationActionRepository());
-    DepencenyInjectionHelper.InjectAllInterfacesFromType(configure, new RunningApplicationActionRepository());
-    DepencenyInjectionHelper.InjectAllInterfacesFromType(configure, new JsonRepository<UserEntity>(ApplicationPaths.USERSDIRECTORYPATH));
-    DepencenyInjectionHelper.InjectAllInterfacesFromType<ApplicationResolver>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromType<ApplicationUninstaller>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromType<ApplicationInstaller>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromType<EventsHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromType<ApplicationsHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromType<ApplicationActionsHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromType<RunningApplicationActionsHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromType<UserAuthentificationHandler>(configure);
-    DepencenyInjectionHelper.InjectAllInterfacesFromType<UsersHandler>(configure);
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance(configure, new ApplicationRepository());
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance(configure, new ApplicationActionRepository());
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance(configure, new RunningApplicationActionRepository());
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance(configure, new JsonRepository<UserEntity>(ApplicationPaths.USERSDIRECTORYPATH));
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationResolver>(configure);
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationUninstaller>(configure);
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationInstaller>(configure);
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<EventsHandler>(configure);
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationsHandler>(configure);
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<ApplicationActionsHandler>(configure);
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<RunningApplicationActionsHandler>(configure);
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<UserAuthentificationHandler>(configure);
+    DepencenyInjectionHelper.InjectAllInterfacesFromTypeWithSameInstance<UsersHandler>(configure);
 });
 
 

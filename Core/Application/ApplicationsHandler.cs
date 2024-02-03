@@ -4,6 +4,7 @@ using PlatypusRepository;
 using Core.Persistance.Entity;
 using Core.Abstract;
 using Core.Application.Abstract;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Core.Application
 {
@@ -56,6 +57,7 @@ namespace Core.Application
 
                 PlatypusApplicationBase applicationBase = PluginResolver.InstanciateImplementationFromRawBytes<PlatypusApplicationBase>(entity.AssemblyRaw);
                 applicationBase.ApplicationGuid = entity.Guid;
+                _applications.Add(applicationBase.ApplicationGuid, applicationBase);
                 _applicationResolver.Resolve(applicationBase);
             });
         }
