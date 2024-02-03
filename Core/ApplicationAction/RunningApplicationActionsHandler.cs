@@ -39,7 +39,7 @@ namespace Core.ApplicationAction
                 ActionGuid = actionRun.ActionGuid,
                 Parameters = actionRun.Parameters
             });
-            actionRun.Guid = entity.ActionGuid;
+            actionRun.Guid = entity.Guid;
             _applicationActionRuns.Add(entity.Guid, actionRun);
             return actionRun;
         }

@@ -26,12 +26,14 @@ namespace Core.ApplicationAction
         private readonly IRepositoryConsumeOperator<ApplicationActionEntity> _applicationActionRepositoryConsumeOperator;
         private readonly IRepositoryRemoveOperator<ApplicationActionEntity, string> _applicationActionRepositoryRemoveOperator;
         private readonly IRepositoryAddOperator<ApplicationActionRun> _applicationActionRunAddOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationActionRun,string> _applicationActionRunRemoveOperator;
         private readonly IEventHandlerRunner _eventhHandlerRunner;
 
         public ApplicationActionsHandler(
             IRepositoryConsumeOperator<ApplicationActionEntity> applicationActionRepositoryConsumeOperator,
             IRepositoryRemoveOperator<ApplicationActionEntity, string> applicationActionRepositoryRemoveOperator,
             IRepositoryAddOperator<ApplicationActionRun> applicationActionRunAddOperator,
+            IRepositoryRemoveOperator<ApplicationActionRun, string> applicationActionRunRemoveOperator,
             IEventHandlerRunner eventhHandlerRunner
         )
         {
@@ -39,6 +41,7 @@ namespace Core.ApplicationAction
             _applicationActionRepositoryConsumeOperator = applicationActionRepositoryConsumeOperator;
             _applicationActionRepositoryRemoveOperator = applicationActionRepositoryRemoveOperator;
             _applicationActionRunAddOperator = applicationActionRunAddOperator;
+            _applicationActionRunRemoveOperator = applicationActionRunRemoveOperator;
             _eventhHandlerRunner = eventhHandlerRunner;
         }
 
@@ -145,6 +148,8 @@ namespace Core.ApplicationAction
                 }
                 return null;
             });
+
+            _applicationActionRunRemoveOperator.Remove(run.Guid);
         }
 
         private ApplicationActionRunResult BeforeApplicationActionRun(ApplicationAction applicationAction, ActionRunEventHandlerEnvironment eventEnv)
