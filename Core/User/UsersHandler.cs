@@ -1,10 +1,15 @@
 ﻿using Core.Persistance.Entity;
 using Core.User.Abstract;
+using PlatypusAPI.ServerFunctionParameter;
 using PlatypusRepository;
 
 namespace Core.User
 {
-    internal class UsersHandler : IRepository<UserEntity>
+    internal class UsersHandler : 
+        IRepositoryAddOperator<UserCreationParameter>,
+        IRepositoryUpdateOperator<UserUpdateParameter>,
+        IRepositoryRemoveOperator<RemoveUserParameter>,
+        IRepositoryConsumeOperator<UserEntity>
     {
         private readonly IRepository<UserEntity> _userRepository;
         private readonly IUserValidator _userValidator;
@@ -18,21 +23,41 @@ namespace Core.User
             _userValidator = userValidator;
         }
 
-        public UserEntity Add(UserEntity entity)
+        public UserCreationParameter Add(UserCreationParameter parameter)
         {
-            _userValidator.Validate(entity.ConnectionMethodGuid, entity.Data);
-            return _userRepository.Add(entity);
+            _userValidator.Validate(parameter.ConnectionMethodGuid, parameter.Data);
+            _userRepository.Add(new UserEntity()
+            {
+                ConnectionMethodGuid = parameter.ConnectionMethodGuid,
+                Data = parameter.Data,
+                FullName = parameter.FullName,
+                UserPermissionBits = parameter.UserPermissionFlags,
+                Email = parameter.Email
+            });
+            return parameter;
         }
 
-        public UserEntity Update(UserEntity entity)
+        public UserUpdateParameter Update(UserUpdateParameter parameter)
         {
-            _userValidator.Validate(entity.ConnectionMethodGuid, entity.Data);
-            return _userRepository.Update(entity);
+            _userValidator.Validate(parameter.ConnectionMethodGuid, parameter.Data);
+            _userRepository.Update(new UserEntity()
+            {
+                Guid = parameter.Guid,
+                ConnectionMethodGuid = parameter.ConnectionMethodGuid,
+                Data = parameter.Data,
+                FullName = parameter.FullName,
+                UserPermissionBits = parameter.UserPermissionFlags,
+                Email = parameter.Email
+            });
+            return parameter;
         }
 
-        public void Remove(UserEntity entity)
+        public void Remove(RemoveUserParameter parameter)
         {
-            _userRepository.Remove(entity);
+            _userRepository.Remove(new UserEntity()
+            {
+                Guid = parameter.Guid
+            });
         }
 
         public void Consume(Action<UserEntity> consumer, Predicate<UserEntity> condition = null)

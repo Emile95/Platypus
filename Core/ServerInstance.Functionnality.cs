@@ -35,17 +35,10 @@ namespace Core
         public UserAccount AddUser(UserAccount userAccount, UserCreationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.UserCRUD);
-            UserEntity entity = _usersHandler.Add(new UserEntity()
-            {
-                ConnectionMethodGuid = parameter.ConnectionMethodGuid,
-                Data = parameter.Data,
-                Email = parameter.Email,
-                FullName = parameter.FullName,
-                UserPermissionBits = parameter.UserPermissionFlags
-            });
+            _userAddOperator.Add(parameter);
+
             return new UserAccount()
             {
-                Guid = entity.Guid,
                 FullName = parameter.FullName,
                 Email = parameter.Email,
                 UserPermissionFlags = parameter.UserPermissionFlags
@@ -55,18 +48,11 @@ namespace Core
         public UserAccount UpdateUser(UserAccount userAccount, UserUpdateParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.UserCRUD);
-            UserEntity entity = _usersHandler.Update(new UserEntity()
-            {
-                Guid = parameter.Guid,
-                ConnectionMethodGuid = parameter.ConnectionMethodGuid,
-                Data = parameter.Data,
-                Email = parameter.Email,
-                FullName = parameter.FullName,
-                UserPermissionBits = parameter.UserPermissionFlags
-            });
+            _userUpdateOperator.Update(parameter);
+
             return new UserAccount()
             {
-                Guid = entity.Guid,
+                Guid = parameter.Guid,
                 FullName = parameter.FullName,
                 Email = parameter.Email,
                 UserPermissionFlags = parameter.UserPermissionFlags
@@ -76,29 +62,20 @@ namespace Core
         public void RemoveUser(UserAccount userAccount, RemoveUserParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.UserCRUD);
-            _usersHandler.Remove(new UserEntity()
-            {
-                Guid = parameter.Guid
-            });
+            _userRemoveOperator.Remove(parameter);
         }
 
         public void CancelRunningApplicationAction(UserAccount userAccount, CancelRunningActionParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.CancelRunningAction);
-            _runningApplicationActionEntityRemoveOperator.Remove(new RunningApplicationActionEntity() 
-            {
-                Guid = parameter.Guid
-            });
+            _cancelRunningActionOperator.Remove(parameter);
         }
 
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions(UserAccount userAccount)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.GetRunningActions);
             List<ApplicationActionRunInfo> runInfos = new List<ApplicationActionRunInfo>();
-            _runningApplicationActionEntityConsumeOperator.Consume((entity) => runInfos.Add(new ApplicationActionRunInfo()
-            {
-                Guid = entity.Guid
-            }));;
+            _actionRunInfoConsumer.Consume((runIfo) => runInfos.Add(runIfo));
             return runInfos;
         }
 
@@ -106,10 +83,7 @@ namespace Core
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.GetActionsInfo);
             List<ApplicationActionInfo> actionInfos = new List<ApplicationActionInfo>();
-            _applicationActionEntityConsumeOperator.Consume((entity) => actionInfos.Add(new ApplicationActionInfo()
-            {
-                Guid = entity.Guid
-            }));
+            _actionInfoConsumer.Consume((actionInfo) => actionInfos.Add(actionInfo));
             return actionInfos;
         }
     }

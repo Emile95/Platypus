@@ -12,15 +12,17 @@ using PlatypusRepository;
 using Core.Persistance.Entity;
 using Core.Abstract;
 using Core.ApplicationAction.Abstract;
+using PlatypusAPI.ApplicationAction;
+using PlatypusAPI.ServerFunctionParameter;
 
 namespace Core.ApplicationAction
 {
     internal class ApplicationActionsHandler : 
         IApplicationAttributeMethodResolver<ActionDefinitionAttribute>,
-        IRepositoryConsumeOperator<ApplicationActionEntity>,
+        IRepositoryConsumeOperator<ApplicationActionInfo>,
         IRepositoryRemoveOperator<ApplicationActionEntity>,
-        IRepositoryRemoveOperator<RunningApplicationActionEntity>,
-        IRepositoryConsumeOperator<RunningApplicationActionEntity>,
+        IRepositoryRemoveOperator<CancelRunningActionParameter>,
+        IRepositoryConsumeOperator<ApplicationActionRunInfo>,
         IApplicationActionRunner,
         IServerStarter
     {
@@ -133,41 +135,59 @@ namespace Core.ApplicationAction
             foreach (ApplicationActionRun applicationActionRun in _applicationActionRuns.Values)
             {
                 if (applicationActionRun.ActionGuid == entity.Guid)
-                    Remove(new RunningApplicationActionEntity() { Guid = entity.Guid });
+                    Remove(new CancelRunningActionParameter() { Guid = entity.Guid });
             }
             _applicationActions.Remove(entity.Guid);
             _applicationActionRepositoryRemoveOperator.Remove(entity);
         }
 
-        public void Remove(RunningApplicationActionEntity entity)
+        public void Remove(CancelRunningActionParameter parameter)
         {
-            if (_applicationActionRuns.ContainsKey(entity.Guid) == false) throw new Exception($"No action with guid '{entity.Guid}' is runiing");
+            if (_applicationActionRuns.ContainsKey(parameter.Guid) == false) throw new Exception($"No action with guid '{parameter.Guid}' is runiing");
 
             CancelRunningActionEventHandlerEnvironment eventEnv = new CancelRunningActionEventHandlerEnvironment()
             {
-                RunningActionGuid = entity.Guid
+                RunningActionGuid = parameter.Guid
             };
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeCancelApplicationRun, eventEnv, (exception) => throw exception);
 
-            ApplicationActionRun run = _applicationActionRuns[entity.Guid];
-            _applicationActionRuns.Remove(entity.Guid);
+            ApplicationActionRun run = _applicationActionRuns[parameter.Guid];
+            _applicationActionRuns.Remove(parameter.Guid);
 
-            _runningApplicationActionRepositoryRemoveOperator.Remove(new RunningApplicationActionEntity() { Guid = entity.Guid });
+            _runningApplicationActionRepositoryRemoveOperator.Remove(new RunningApplicationActionEntity() { Guid = parameter.Guid });
 
             run.Cancel();
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterCancelApplicationRun, eventEnv, (exception) => throw exception);
         }
 
-        public void Consume(Action<ApplicationActionEntity> consumer, Predicate<ApplicationActionEntity> condition = null)
+        public void Consume(Action<ApplicationActionInfo> consumer, Predicate<ApplicationActionInfo> condition = null)
         {
-            _applicationActionRepositoryConsumeOperator.Consume(consumer, condition);
+            _applicationActionRepositoryConsumeOperator.Consume((entity) => {
+                ApplicationActionInfo applicationActionInfo = new ApplicationActionInfo()
+                {
+                    Guid = entity.Guid,
+                };
+                if (condition == null) consumer(applicationActionInfo);
+                else
+                    if(condition(applicationActionInfo))
+                        consumer(applicationActionInfo);
+            });
         }
 
-        public void Consume(Action<RunningApplicationActionEntity> consumer, Predicate<RunningApplicationActionEntity> condition = null)
+        public void Consume(Action<ApplicationActionRunInfo> consumer, Predicate<ApplicationActionRunInfo> condition = null)
         {
-            _runningApplicationActionRepositoryConsumeOperator.Consume(consumer, condition);
+            _runningApplicationActionRepositoryConsumeOperator.Consume((entity) => {
+                ApplicationActionRunInfo applicationActionRunInfo = new ApplicationActionRunInfo()
+                {
+                    Guid = entity.Guid,
+                };
+                if (condition == null) consumer(applicationActionRunInfo);
+                else
+                    if (condition(applicationActionRunInfo))
+                    consumer(applicationActionRunInfo);
+            });
         }
 
         private void ApplicationActionRunCallBack(ApplicationActionRun run, ActionRunEventHandlerEnvironment eventEnv)

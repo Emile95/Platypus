@@ -18,6 +18,9 @@ using PlatypusRepository;
 using Core.Persistance.Entity;
 using PlatypusRepository.Json;
 using Core.ApplicationAction.Abstract;
+using PlatypusAPI.ServerFunctionParameter;
+using PlatypusAPI.ApplicationAction;
+using PlatypusAPI.ApplicationAction.Run;
 
 namespace Core
 {
@@ -25,16 +28,19 @@ namespace Core
     {
         private ServerConfig _config;
         private List<IServerStarter> _serverStarters;
-        private IUserAuthentificator _userAuthentificator;
-        private IRepository<UserEntity> _usersHandler;
         private ISeverPortListener _restAPIHandler;
         private ISeverPortListener _tcpServerSocketHandler;
+        private IUserAuthentificator _userAuthentificator;
+        private IRepositoryAddOperator<UserCreationParameter> _userAddOperator;
+        private IRepositoryUpdateOperator<UserUpdateParameter> _userUpdateOperator;
+        private IRepositoryRemoveOperator<RemoveUserParameter> _userRemoveOperator;
+        private IRepositoryRemoveOperator<CancelRunningActionParameter> _cancelRunningActionOperator;
+        private IRepositoryConsumeOperator<ApplicationActionRunInfo> _actionRunInfoConsumer;
+        private IRepositoryConsumeOperator<ApplicationActionInfo> _actionInfoConsumer;
         private IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
         private IApplicationPackageUninstaller<string> _applicationPackageUninstaller;
         private IApplicationActionRunner _applicationActionRunner;
-        private IRepositoryRemoveOperator<RunningApplicationActionEntity> _runningApplicationActionEntityRemoveOperator;
-        private IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionEntityConsumeOperator;
-        private IRepositoryConsumeOperator<ApplicationActionEntity> _applicationActionEntityConsumeOperator;
+        
         private EventsHandler _eventsHandler;
 
         public void Initialize(string[] args)
@@ -56,10 +62,14 @@ namespace Core
 
             _userAuthentificator = userAuthentificationHandler;
 
-            _usersHandler = new UsersHandler(
+            UsersHandler usersHandler = new UsersHandler(
                 userRepository,
                 userAuthentificationHandler
              );
+
+            _userAddOperator = usersHandler;
+            _userUpdateOperator = usersHandler;
+            _userRemoveOperator = usersHandler;
 
             ApplicationActionsHandler applicationActionsHandler = new ApplicationActionsHandler(
                 runningApplicationActionRepository,
@@ -70,9 +80,9 @@ namespace Core
                 _eventsHandler
             );
 
-            _runningApplicationActionEntityRemoveOperator = applicationActionsHandler;
-            _runningApplicationActionEntityConsumeOperator = applicationActionsHandler;
-            _applicationActionEntityConsumeOperator = applicationActionsHandler;
+            _cancelRunningActionOperator = applicationActionsHandler;
+            _actionRunInfoConsumer = applicationActionsHandler;
+            _actionInfoConsumer = applicationActionsHandler;
             _applicationActionRunner = applicationActionsHandler;
 
             ApplicationInstaller applicationInstaller = new ApplicationInstaller(
