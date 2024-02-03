@@ -1,7 +1,7 @@
 ﻿using PlatypusAPI.ApplicationAction.Run;
 using PlatypusFramework.Core.ApplicationAction;
 
-namespace Core.ApplicationAction.Run
+namespace Core.ApplicationAction
 {
     public class ApplicationActionRun
     {
@@ -12,6 +12,11 @@ namespace Core.ApplicationAction.Run
         public ApplicationActionRunResult Result { get; private set; }
         public Dictionary<string, object> Parameters;
         public Task Task { get; private set; }
+
+        public string GetRunningActionGuid()
+        {
+            return ActionGuid + "-" + Guid;
+        }
 
         public void StartRun(ApplicationAction action, ApplicationActionRunParameter parameter, Action runCallBack)
         {
@@ -31,7 +36,7 @@ namespace Core.ApplicationAction.Run
         private void RunAction(Func<ApplicationActionRunResult> action, Action runCallBack)
         {
             Result = action();
-            switch(Result.Status)
+            switch (Result.Status)
             {
                 case ApplicationActionRunResultStatus.Success:
                     Status = ApplicationActionRunInfoStatus.Finish;

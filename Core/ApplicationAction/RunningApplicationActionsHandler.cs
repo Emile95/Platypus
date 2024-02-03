@@ -1,6 +1,4 @@
-﻿using Core.Abstract;
-using Core.ApplicationAction.Run;
-using Core.Event.Abstract;
+﻿using Core.Event.Abstract;
 using Core.Persistance.Entity;
 using PlatypusAPI.ApplicationAction.Run;
 using PlatypusFramework.Core.Event;
@@ -33,13 +31,15 @@ namespace Core.ApplicationAction
 
         public ApplicationActionRun Add(ApplicationActionRun actionRun)
         {
+            string runningActionGuid = actionRun.GetRunningActionGuid();
             RunningApplicationActionEntity entity = _runningApplicationActionEntityAddOperator.Add(new RunningApplicationActionEntity()
             {
+                Guid = runningActionGuid,
                 ActionGuid = actionRun.ActionGuid,
+                ActionRunGuid = actionRun.Guid,
                 Parameters = actionRun.Parameters
             });
-            actionRun.Guid = entity.Guid;
-            _applicationActionRuns.Add(entity.Guid, actionRun);
+            _applicationActionRuns.Add(runningActionGuid, actionRun);
             return actionRun;
         }
 
@@ -81,18 +81,12 @@ namespace Core.ApplicationAction
             _eventhHandlerRunner.Run<object>(EventHandlerType.BeforeCancelApplicationRun, eventEnv, (exception) => throw exception);
 
             ApplicationActionRun run = _applicationActionRuns[id];
-            _applicationActionRuns.Remove(id);
-
-            _runningApplicationActionEntityRemoveOperator.Remove(id);
-
             run.Cancel();
 
-            _eventhHandlerRunner.Run<object>(EventHandlerType.AfterCancelApplicationRun, eventEnv, (exception) => throw exception);
-        }
+            _applicationActionRuns.Remove(id);
+            _runningApplicationActionEntityRemoveOperator.Remove(id);
 
-        public void Start()
-        {
-            
+            _eventhHandlerRunner.Run<object>(EventHandlerType.AfterCancelApplicationRun, eventEnv, (exception) => throw exception);
         }
     }
 }

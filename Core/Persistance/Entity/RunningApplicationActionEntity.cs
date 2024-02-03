@@ -11,6 +11,9 @@ namespace Core.Persistance.Entity
         [TextFile(FileName = "actionGuid")]
         public string ActionGuid { get; set; }
 
+        [TextFile(FileName = "actionRunGuid")]
+        public string ActionRunGuid { get; set; }
+
         [JsonFile(FileName = "parameters")]
         public Dictionary<string, object> Parameters { get; set; }
     }

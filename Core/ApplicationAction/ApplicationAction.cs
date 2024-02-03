@@ -4,11 +4,9 @@ using PlatypusFramework.Core.ApplicationAction;
 using PlatypusFramework.Configuration.Application;
 using PlatypusFramework.Configuration.ApplicationAction;
 using System.Reflection;
-using PlatypusAPI.ApplicationAction;
 using PlatypusFramework.Confugration;
 using PlatypusUtils;
 using Core.Ressource;
-using Core.ApplicationAction.Run;
 using PlatypusRepository;
 using Core.Persistance.Entity;
 using Core.Persistance.Repository;
@@ -143,7 +141,7 @@ namespace Core.ApplicationAction
             ApplicationActionRunEntity entity = new ApplicationActionRunEntity();
             _applicationActionRunRepositoryAddOperator.Add(entity);
 
-            applicationActionRun.Guid = runActionParameter.Guid + "-" + entity.Guid;
+            applicationActionRun.Guid = entity.Guid;
 
             return applicationActionRun;
         }

@@ -1,5 +1,4 @@
-﻿using Core.ApplicationAction.Run;
-using PlatypusAPI.ApplicationAction.Run;
+﻿using PlatypusAPI.ApplicationAction.Run;
 using PlatypusFramework.Core.ApplicationAction;
 using PlatypusFramework.Configuration.Application;
 using PlatypusFramework.Configuration.ApplicationAction;
@@ -20,8 +19,8 @@ namespace Core.ApplicationAction
         IApplicationAttributeMethodResolver<ActionDefinitionAttribute>,
         IRepositoryConsumeOperator<ApplicationActionInfo>,
         IRepositoryRemoveOperator<ApplicationAction, string>,
-        IApplicationActionRunner,
-        IServerStarter<RunningApplicationActionEntity>
+        IServerStarter<RunningApplicationActionEntity>,
+        IApplicationActionRunner
     {
         private readonly Dictionary<string, ApplicationAction> _applicationActions;
         private readonly IRepositoryConsumeOperator<ApplicationActionEntity> _applicationActionRepositoryConsumeOperator;
@@ -56,6 +55,13 @@ namespace Core.ApplicationAction
 
             ApplicationAction applicationAction = new ApplicationAction(application, attribute, method, actionGuid);
             _applicationActions.Add(actionGuid, applicationAction);
+        }
+
+        public void Start()
+        {
+            _runningApplicationActionEntityConsumeOperator.Consume((entity) => {
+
+            });
         }
 
         public ApplicationActionRunResult Run(ApplicationActionRunParameter runActionParameter)
@@ -101,7 +107,6 @@ namespace Core.ApplicationAction
 
             if (runActionParameter.Async)
             {
-                
                 string message = Utils.GetString(Strings.ResourceManager,"NewApplicationActionStarted");
                 return new ApplicationActionRunResult()
                 {
@@ -120,8 +125,6 @@ namespace Core.ApplicationAction
             _applicationActions.Remove(id);
             _applicationActionRepositoryRemoveOperator.Remove(id);
         }
-
-        
 
         public void Consume(Action<ApplicationActionInfo> consumer, Predicate<ApplicationActionInfo> condition = null)
         {
@@ -153,7 +156,7 @@ namespace Core.ApplicationAction
                 return null;
             });
 
-            _applicationActionRunRemoveOperator.Remove(run.Guid);
+            _applicationActionRunRemoveOperator.Remove(run.GetRunningActionGuid());
         }
 
         private ApplicationActionRunResult BeforeApplicationActionRun(ApplicationAction applicationAction, ActionRunEventHandlerEnvironment eventEnv)
@@ -167,13 +170,6 @@ namespace Core.ApplicationAction
             });
 
             return null;
-        }
-
-        public void Start()
-        {
-            _runningApplicationActionEntityConsumeOperator.Consume((entity) => { 
-                
-            });
         }
     }
 }
