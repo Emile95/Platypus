@@ -30,6 +30,7 @@ builder.ConfigureServices((configure) => {
     configure.AddHostedService<ServerInstance>();
 
     ApplicationRepository applicationRepository = new ApplicationRepository();
+
     configure.AddSingleton<IRepositoryAddOperator<ApplicationEntity>>(applicationRepository);
     configure.AddSingleton<IRepositoryConsumeOperator<ApplicationEntity>>(applicationRepository);
     configure.AddSingleton<IRepositoryRemoveOperator<ApplicationEntity, string>>(applicationRepository);
@@ -51,39 +52,44 @@ builder.ConfigureServices((configure) => {
     configure.AddSingleton<IRepositoryUpdateOperator<UserEntity>>(userRepository);
     configure.AddSingleton<IRepositoryRemoveOperator<UserEntity, string>>(userRepository);
 
-    configure.AddSingleton<IApplicationAttributeMethodResolver<EventHandlerAttribute>, EventsHandler>();
-    configure.AddSingleton<IEventHandlerRunner, EventsHandler>();
-
     configure.AddSingleton<IApplicationResolver<PlatypusApplicationBase>, ApplicationResolver>();
     configure.AddSingleton<IApplicationUninstaller, ApplicationUninstaller>();
     configure.AddSingleton<IApplicationInstaller, ApplicationInstaller>();
 
-    configure.AddSingleton<IRepositoryRemoveOperator<PlatypusApplicationBase, string>, ApplicationsHandler>();
-    configure.AddSingleton<IRepositoryAddOperator<PlatypusApplicationBase>, ApplicationsHandler>();
-    configure.AddSingleton<IGuidValidator<PlatypusApplicationBase>, ApplicationsHandler>();
-    configure.AddSingleton<IGetterByGuid<PlatypusApplicationBase>, ApplicationsHandler>();
+    configure.AddSingleton<EventsHandler>();
+    configure.AddSingleton<IApplicationAttributeMethodResolver<EventHandlerAttribute>>(provider => provider.GetRequiredService<EventsHandler>());
+    configure.AddSingleton<IEventHandlerRunner>(provider => provider.GetRequiredService<EventsHandler>());
 
-    configure.AddSingleton<IApplicationAttributeMethodResolver<ActionDefinitionAttribute>, ApplicationActionsHandler>();
-    configure.AddSingleton<IRepositoryConsumeOperator<ApplicationActionInfo>, ApplicationActionsHandler>();
-    configure.AddSingleton<IRepositoryRemoveOperator<ApplicationAction, string>, ApplicationActionsHandler>();
-    configure.AddSingleton<IApplicationActionRunner, ApplicationActionsHandler>();
+    configure.AddSingleton<ApplicationsHandler>();
+    configure.AddSingleton<IRepositoryRemoveOperator<PlatypusApplicationBase, string>>(provider => provider.GetRequiredService<ApplicationsHandler>());
+    configure.AddSingleton<IRepositoryAddOperator<PlatypusApplicationBase>>(provider => provider.GetRequiredService<ApplicationsHandler>());
+    configure.AddSingleton<IGuidValidator<PlatypusApplicationBase>>(provider => provider.GetRequiredService<ApplicationsHandler>());
+    configure.AddSingleton<IGetterByGuid<PlatypusApplicationBase>>(provider => provider.GetRequiredService<ApplicationsHandler>());
+    configure.AddSingleton<IServerStarter<ApplicationsHandler>>(provider => provider.GetRequiredService<ApplicationsHandler>());
 
-    configure.AddSingleton<IRepositoryRemoveOperator<ApplicationActionRun, string>, RunningApplicationActionsHandler>();
-    configure.AddSingleton<IRepositoryConsumeOperator<ApplicationActionRun>, RunningApplicationActionsHandler>();
-    configure.AddSingleton<IRepositoryConsumeOperator<ApplicationActionRunInfo>, RunningApplicationActionsHandler>();
-    configure.AddSingleton<IRepositoryAddOperator<ApplicationActionRun>, RunningApplicationActionsHandler>();
+    configure.AddSingleton<ApplicationActionsHandler>();
+    configure.AddSingleton<IApplicationAttributeMethodResolver<ActionDefinitionAttribute>>(provider => provider.GetRequiredService<ApplicationActionsHandler>());
+    configure.AddSingleton<IRepositoryConsumeOperator<ApplicationActionInfo>>(provider => provider.GetRequiredService<ApplicationActionsHandler>());
+    configure.AddSingleton<IRepositoryRemoveOperator<ApplicationAction, string>>(provider => provider.GetRequiredService<ApplicationActionsHandler>());
+    configure.AddSingleton<IApplicationActionRunner>(provider => provider.GetRequiredService<ApplicationActionsHandler>());
 
-    configure.AddSingleton<IUserAuthentificator, UserAuthentificationHandler>();
-    configure.AddSingleton<IApplicationAttributeMethodResolver<UserConnectionMethodCreatorAttribute>, UserAuthentificationHandler>();
-    configure.AddSingleton<IUserValidator, UserAuthentificationHandler>();
+    configure.AddSingleton<RunningApplicationActionsHandler>();
+    configure.AddSingleton<IRepositoryRemoveOperator<ApplicationActionRun, string>>(provider => provider.GetRequiredService<RunningApplicationActionsHandler>());
+    configure.AddSingleton<IRepositoryConsumeOperator<ApplicationActionRun>>(provider => provider.GetRequiredService<RunningApplicationActionsHandler>());
+    configure.AddSingleton<IRepositoryConsumeOperator<ApplicationActionRunInfo>>(provider => provider.GetRequiredService<RunningApplicationActionsHandler>());
+    configure.AddSingleton<IRepositoryAddOperator<ApplicationActionRun>>(provider => provider.GetRequiredService<RunningApplicationActionsHandler>());
+    configure.AddSingleton<IServerStarter<RunningApplicationActionsHandler>>(provider => provider.GetRequiredService<RunningApplicationActionsHandler>());
 
-    configure.AddSingleton<IRepositoryAddOperator<UserCreationParameter>, UsersHandler>();
-    configure.AddSingleton<IRepositoryUpdateOperator<UserUpdateParameter>, UsersHandler>();
-    configure.AddSingleton<IRepositoryRemoveOperator<RemoveUserParameter, string>, UsersHandler>();
-    configure.AddSingleton<IRepositoryConsumeOperator<UserEntity>, UsersHandler>();
+    configure.AddSingleton<UserAuthentificationHandler>();
+    configure.AddSingleton<IUserAuthentificator>(provider => provider.GetRequiredService<UserAuthentificationHandler>());
+    configure.AddSingleton<IApplicationAttributeMethodResolver<UserConnectionMethodCreatorAttribute>>(provider => provider.GetRequiredService<UserAuthentificationHandler>());
+    configure.AddSingleton<IUserValidator>(provider => provider.GetRequiredService<UserAuthentificationHandler>());
 
-    configure.AddSingleton<IServerStarter<ApplicationsHandler>, ApplicationsHandler>();
-    configure.AddSingleton<IServerStarter<RunningApplicationActionsHandler>, RunningApplicationActionsHandler>();
+    configure.AddSingleton<UsersHandler>();
+    configure.AddSingleton<IRepositoryAddOperator<UserCreationParameter>>(provider => provider.GetRequiredService<UsersHandler>());
+    configure.AddSingleton<IRepositoryUpdateOperator<UserUpdateParameter>>(provider => provider.GetRequiredService<UsersHandler>());
+    configure.AddSingleton<IRepositoryRemoveOperator<RemoveUserParameter, string>>(provider => provider.GetRequiredService<UsersHandler>());
+    configure.AddSingleton<IRepositoryConsumeOperator<UserEntity>>(provider => provider.GetRequiredService<UsersHandler>());
 });
 
 
