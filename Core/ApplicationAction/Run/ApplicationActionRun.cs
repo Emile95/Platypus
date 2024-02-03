@@ -21,15 +21,6 @@ namespace Core.ApplicationAction.Run
             Result = new ApplicationActionRunResult();
         }
 
-        public ApplicationActionRunInfo GetInfo()
-        {
-            return new ApplicationActionRunInfo()
-            {
-                Guid = this.Guid,
-                Status = this.Status
-            };
-        }
-
         public void Cancel()
         {
             Env.ActionCancelled = true;

@@ -28,7 +28,7 @@ namespace Core.User
             _userRepository = userRepository;
         }
 
-        public UserAccount Connect(string connectionMethodGuid, Dictionary<string, object> credentials)
+        public UserAccount Authentify(string connectionMethodGuid, Dictionary<string, object> credentials)
         {
             if (_connectionMethods.ContainsKey(connectionMethodGuid) == false) throw new InvalidUserConnectionMethodGuidException(connectionMethodGuid);
             string loginAttemtMessage = "";

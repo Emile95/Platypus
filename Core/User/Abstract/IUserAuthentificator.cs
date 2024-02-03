@@ -4,6 +4,6 @@ namespace Core.User.Abstract
 {
     internal interface IUserAuthentificator
     {
-        UserAccount Connect(string connectionMethodGuid, Dictionary<string, object> credentials);
+        UserAccount Authentify(string connectionMethodGuid, Dictionary<string, object> credentials);
     }
 }

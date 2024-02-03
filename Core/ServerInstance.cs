@@ -17,6 +17,7 @@ using Core.User.Abstract;
 using PlatypusRepository;
 using Core.Persistance.Entity;
 using PlatypusRepository.Json;
+using Core.ApplicationAction.Abstract;
 
 namespace Core
 {
@@ -24,13 +25,16 @@ namespace Core
     {
         private ServerConfig _config;
         private List<IServerStarter> _serverStarters;
-        private IUserAuthentificator _serverConnector;
+        private IUserAuthentificator _userAuthentificator;
         private IRepository<UserEntity> _usersHandler;
         private ISeverPortListener _restAPIHandler;
         private ISeverPortListener _tcpServerSocketHandler;
         private IApplicationPackageInstaller<PlatypusApplicationBase> _applicationPackageInstaller;
         private IApplicationPackageUninstaller<string> _applicationPackageUninstaller;
-        private ApplicationActionsHandler _applicationActionsHandler;
+        private IApplicationActionRunner _applicationActionRunner;
+        private IRepositoryRemoveOperator<RunningApplicationActionEntity> _runningApplicationActionEntityRemoveOperator;
+        private IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionEntityConsumeOperator;
+        private IRepositoryConsumeOperator<ApplicationActionEntity> _applicationActionEntityConsumeOperator;
         private EventsHandler _eventsHandler;
 
         public void Initialize(string[] args)
@@ -45,23 +49,32 @@ namespace Core
             RunningApplicationActionRepository runningApplicationActionRepository = new RunningApplicationActionRepository();
             IRepository<UserEntity> userRepository = new JsonRepository<UserEntity>(ApplicationPaths.USERSDIRECTORYPATH);
 
-            UserAuthentificationHandler serverConnectionHandler = new UserAuthentificationHandler(userRepository);
-            serverConnectionHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
+            UserAuthentificationHandler userAuthentificationHandler = new UserAuthentificationHandler(userRepository);
+            userAuthentificationHandler.AddBuiltInConnectionMethod(new PlatypusUserConnectionMethod(), BuiltInUserConnectionMethodGuid.PlatypusUser);
 
             _eventsHandler = new EventsHandler();
 
-            _serverConnector = serverConnectionHandler;
+            _userAuthentificator = userAuthentificationHandler;
 
             _usersHandler = new UsersHandler(
                 userRepository,
-                serverConnectionHandler
+                userAuthentificationHandler
              );
 
-            _applicationActionsHandler = new ApplicationActionsHandler(
+            ApplicationActionsHandler applicationActionsHandler = new ApplicationActionsHandler(
                 runningApplicationActionRepository,
+                runningApplicationActionRepository,
+                runningApplicationActionRepository,
+                applicationActionRepository,
+                applicationActionRepository,
                 _eventsHandler
             );
-     
+
+            _runningApplicationActionEntityRemoveOperator = applicationActionsHandler;
+            _runningApplicationActionEntityConsumeOperator = applicationActionsHandler;
+            _applicationActionEntityConsumeOperator = applicationActionsHandler;
+            _applicationActionRunner = applicationActionsHandler;
+
             ApplicationInstaller applicationInstaller = new ApplicationInstaller(
                 applicationRepository,
                 applicationRepository,
@@ -69,9 +82,9 @@ namespace Core
             );
 
             ApplicationResolver applicationResolver = new ApplicationResolver(
-                _applicationActionsHandler,
+                applicationActionsHandler,
                 _eventsHandler,
-                serverConnectionHandler
+                userAuthentificationHandler
             );
 
             ApplicationsHandler applicationsHandler = new ApplicationsHandler(
@@ -90,7 +103,7 @@ namespace Core
             _applicationPackageUninstaller = applicationsHandler;
 
             _serverStarters.Add(applicationsHandler);
-            _serverStarters.Add(_applicationActionsHandler);
+            _serverStarters.Add(applicationActionsHandler);
         }
 
         public void Start()

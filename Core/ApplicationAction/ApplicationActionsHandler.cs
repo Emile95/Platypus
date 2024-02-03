@@ -6,42 +6,49 @@ using PlatypusFramework.Configuration.ApplicationAction;
 using System.Reflection;
 using Core.Event;
 using PlatypusFramework.Core.Event;
-using PlatypusAPI.ApplicationAction;
-using PlatypusAPI.ServerFunctionParameter;
 using PlatypusUtils;
 using Core.Ressource;
 using PlatypusRepository;
 using Core.Persistance.Entity;
-using Core.Persistance.Repository;
 using Core.Abstract;
+using Core.ApplicationAction.Abstract;
 
 namespace Core.ApplicationAction
 {
     internal class ApplicationActionsHandler : 
         IApplicationAttributeMethodResolver<ActionDefinitionAttribute>,
+        IRepositoryConsumeOperator<ApplicationActionEntity>,
+        IRepositoryRemoveOperator<ApplicationActionEntity>,
+        IRepositoryRemoveOperator<RunningApplicationActionEntity>,
+        IRepositoryConsumeOperator<RunningApplicationActionEntity>,
+        IApplicationActionRunner,
         IServerStarter
     {
         private readonly Dictionary<string, ApplicationAction> _applicationActions;
         private readonly Dictionary<string, ApplicationActionRun> _applicationActionRuns;
-       
         private readonly IRepositoryAddOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryAddOperator;
         private readonly IRepositoryRemoveOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryRemoveOperator;
         private readonly IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionRepositoryConsumeOperator;
-
+        private readonly IRepositoryConsumeOperator<ApplicationActionEntity> _applicationActionRepositoryConsumeOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationActionEntity> _applicationActionRepositoryRemoveOperator;
         private readonly EventsHandler _eventsHandler;
 
         internal ApplicationActionsHandler(
-            RunningApplicationActionRepository runningApplicationActionRepository,
+            IRepositoryAddOperator<RunningApplicationActionEntity> runningApplicationActionRepositoryAddOperator,
+            IRepositoryRemoveOperator<RunningApplicationActionEntity> runningApplicationActionRepositoryRemoveOperator,
+            IRepositoryConsumeOperator<RunningApplicationActionEntity> runningApplicationActionRepositoryConsumeOperator,
+            IRepositoryConsumeOperator<ApplicationActionEntity> applicationActionRepositoryConsumeOperator,
+            IRepositoryRemoveOperator<ApplicationActionEntity> applicationActionRepositoryRemoveOperator,
             EventsHandler eventsHandler
         )
         {
             _applicationActions = new Dictionary<string, ApplicationAction>();
             _applicationActionRuns = new Dictionary<string, ApplicationActionRun>();
-
-            _runningApplicationActionRepositoryAddOperator = runningApplicationActionRepository;
-            _runningApplicationActionRepositoryRemoveOperator = runningApplicationActionRepository;
-            _runningApplicationActionRepositoryConsumeOperator = runningApplicationActionRepository;
-
+            _runningApplicationActionRepositoryAddOperator = runningApplicationActionRepositoryAddOperator;
+            _runningApplicationActionRepositoryRemoveOperator = runningApplicationActionRepositoryRemoveOperator;
+            _runningApplicationActionRepositoryConsumeOperator = runningApplicationActionRepositoryConsumeOperator;
+            _applicationActionRepositoryConsumeOperator = applicationActionRepositoryConsumeOperator;
+            _applicationActionRepositoryRemoveOperator = applicationActionRepositoryRemoveOperator;
             _eventsHandler = eventsHandler;
         }
 
@@ -54,23 +61,20 @@ namespace Core.ApplicationAction
             _applicationActions.Add(actionGuid, applicationAction);
         }
 
-        internal void RemoveAction(string actionGuid)
+        public ApplicationActionRunResult Run(ApplicationActionRunParameter runActionParameter)
         {
-            foreach(ApplicationActionRun applicationActionRun in _applicationActionRuns.Values)
+            if (_applicationActions.ContainsKey(runActionParameter.Guid) == false)
             {
-                if (applicationActionRun.ActionGuid == actionGuid)
-                    CancelRunningActionByGuid(applicationActionRun.Guid);
+                string message = Utils.GetString(Strings.ResourceManager, "ApplicationActionNotFound", runActionParameter.Guid);
+                return new ApplicationActionRunResult()
+                {
+                    Message = message,
+                    Status = ApplicationActionRunResultStatus.Failed,
+                };
             }
-            _applicationActions.Remove(actionGuid);
-        }
 
-        internal bool HasActionWithGuid(string actionGuid)
-        {
-            return _applicationActions.ContainsKey(actionGuid);
-        }
+            ApplicationActionEnvironmentBase env = _applicationActions[runActionParameter.Guid].CreateStartActionEnvironment();
 
-        internal ApplicationActionRunResult RunAction(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
-        {
             ApplicationAction applicationAction = _applicationActions[runActionParameter.Guid];
 
             try
@@ -86,7 +90,6 @@ namespace Core.ApplicationAction
             }
 
             ActionRunEventHandlerEnvironment actionRunEventHandlerEnvironment = new ActionRunEventHandlerEnvironment();
-            actionRunEventHandlerEnvironment.ApplicationActionInfo = applicationAction.GetInfo();
 
             ApplicationActionRunResult result = BeforeApplicationActionRun(applicationAction, actionRunEventHandlerEnvironment);
             if (result is not null) return result;
@@ -125,46 +128,46 @@ namespace Core.ApplicationAction
             return applicationActionRun.Result;
         }
 
-        public void CancelRunningAction(CancelRunningActionParameter parameter)
+        public void Remove(ApplicationActionEntity entity)
         {
-            CancelRunningActionByGuid(parameter.Guid);
+            foreach (ApplicationActionRun applicationActionRun in _applicationActionRuns.Values)
+            {
+                if (applicationActionRun.ActionGuid == entity.Guid)
+                    Remove(new RunningApplicationActionEntity() { Guid = entity.Guid });
+            }
+            _applicationActions.Remove(entity.Guid);
+            _applicationActionRepositoryRemoveOperator.Remove(entity);
         }
 
-        private void CancelRunningActionByGuid(string guid)
+        public void Remove(RunningApplicationActionEntity entity)
         {
-            if (_applicationActionRuns.ContainsKey(guid) == false) throw new Exception($"No action with guid '{guid}' is runiing");
+            if (_applicationActionRuns.ContainsKey(entity.Guid) == false) throw new Exception($"No action with guid '{entity.Guid}' is runiing");
 
             CancelRunningActionEventHandlerEnvironment eventEnv = new CancelRunningActionEventHandlerEnvironment()
             {
-                RunningActionGuid = guid
+                RunningActionGuid = entity.Guid
             };
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.BeforeCancelApplicationRun, eventEnv, (exception) => throw exception);
 
-            ApplicationActionRun run = _applicationActionRuns[guid];
-            _applicationActionRuns.Remove(guid);
+            ApplicationActionRun run = _applicationActionRuns[entity.Guid];
+            _applicationActionRuns.Remove(entity.Guid);
 
-            _runningApplicationActionRepositoryRemoveOperator.Remove(new RunningApplicationActionEntity() { Guid = guid });
+            _runningApplicationActionRepositoryRemoveOperator.Remove(new RunningApplicationActionEntity() { Guid = entity.Guid });
 
             run.Cancel();
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterCancelApplicationRun, eventEnv, (exception) => throw exception);
         }
 
-        public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActionInfos()
+        public void Consume(Action<ApplicationActionEntity> consumer, Predicate<ApplicationActionEntity> condition = null)
         {
-            return _applicationActionRuns.Values.Select(x => x.GetInfo());
-                
+            _applicationActionRepositoryConsumeOperator.Consume(consumer, condition);
         }
 
-        public IEnumerable<ApplicationActionInfo> GetApplicationActionInfos()
+        public void Consume(Action<RunningApplicationActionEntity> consumer, Predicate<RunningApplicationActionEntity> condition = null)
         {
-            return _applicationActions.Values.Select(x => x.GetInfo());
-        }
-
-        public ApplicationActionEnvironmentBase CreateStartActionEnvironment(string actionName)
-        {
-            return _applicationActions[actionName].CreateStartActionEnvironment();
+            _runningApplicationActionRepositoryConsumeOperator.Consume(consumer, condition);
         }
 
         private void ApplicationActionRunCallBack(ApplicationActionRun run, ActionRunEventHandlerEnvironment eventEnv)
@@ -176,7 +179,6 @@ namespace Core.ApplicationAction
             _runningApplicationActionRepositoryRemoveOperator.Remove(new RunningApplicationActionEntity() { Guid = run.Guid });
 
             eventEnv.ApplicationActionResult = run.Result;
-            eventEnv.ApplicationActionRunInfo = run.GetInfo();
 
             _eventsHandler.RunEventHandlers<object>(EventHandlerType.AfterApplicationActionRun, eventEnv, (exception) => {
                 if (run.Result.Status != ApplicationActionRunResultStatus.Failed)
@@ -190,8 +192,6 @@ namespace Core.ApplicationAction
 
         private ApplicationActionRunResult BeforeApplicationActionRun(ApplicationAction applicationAction, ActionRunEventHandlerEnvironment eventEnv)
         {
-            eventEnv.ApplicationActionInfo = applicationAction.GetInfo();
-
             _eventsHandler.RunEventHandlers(EventHandlerType.BeforeApplicationActionRun, eventEnv, (exception) => {
                 return new ApplicationActionRunResult()
                 {

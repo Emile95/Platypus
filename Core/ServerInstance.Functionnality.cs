@@ -1,10 +1,7 @@
 ﻿using PlatypusAPI.ApplicationAction.Run;
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.User;
-using PlatypusFramework.Core.ApplicationAction;
 using PlatypusAPI.ServerFunctionParameter;
-using PlatypusUtils;
-using Core.Ressource;
 using Core.Persistance.Entity;
 
 namespace Core
@@ -13,7 +10,7 @@ namespace Core
     {
         public UserAccount UserConnect(UserConnectionParameter parameter)
         {
-            return _serverConnector.Connect(parameter.ConnectionMethodGuid, parameter.Credential);
+            return _userAuthentificator.Authentify(parameter.ConnectionMethodGuid, parameter.Credential);
         }
 
         public bool InstallApplication(UserAccount userAccount, InstallApplicationParameter parameter)
@@ -32,19 +29,7 @@ namespace Core
         public ApplicationActionRunResult RunAction(UserAccount userAccount, ApplicationActionRunParameter runActionParameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.RunAction);
-
-            if (_applicationActionsHandler.HasActionWithGuid(runActionParameter.Guid) == false)
-            {
-                string message = Utils.GetString(Strings.ResourceManager, "ApplicationActionNotFound", runActionParameter.Guid);
-                return new ApplicationActionRunResult()
-                {
-                    Message = message,
-                    Status = ApplicationActionRunResultStatus.Failed,
-                };
-            }
-            ApplicationActionEnvironmentBase env = _applicationActionsHandler.CreateStartActionEnvironment(runActionParameter.Guid);
-
-            return _applicationActionsHandler.RunAction(runActionParameter, env);
+            return _applicationActionRunner.Run(runActionParameter);
         }
 
         public UserAccount AddUser(UserAccount userAccount, UserCreationParameter parameter)
@@ -100,19 +85,32 @@ namespace Core
         public void CancelRunningApplicationAction(UserAccount userAccount, CancelRunningActionParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.CancelRunningAction);
-            _applicationActionsHandler.CancelRunningAction(parameter);
+            _runningApplicationActionEntityRemoveOperator.Remove(new RunningApplicationActionEntity() 
+            {
+                Guid = parameter.Guid
+            });
         }
 
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions(UserAccount userAccount)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.GetRunningActions);
-            return _applicationActionsHandler.GetRunningApplicationActionInfos();
+            List<ApplicationActionRunInfo> runInfos = new List<ApplicationActionRunInfo>();
+            _runningApplicationActionEntityConsumeOperator.Consume((entity) => runInfos.Add(new ApplicationActionRunInfo()
+            {
+                Guid = entity.Guid
+            }));;
+            return runInfos;
         }
 
         public IEnumerable<ApplicationActionInfo> GetApplicationActionInfos(UserAccount userAccount)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.GetActionsInfo);
-            return _applicationActionsHandler.GetApplicationActionInfos();
+            List<ApplicationActionInfo> actionInfos = new List<ApplicationActionInfo>();
+            _applicationActionEntityConsumeOperator.Consume((entity) => actionInfos.Add(new ApplicationActionInfo()
+            {
+                Guid = entity.Guid
+            }));
+            return actionInfos;
         }
     }
 }

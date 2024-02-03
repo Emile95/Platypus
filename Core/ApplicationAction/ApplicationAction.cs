@@ -65,16 +65,6 @@ namespace Core.ApplicationAction
             }   
         }
 
-        public ApplicationActionInfo GetInfo()
-        {
-            return new ApplicationActionInfo()
-            {
-                Name = this.Name,
-                Guid = this.Guid,
-                ParentApplicationGuid = GetParentApplicationGuid()
-            };
-        }
-
         private ApplicationActionRunResult BuildAction(PlatypusApplicationBase application, ApplicationActionEnvironmentBase env, MethodInfo methodInfo)
         {
             try
