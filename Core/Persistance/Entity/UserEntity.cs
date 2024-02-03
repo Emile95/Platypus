@@ -3,7 +3,7 @@ using PlatypusRepository.Configuration;
 
 namespace Core.Persistance.Entity
 {
-    internal class UserEntity
+    public class UserEntity
     {
         [RepositoryEntityID]
         public string Guid { get; set; }

@@ -10,6 +10,7 @@ namespace Core.ApplicationAction.Run
         public ApplicationActionEnvironmentBase Env { get; set; }
         public ApplicationActionRunInfoStatus Status { get; private set; }
         public ApplicationActionRunResult Result { get; private set; }
+        public Dictionary<string, object> Parameters;
         public Task Task { get; private set; }
 
         public void StartRun(ApplicationAction action, ApplicationActionRunParameter parameter, Action runCallBack)
@@ -19,6 +20,7 @@ namespace Core.ApplicationAction.Run
             Task.Start();
 
             Result = new ApplicationActionRunResult();
+            Parameters = parameter.ActionParameters;
         }
 
         public void Cancel()

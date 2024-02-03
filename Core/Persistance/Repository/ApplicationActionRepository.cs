@@ -5,17 +5,17 @@ using PlatypusRepository.Folder.Operator;
 
 namespace Core.Persistance.Repository
 {
-    internal class ApplicationActionRepository :
+    public class ApplicationActionRepository :
         FolderRepositoryOperator<ApplicationActionEntity>,
         IRepositoryAddOperator<ApplicationActionEntity>,
-        IRepositoryRemoveOperator<ApplicationActionEntity>,
+        IRepositoryRemoveOperator<ApplicationActionEntity, string>,
         IRepositoryConsumeOperator<ApplicationActionEntity>
     {
         private readonly IRepositoryAddOperator<ApplicationActionEntity> _addOperator;
-        private readonly IRepositoryRemoveOperator<ApplicationActionEntity> _removeOperator;
+        private readonly IRepositoryRemoveOperator<ApplicationActionEntity, string> _removeOperator;
         private readonly IRepositoryConsumeOperator<ApplicationActionEntity> _consumeOperator;
 
-        internal ApplicationActionRepository()
+        public ApplicationActionRepository()
             : base(ApplicationPaths.ACTIONSDIRECTORYPATH)
         {
             _addOperator = new FolderRepositoryAddOperator<ApplicationActionEntity>(_entityType, _repositoryDirectoryPath, _entityHandler);
@@ -33,9 +33,9 @@ namespace Core.Persistance.Repository
             _consumeOperator.Consume(consumer, condition);
         }
 
-        public void Remove(ApplicationActionEntity entity)
+        public void Remove(string id)
         {
-            _removeOperator.Remove(entity);
+            _removeOperator.Remove(id);
         }
     }
 }

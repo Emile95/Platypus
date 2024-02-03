@@ -2,7 +2,7 @@
 
 namespace PlatypusRepository.Folder.Operator
 {
-    public class JsonRepositoryRemoveOperator<EntityType> : JsonRepositoryOperator<EntityType>, IRepositoryRemoveOperator<EntityType>
+    public class JsonRepositoryRemoveOperator<EntityType> : JsonRepositoryOperator<EntityType>, IRepositoryRemoveOperator<EntityType, string>
         where EntityType : class
     {
         public JsonRepositoryRemoveOperator(string repositoryDirectoryPath)
@@ -14,9 +14,8 @@ namespace PlatypusRepository.Folder.Operator
         public JsonRepositoryRemoveOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, string> folderEntityHandler)
             : base(entityType, repositoryDirectoryPath, folderEntityHandler) { }
 
-        public void Remove(EntityType entity)
+        public void Remove(string id)
         {
-            string id = _entityHandler.GetID(entity);
             string entityFilePath = Path.Combine(_repositoryDirectoryPath, id + ".json");
             File.Delete(entityFilePath);
         }

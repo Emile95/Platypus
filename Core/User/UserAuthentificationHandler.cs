@@ -12,20 +12,22 @@ using System.Reflection;
 
 namespace Core.User
 {
-    internal class UserAuthentificationHandler :
+    public class UserAuthentificationHandler :
         IApplicationAttributeMethodResolver<UserConnectionMethodCreatorAttribute>,
         IUserAuthentificator,
         IUserValidator
     {
         private readonly Dictionary<string, IUserConnectionMethod> _connectionMethods;
-        private readonly IRepository<UserEntity> _userRepository;
+        private readonly IRepository<UserEntity, string> _userRepository;
 
-        internal UserAuthentificationHandler(
-            IRepository<UserEntity> userRepository
+        public UserAuthentificationHandler(
+            IRepository<UserEntity, string> userRepository
         )
         {
             _connectionMethods = new Dictionary<string, IUserConnectionMethod>();
             _userRepository = userRepository;
+
+            _connectionMethods.Add(BuiltInUserConnectionMethodGuid.PlatypusUser, new PlatypusUserConnectionMethod());
         }
 
         public UserAccount Authentify(string connectionMethodGuid, Dictionary<string, object> credentials)
@@ -59,11 +61,6 @@ namespace Core.User
         {
             IUserConnectionMethod connectionMethod = method.Invoke(application, new object[] { }) as IUserConnectionMethod;
             AddConnectionMethod(connectionMethod, application.ApplicationGuid);
-        }
-
-        internal void AddBuiltInConnectionMethod(IUserConnectionMethod connectionMethod, string guid)
-        {
-            _connectionMethods.Add(guid, connectionMethod);
         }
 
         private string AddConnectionMethod(IUserConnectionMethod connectionMethod, string applicationGuid)

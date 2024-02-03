@@ -3,7 +3,7 @@ using PlatypusRepository.Folder.Configuration.Property;
 
 namespace Core.Persistance.Entity
 {
-    internal class RunningApplicationActionEntity
+    public class RunningApplicationActionEntity
     {
         [RepositoryEntityID]
         public string Guid { get; set; }

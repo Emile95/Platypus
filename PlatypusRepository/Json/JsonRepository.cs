@@ -3,12 +3,12 @@ using PlatypusRepository.Json.Operator;
 
 namespace PlatypusRepository.Json
 {
-    public class JsonRepository<EntityType> : IRepository<EntityType>
+    public class JsonRepository<EntityType> : IRepository<EntityType, string>
         where EntityType : class
     {
         private readonly IRepositoryAddOperator<EntityType> _addOperator;
         private readonly IRepositoryUpdateOperator<EntityType> _updateOperator;
-        private readonly IRepositoryRemoveOperator<EntityType> _removeOperator;
+        private readonly IRepositoryRemoveOperator<EntityType, string> _removeOperator;
         private readonly IRepositoryConsumeOperator<EntityType> _consumeOperator;
 
         public JsonRepository(string directoryPath)
@@ -32,9 +32,9 @@ namespace PlatypusRepository.Json
             return _updateOperator.Update(entity);
         }
 
-        public void Remove(EntityType entity)
+        public void Remove(string id)
         {
-            _removeOperator.Remove(entity);
+            _removeOperator.Remove(id);
         }
 
         public void Consume(Action<EntityType> consumer, Predicate<EntityType> condition = null)

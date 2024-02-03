@@ -5,17 +5,17 @@ using PlatypusRepository;
 
 namespace Core.User
 {
-    internal class UsersHandler : 
+    public class UsersHandler : 
         IRepositoryAddOperator<UserCreationParameter>,
         IRepositoryUpdateOperator<UserUpdateParameter>,
-        IRepositoryRemoveOperator<RemoveUserParameter>,
+        IRepositoryRemoveOperator<RemoveUserParameter, string>,
         IRepositoryConsumeOperator<UserEntity>
     {
-        private readonly IRepository<UserEntity> _userRepository;
+        private readonly IRepository<UserEntity, string> _userRepository;
         private readonly IUserValidator _userValidator;
 
-        internal UsersHandler(
-            IRepository<UserEntity> userRepository,
+        public UsersHandler(
+            IRepository<UserEntity, string> userRepository,
             IUserValidator userValidator
         )
         {
@@ -52,12 +52,9 @@ namespace Core.User
             return parameter;
         }
 
-        public void Remove(RemoveUserParameter parameter)
+        public void Remove(string id)
         {
-            _userRepository.Remove(new UserEntity()
-            {
-                Guid = parameter.Guid
-            });
+            _userRepository.Remove(id);
         }
 
         public void Consume(Action<UserEntity> consumer, Predicate<UserEntity> condition = null)

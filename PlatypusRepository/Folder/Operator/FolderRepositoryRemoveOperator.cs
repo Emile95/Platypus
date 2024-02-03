@@ -2,7 +2,7 @@
 
 namespace PlatypusRepository.Folder.Operator
 {
-    public class FolderRepositoryRemoveOperator<EntityType> : FolderRepositoryOperator<EntityType>, IRepositoryRemoveOperator<EntityType>
+    public class FolderRepositoryRemoveOperator<EntityType> : FolderRepositoryOperator<EntityType>, IRepositoryRemoveOperator<EntityType, string>
         where EntityType : class
     {
         public FolderRepositoryRemoveOperator(string repositoryDirectoryPath)
@@ -14,9 +14,9 @@ namespace PlatypusRepository.Folder.Operator
         public FolderRepositoryRemoveOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, string> folderEntityHandler)
             : base(entityType, repositoryDirectoryPath, folderEntityHandler) { }
 
-        public void Remove(EntityType entity)
+        public void Remove(string key)
         {
-            string entityDirectoryPath = Path.Combine(_repositoryDirectoryPath, _entityHandler.GetID(entity));
+            string entityDirectoryPath = Path.Combine(_repositoryDirectoryPath, key);
             Directory.Delete(entityDirectoryPath, true);
         }
     }

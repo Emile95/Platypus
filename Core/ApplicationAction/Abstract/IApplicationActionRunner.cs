@@ -2,7 +2,7 @@
 
 namespace Core.ApplicationAction.Abstract
 {
-    internal interface IApplicationActionRunner
+    public interface IApplicationActionRunner
     {
         ApplicationActionRunResult Run(ApplicationActionRunParameter runActionParameter);
     }

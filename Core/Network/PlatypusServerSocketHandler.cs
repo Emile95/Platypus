@@ -13,7 +13,7 @@ using System.Net.Sockets;
 
 namespace Core.Network
 {
-    internal class PlatypusServerSocketHandler : ServerSocketHandler<FactorisableExceptionType, RequestType>, ISeverPortListener
+    public class PlatypusServerSocketHandler : ServerSocketHandler<FactorisableExceptionType, RequestType>, ISeverPortListener<PlatypusServerSocketHandler>
     {
         private readonly Dictionary<string, UserAccount> _connectedUserOnSockets;
 

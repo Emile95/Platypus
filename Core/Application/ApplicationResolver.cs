@@ -9,13 +9,13 @@ using Core.Abstract;
 
 namespace Core.Application
 {
-    internal class ApplicationResolver : IApplicationResolver<PlatypusApplicationBase>
+    public class ApplicationResolver : IApplicationResolver<PlatypusApplicationBase>
     {
         private readonly IApplicationAttributeMethodResolver<ActionDefinitionAttribute> _applicationActionResolver;
         private readonly IApplicationAttributeMethodResolver<EventHandlerAttribute> _eventsHandlerResolver;
         private readonly IApplicationAttributeMethodResolver<UserConnectionMethodCreatorAttribute> _connectionMethodResolver;
 
-        internal ApplicationResolver(
+        public ApplicationResolver(
             IApplicationAttributeMethodResolver<ActionDefinitionAttribute> applicationActionResolver,
             IApplicationAttributeMethodResolver<EventHandlerAttribute> eventsHandlerResolver,
             IApplicationAttributeMethodResolver<UserConnectionMethodCreatorAttribute> connectionMethodResolver

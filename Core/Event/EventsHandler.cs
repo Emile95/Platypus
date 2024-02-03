@@ -1,7 +1,7 @@
 ﻿using Core.Abstract;
+using Core.Event.Abstract;
 using Core.Exceptions;
 using PlatypusFramework.Configuration.Application;
-using PlatypusFramework.Configuration.ApplicationAction;
 using PlatypusFramework.Configuration.Event;
 using PlatypusFramework.Core.Event;
 using System.Reflection;
@@ -9,7 +9,8 @@ using System.Reflection;
 namespace Core.Event
 {
     public class EventsHandler :
-        IApplicationAttributeMethodResolver<EventHandlerAttribute>
+        IApplicationAttributeMethodResolver<EventHandlerAttribute>,
+        IEventHandlerRunner
     {
         private readonly Dictionary<EventHandlerType, List<EventHandler>> _eventHandlers;
 
@@ -27,7 +28,7 @@ namespace Core.Event
             _eventHandlers[attribute.EventHandlerType].Add(eventhandler);
         }
 
-        public T RunEventHandlers<T>(EventHandlerType eventHandlerType, EventHandlerEnvironment eventEnv, Func<EventHandlerException, T> exceptionObjectCreator)
+        public T Run<T>(EventHandlerType eventHandlerType, EventHandlerEnvironment eventEnv, Func<EventHandlerException, T> exceptionObjectCreator)
             where T : class
         {
             try

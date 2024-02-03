@@ -1,6 +1,6 @@
 ﻿namespace Core.Network
 {
-    internal interface ISeverPortListener
+    public interface ISeverPortListener<Type>
     {
         void InitializeServerPortListener(int port);
     }

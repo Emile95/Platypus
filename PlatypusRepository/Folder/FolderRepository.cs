@@ -2,12 +2,12 @@
 
 namespace PlatypusRepository.Folder
 {
-    public class FolderRepository<EntityType> : IRepository<EntityType>
+    public class FolderRepository<EntityType> : IRepository<EntityType, string>
         where EntityType : class
     {
         private readonly IRepositoryAddOperator<EntityType> _addOperator;
         private readonly IRepositoryUpdateOperator<EntityType> _updateOperator;
-        private readonly IRepositoryRemoveOperator<EntityType> _removeOperator;
+        private readonly IRepositoryRemoveOperator<EntityType, string> _removeOperator;
         private readonly IRepositoryConsumeOperator<EntityType> _consumeOperator;
 
         public FolderRepository(string directoryPath)
@@ -32,9 +32,9 @@ namespace PlatypusRepository.Folder
             return _updateOperator.Update(entity);
         }
 
-        public void Remove(EntityType entity)
+        public void Remove(string key)
         {
-            _removeOperator.Remove(entity);
+            _removeOperator.Remove(key);
         }
 
         public void Consume(Action<EntityType> consumer, Predicate<EntityType> condition = null)

@@ -2,7 +2,7 @@
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.User;
 using PlatypusAPI.ServerFunctionParameter;
-using Core.Persistance.Entity;
+using PlatypusFramework.Configuration.Application;
 
 namespace Core
 {
@@ -16,7 +16,8 @@ namespace Core
         public bool InstallApplication(UserAccount userAccount, InstallApplicationParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.InstallAndUninstallApplication);
-            _applicationPackageInstaller.Install(parameter.DllFilePath);
+            PlatypusApplicationBase application = _applicationPackageInstaller.Install(parameter.DllFilePath);
+            _applicationAddOperator.Add(application);
             return true;
         }
 
@@ -62,13 +63,13 @@ namespace Core
         public void RemoveUser(UserAccount userAccount, RemoveUserParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.UserCRUD);
-            _userRemoveOperator.Remove(parameter);
+            _userRemoveOperator.Remove(parameter.Guid);
         }
 
         public void CancelRunningApplicationAction(UserAccount userAccount, CancelRunningActionParameter parameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.CancelRunningAction);
-            _cancelRunningActionOperator.Remove(parameter);
+            _applicationActionRunRemoveOperator.Remove(parameter.Guid);
         }
 
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions(UserAccount userAccount)

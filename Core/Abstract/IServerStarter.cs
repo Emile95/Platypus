@@ -1,6 +1,6 @@
 ﻿namespace Core.Abstract
 {
-    internal interface IServerStarter
+    public interface IServerStarter<Type>
     {
         void Start();
     }

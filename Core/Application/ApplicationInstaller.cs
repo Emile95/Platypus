@@ -8,28 +8,37 @@ using PlatypusRepository;
 using System.IO.Compression;
 using Core.Persistance.Entity;
 using Core.Application.Abstract;
+using PlatypusFramework.Core.Event;
+using Core.Event.Abstract;
 
 namespace Core.Application
 {
-    internal class ApplicationInstaller : IApplicationPackageInstaller<PlatypusApplicationBase>
+    public class ApplicationInstaller : IApplicationInstaller
     {
-        private readonly IRepositoryAddOperator<ApplicationEntity> _applicationRepositoryAddOperator;
-        private readonly IRepositoryRemoveOperator<ApplicationEntity> _applicationRepositoryRemoveOperator;
-        private readonly IRepositoryAddOperator<ApplicationActionEntity> _applicationActionRepositoryAddOperator;
+        private readonly IRepositoryAddOperator<ApplicationEntity> _applicationEntityAddOperator;
+        private readonly IRepositoryAddOperator<PlatypusApplicationBase> _applicationAddOperator;
+        private readonly IRepositoryAddOperator<ApplicationActionEntity> _applicationActionEntityAddOperator;
+        private readonly IEventHandlerRunner _eventhHandlerRunner;
 
-        internal ApplicationInstaller(
-            IRepositoryAddOperator<ApplicationEntity> applicationRepositoryAddOperator,
-            IRepositoryRemoveOperator<ApplicationEntity> applicationRepositoryRemoveOperator,
-            IRepositoryAddOperator<ApplicationActionEntity> applicationActionRepositoryAddOperator
+        public ApplicationInstaller(
+            IRepositoryAddOperator<ApplicationEntity> applicationEntityAddOperator,
+            IRepositoryAddOperator<PlatypusApplicationBase> applicationAddOperator,
+            IRepositoryAddOperator<ApplicationActionEntity> applicationActionEntityAddOperator,
+            IEventHandlerRunner eventhHandlerRunner
         )
         {
-            _applicationRepositoryAddOperator = applicationRepositoryAddOperator;
-            _applicationRepositoryRemoveOperator = applicationRepositoryRemoveOperator;
-            _applicationActionRepositoryAddOperator = applicationActionRepositoryAddOperator;
+            _applicationEntityAddOperator = applicationEntityAddOperator;
+            _applicationAddOperator = applicationAddOperator;
+            _applicationActionEntityAddOperator = applicationActionEntityAddOperator;
+            _eventhHandlerRunner = eventhHandlerRunner;
         }
 
         public PlatypusApplicationBase Install(string sourcePath)
         {
+            InstallApplicationEventHandlerEnvironment eventEnv = new InstallApplicationEventHandlerEnvironment();
+
+            _eventhHandlerRunner.Run<object>(EventHandlerType.BeforeInstallApplication, eventEnv, (exception) => throw exception);
+
             FileInfo applicationFileInfo = new FileInfo(sourcePath);
             if (applicationFileInfo.Extension != ".platypus")
                 throw new InvalidPlatypusApplicationPackageException(applicationFileInfo.Name, "wrong file extension");
@@ -38,34 +47,32 @@ namespace Core.Application
 
             ExtractPackage(entity, sourcePath);
 
-            _applicationRepositoryAddOperator.Add(entity);
+            PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromRawBytes<PlatypusApplicationBase>(entity.AssemblyRaw);
 
-            try
+            _applicationEntityAddOperator.Add(entity);
+
+            platypusApplication.ApplicationGuid = entity.Guid;
+
+            Type type = platypusApplication.GetType();
+            MethodInfo[] methods = type.GetMethods();
+
+            foreach (MethodInfo method in methods)
             {
-                PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromRawBytes<PlatypusApplicationBase>(entity.AssemblyRaw);
+                if (InstallAction(entity.Guid, method)) continue;
+            }
 
-                platypusApplication.ApplicationGuid = entity.Guid;
-
-                Type type = platypusApplication.GetType();
-                MethodInfo[] methods = type.GetMethods();
-
-                foreach (MethodInfo method in methods)
-                {
-                    if (InstallAction(entity.Guid, method)) continue;
-                }
-
-                ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
-                env.ApplicationGuid = entity.Guid;
+            ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
+            env.ApplicationGuid = entity.Guid;
 
                 platypusApplication.Install(env);
 
-                return platypusApplication;
-            }
-            catch (Exception)
-            {
-                _applicationRepositoryRemoveOperator.Remove(entity);
-                return null;
-            }
+            if (platypusApplication == null) return null;
+
+            _applicationAddOperator.Add(platypusApplication);
+
+            _eventhHandlerRunner.Run<object>(EventHandlerType.AfterInstallApplication, eventEnv, (exception) => throw exception);
+
+            return platypusApplication;
         }
 
         private bool InstallAction(string applicationGuid, MethodInfo methodInfo)
@@ -73,7 +80,7 @@ namespace Core.Application
             ActionDefinitionAttribute actionDefinition = methodInfo.GetCustomAttribute<ActionDefinitionAttribute>();
             if (actionDefinition == null) return false;
 
-            _applicationActionRepositoryAddOperator.Add(new ApplicationActionEntity() { 
+            _applicationActionEntityAddOperator.Add(new ApplicationActionEntity() { 
                 Guid = actionDefinition.Name + applicationGuid
             });
             return true;
