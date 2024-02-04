@@ -151,6 +151,15 @@ namespace Core.Ressource {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No dll named &apos;{0}&apos; found in package.
+        /// </summary>
+        public static string NoDllFoundInPakcage {
+            get {
+                return ResourceManager.GetString("NoDllFoundInPakcage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to there is no user connection method with the guid &apos;{0}&apos;.
         /// </summary>
         public static string NoUserConnectionMethodWithGuid {

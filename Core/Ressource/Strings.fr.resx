@@ -147,6 +147,9 @@
   <data name="NoApplicationWithGuid" xml:space="preserve">
     <value>there is no application with guid '{0}'</value>
   </data>
+  <data name="NoDllFoundInPakcage" xml:space="preserve">
+    <value>Auncun dll nommé '{0}' trouvé dans le package</value>
+  </data>
   <data name="NoUserConnectionMethodWithGuid" xml:space="preserve">
     <value>there is no user connection method with the guid '{0}'</value>
   </data>

@@ -10,6 +10,10 @@ using Core.Persistance.Entity;
 using Core.Application.Abstract;
 using PlatypusFramework.Core.Event;
 using Core.Event.Abstract;
+using Core.Application.Exception;
+using Core.Ressource;
+using Core.Persistance;
+using System.IO;
 
 namespace Core.Application
 {
@@ -45,11 +49,13 @@ namespace Core.Application
 
             ApplicationEntity entity = new ApplicationEntity();
 
-            ExtractPackage(entity, sourcePath);
+            string temporaryDirectoryPath = ExtractPackageAndLoadDll(entity, sourcePath);
 
             PlatypusApplicationBase platypusApplication = PluginResolver.InstanciateImplementationFromRawBytes<PlatypusApplicationBase>(entity.AssemblyRaw);
 
             _applicationEntityAddOperator.Add(entity);
+
+            MoveTemporaryFolderContentToApplicationFolder(temporaryDirectoryPath, Path.Combine(ApplicationPaths.APPLICATIONSDIRECTORYPATHS, entity.Guid));
 
             platypusApplication.ApplicationGuid = entity.Guid;
 
@@ -57,14 +63,12 @@ namespace Core.Application
             MethodInfo[] methods = type.GetMethods();
 
             foreach (MethodInfo method in methods)
-            {
                 if (InstallAction(entity.Guid, method)) continue;
-            }
-
+            
             ApplicationInstallEnvironment env = new ApplicationInstallEnvironment();
             env.ApplicationGuid = entity.Guid;
 
-                platypusApplication.Install(env);
+            platypusApplication.Install(env);
 
             if (platypusApplication == null) return;
 
@@ -84,28 +88,42 @@ namespace Core.Application
             return true;
         }
 
-        private void ExtractPackage(ApplicationEntity entity, string sourceDirectoryPath)
+        private void MoveTemporaryFolderContentToApplicationFolder(string temporaryDirectoryPath, string applicationDirectoryPath)
+        {
+            string[] directoriePaths = Directory.GetDirectories(temporaryDirectoryPath);
+
+            foreach (string directoryPath in directoriePaths)
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
+                Directory.Move(directoryPath, Path.Combine(applicationDirectoryPath, directoryInfo.Name));
+            }
+            
+            string[] filePaths = Directory.GetFiles(temporaryDirectoryPath);
+            foreach (string filePath in filePaths)
+            {
+                FileInfo fileInfo = new FileInfo(filePath);
+                File.Copy(filePath, Path.Combine(applicationDirectoryPath, fileInfo.Name));
+            }
+                
+            Directory.Delete(temporaryDirectoryPath, true);
+        }
+
+        private string ExtractPackageAndLoadDll(ApplicationEntity entity, string sourceDirectoryPath)
         {
             string temporaryDirectoryPath = Path.Combine(Path.GetTempPath(), "platyPusInstall");
             Directory.CreateDirectory(temporaryDirectoryPath);
 
             ZipFile.ExtractToDirectory(sourceDirectoryPath, temporaryDirectoryPath);
-            string[] dllFiles = Directory.GetFiles(temporaryDirectoryPath, "*.dll");
-            if (dllFiles.Length == 0) return;
 
-            entity.AssemblyRaw = File.ReadAllBytes(dllFiles[0]);
+            string applicationDllFilePath = Path.Combine(temporaryDirectoryPath,"platypusApplication.dll");
+            if (File.Exists(applicationDllFilePath) == false)
+                throw new InstallApplicationException(Utils.GetString(Strings.ResourceManager, "NoDllFoundInPakcage", "platypusApplication.dll"));
 
-            Directory.Delete(temporaryDirectoryPath, true);
+            entity.AssemblyRaw = File.ReadAllBytes(Path.Combine(temporaryDirectoryPath, applicationDllFilePath));
 
-            /*string[] directoriesPath = Directory.GetDirectories(temporaryDirectoryPath);
-            if (directoriesPath.Length > 0)
-                foreach (string directoryPath in directoriesPath)
-                {
-                    DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
-                    Directory.Move(directoryPath, Path.Combine(entity.DirectoryPath, directoryInfo.Name));
-                }*/
+            File.Delete(applicationDllFilePath);
+
+            return temporaryDirectoryPath;
         }
-
-        
     }
 }
