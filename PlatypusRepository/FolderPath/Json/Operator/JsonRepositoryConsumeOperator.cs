@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
-using PlatypusRepository.Json.Abstract;
+using PlatypusRepository.FolderPath.Abstract;
 
-namespace PlatypusRepository.Folder.Operator
+namespace PlatypusRepository.FolderPath.Json.Operator
 {
-    public class JsonRepositoryConsumeOperator<EntityType> : JsonRepositoryOperator<EntityType>, IRepositoryConsumeOperator<EntityType>
+    public class JsonRepositoryConsumeOperator<EntityType> : FolderPathRepositoryOperator<EntityType>, IRepositoryConsumeOperator<EntityType>
         where EntityType : class
     {
         public JsonRepositoryConsumeOperator(string repositoryDirectoryPath)

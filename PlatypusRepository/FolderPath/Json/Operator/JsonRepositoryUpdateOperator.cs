@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
-using PlatypusRepository.Json.Abstract;
+using PlatypusRepository.FolderPath.Abstract;
 
-namespace PlatypusRepository.Json.Operator
+namespace PlatypusRepository.FolderPath.Json.Operator
 {
-    public class JsonRepositoryUpdateOperator<EntityType> : JsonRepositoryOperator<EntityType>, IRepositoryUpdateOperator<EntityType>
+    public class JsonRepositoryUpdateOperator<EntityType> : FolderPathRepositoryOperator<EntityType>, IRepositoryUpdateOperator<EntityType>
         where EntityType : class
     {
         public JsonRepositoryUpdateOperator(string repositoryDirectoryPath)
@@ -18,7 +18,7 @@ namespace PlatypusRepository.Json.Operator
         public EntityType Update(EntityType entity)
         {
             string id = _entityHandler.GetID(entity);
-            string jsonFilePath = Path.Combine(_repositoryDirectoryPath, id+".json");
+            string jsonFilePath = Path.Combine(_repositoryDirectoryPath, id + ".json");
 
             string json = JsonConvert.SerializeObject(entity);
             File.WriteAllText(jsonFilePath, json);

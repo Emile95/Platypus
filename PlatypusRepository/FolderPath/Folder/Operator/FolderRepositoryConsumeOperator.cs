@@ -1,9 +1,10 @@
-﻿using PlatypusRepository.Folder.Abstract;
-using PlatypusRepository.Folder.Configuration;
+﻿using PlatypusRepository.FolderPath.Abstract;
+using PlatypusRepository.FolderPath.Folder.Abstract;
+using PlatypusRepository.FolderPath.Folder.Configuration;
 
-namespace PlatypusRepository.Folder.Operator
+namespace PlatypusRepository.FolderPath.Folder.Operator
 {
-    public class FolderRepositoryConsumeOperator<EntityType> : FolderRepositoryOperator<EntityType>, IRepositoryConsumeOperator<EntityType>
+    public class FolderRepositoryConsumeOperator<EntityType> : FolderPathRepositoryOperator<EntityType>, IRepositoryConsumeOperator<EntityType>
         where EntityType : class
     {
         public FolderRepositoryConsumeOperator(string repositoryDirectoryPath)
@@ -25,7 +26,8 @@ namespace PlatypusRepository.Folder.Operator
 
                 EntityType entity = Activator.CreateInstance<EntityType>();
 
-                _entityHandler.IterateAttributesOfProperties<FolderEntityPropertyAttribute>((attribute, propertyInfo) => {
+                _entityHandler.IterateAttributesOfProperties<FolderEntityPropertyAttribute>((attribute, propertyInfo) =>
+                {
                     IFolderEntityPropertyFetcher fetcher = attribute as IFolderEntityPropertyFetcher;
                     fetcher?.Fetch(entity, propertyInfo, entityDirectoryPath);
                 });

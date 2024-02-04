@@ -1,8 +1,8 @@
-﻿using PlatypusRepository.Folder.Abstract;
+﻿using PlatypusRepository.FolderPath.Abstract;
 
-namespace PlatypusRepository.Folder.Operator
+namespace PlatypusRepository.FolderPath.Folder.Operator
 {
-    public class FolderRepositoryRemoveOperator<EntityType> : FolderRepositoryOperator<EntityType>, IRepositoryRemoveOperator<EntityType, string>
+    public class FolderRepositoryRemoveOperator<EntityType> : FolderPathRepositoryOperator<EntityType>, IRepositoryRemoveOperator<EntityType, string>
         where EntityType : class
     {
         public FolderRepositoryRemoveOperator(string repositoryDirectoryPath)

@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
-using PlatypusRepository.Folder.Abstract;
+using PlatypusRepository.FolderPath.Folder.Abstract;
+using PlatypusRepository.FolderPath.Folder.Configuration;
 
-namespace PlatypusRepository.Folder.Configuration.Property
+namespace PlatypusRepository.FolderPath.Folder.Configuration.Property
 {
     public abstract class FileAttribute : FolderEntityPropertyAttribute, IFolderEntityPropertyFetcher, IFolderEntityPropertySaver, IFolderEntityPropertyValidator
     {

@@ -1,19 +1,19 @@
-﻿namespace PlatypusRepository.Json.Abstract
+﻿namespace PlatypusRepository.FolderPath.Abstract
 {
-    public abstract class JsonRepositoryOperator<EntityType>
+    public abstract class FolderPathRepositoryOperator<EntityType>
         where EntityType : class
     {
         protected readonly Type _entityType;
         protected readonly string _repositoryDirectoryPath;
         protected readonly RepositoryEntityHandler<EntityType, string> _entityHandler;
 
-        public JsonRepositoryOperator(string repositoryDirectoryPath)
+        public FolderPathRepositoryOperator(string repositoryDirectoryPath)
             : this(typeof(EntityType), repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, string>()) { }
 
-        public JsonRepositoryOperator(Type entityType, string repositoryDirectoryPath)
+        public FolderPathRepositoryOperator(Type entityType, string repositoryDirectoryPath)
             : this(entityType, repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, string>()) { }
 
-        public JsonRepositoryOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, string> entityHandler)
+        public FolderPathRepositoryOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, string> entityHandler)
         {
             _entityType = entityType;
             _repositoryDirectoryPath = repositoryDirectoryPath;

@@ -1,8 +1,8 @@
-﻿using PlatypusRepository.Json.Abstract;
+﻿using PlatypusRepository.FolderPath.Abstract;
 
-namespace PlatypusRepository.Folder.Operator
+namespace PlatypusRepository.FolderPath.Json.Operator
 {
-    public class JsonRepositoryRemoveOperator<EntityType> : JsonRepositoryOperator<EntityType>, IRepositoryRemoveOperator<EntityType, string>
+    public class JsonRepositoryRemoveOperator<EntityType> : FolderPathRepositoryOperator<EntityType>, IRepositoryRemoveOperator<EntityType, string>
         where EntityType : class
     {
         public JsonRepositoryRemoveOperator(string repositoryDirectoryPath)

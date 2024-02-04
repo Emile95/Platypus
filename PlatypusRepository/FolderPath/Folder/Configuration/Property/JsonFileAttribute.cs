@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Reflection;
 
-namespace PlatypusRepository.Folder.Configuration.Property
+namespace PlatypusRepository.FolderPath.Folder.Configuration.Property
 {
     public class JsonFileAttribute : FileAttribute
     {
@@ -11,7 +11,7 @@ namespace PlatypusRepository.Folder.Configuration.Property
         }
 
         public override bool Validate(PropertyInfo propertyInfo)
-        { 
+        {
             return propertyInfo.PropertyType.IsClass == true ||
                    propertyInfo.PropertyType.IsEquivalentTo(typeof(string)) == false;
         }

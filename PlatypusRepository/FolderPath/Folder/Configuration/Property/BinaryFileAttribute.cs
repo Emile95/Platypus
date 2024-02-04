@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace PlatypusRepository.Folder.Configuration.Property
+namespace PlatypusRepository.FolderPath.Folder.Configuration.Property
 {
     public class BinaryFileAttribute : FileAttribute
     {

@@ -1,9 +1,10 @@
-﻿using PlatypusRepository.Folder.Abstract;
-using PlatypusRepository.Folder.Configuration;
+﻿using PlatypusRepository.FolderPath.Abstract;
+using PlatypusRepository.FolderPath.Folder.Abstract;
+using PlatypusRepository.FolderPath.Folder.Configuration;
 
-namespace PlatypusRepository.Folder.Operator
+namespace PlatypusRepository.FolderPath.Folder.Operator
 {
-    public class FolderRepositoryUpdateOperator<EntityType> : FolderRepositoryOperator<EntityType>, IRepositoryUpdateOperator<EntityType>
+    public class FolderRepositoryUpdateOperator<EntityType> : FolderPathRepositoryOperator<EntityType>, IRepositoryUpdateOperator<EntityType>
         where EntityType : class
     {
         public FolderRepositoryUpdateOperator(string repositoryDirectoryPath)

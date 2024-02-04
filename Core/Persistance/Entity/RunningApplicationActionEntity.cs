@@ -1,5 +1,5 @@
 ﻿using PlatypusRepository.Configuration;
-using PlatypusRepository.Folder.Configuration.Property;
+using PlatypusRepository.FolderPath.Folder.Configuration.Property;
 
 namespace Core.Persistance.Entity
 {

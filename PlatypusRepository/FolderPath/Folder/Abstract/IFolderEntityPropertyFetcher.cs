@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace PlatypusRepository.Folder.Abstract
+namespace PlatypusRepository.FolderPath.Folder.Abstract
 {
     internal interface IFolderEntityPropertyFetcher
     {

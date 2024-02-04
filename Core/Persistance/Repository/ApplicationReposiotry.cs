@@ -1,12 +1,12 @@
 ﻿using Core.Persistance.Entity;
 using PlatypusRepository;
-using PlatypusRepository.Folder.Abstract;
-using PlatypusRepository.Folder.Operator;
+using PlatypusRepository.FolderPath.Folder.Operator;
+using PlatypusRepository.FolderPath.Abstract;
 
 namespace Core.Persistance.Repository
 {
-    public class ApplicationRepository : 
-        FolderRepositoryOperator<ApplicationEntity>, 
+    public class ApplicationRepository :
+        FolderPathRepositoryOperator<ApplicationEntity>, 
         IRepositoryAddOperator<ApplicationEntity>, 
         IRepositoryConsumeOperator<ApplicationEntity>, 
         IRepositoryRemoveOperator<ApplicationEntity, string>
