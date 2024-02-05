@@ -15,13 +15,13 @@ using Core.ApplicationAction;
 using Core.Persistance;
 using Newtonsoft.Json;
 using System.Net.Sockets;
-using Microsoft.Extensions.Hosting;
 using Core.Persistance.Entity;
 using Core.Network.Abstract;
+using PlatypusContainer.Service;
 
 namespace Core
 {
-    public partial class ServerInstance : BackgroundService
+    public partial class ServerInstance : IHostedService
     {
         private readonly ServerConfig _config;
         private readonly ISeverPortListener<RestAPIHandler> _restAPIHandler;
@@ -73,7 +73,7 @@ namespace Core
             _applicationActionRunner = applicationActionRunner;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        public Task RunAsync(CancellationToken stoppingToken)
         {
             return Task.Run(() =>
             {

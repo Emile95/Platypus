@@ -1,17 +1,16 @@
 ﻿using Core.Persistance;
 using Core.Persistance.Repository;
-using Microsoft.Extensions.Hosting;
 using PlatypusRepository.FolderPath.Json;
 using Core.Persistance.Entity;
-using Microsoft.Extensions.DependencyInjection;
 using Core.User;
 using Core.Application;
 using Core.ApplicationAction;
 using Core.Event;
 using Core;
 using EntryPoint;
+using PlatypusContainer;
 
-IHostBuilder builder = Host.CreateDefaultBuilder(args);
+IContainerBuilder builder = new ContainerBuilder();
 
 builder.ConfigureServices((configure) => {
     configure.AddHostedService<ServerInstance>();
@@ -32,5 +31,5 @@ builder.ConfigureServices((configure) => {
 });
 
 
-IHost host = builder.Build();
-host.Run();
+IContainer container = builder.Build();
+container.Run();

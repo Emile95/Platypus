@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using PlatypusContainer.Service;
 
 namespace EntryPoint
 {
@@ -7,7 +7,8 @@ namespace EntryPoint
         internal static void AddServiceInterfacesSharedReference<ClassType>(IServiceCollection services)
             where ClassType : class
         {
-            AddServiceInterfacesSharedReference<ClassType>(services, (i) => services.AddSingleton(i, provider => provider.GetRequiredService<ClassType>()));
+            services.AddSingleton<ClassType>();
+            AddServiceInterfacesSharedReference<ClassType>(services, (i) => services.AddSingleton(i, provider => provider.GetService<ClassType>()));
         }
 
         internal static void AddServiceInterfacesSharedReference<ClassType>(IServiceCollection services, ClassType instance)
@@ -23,7 +24,6 @@ namespace EntryPoint
 
             if (interfaces == null || interfaces.Length == 0) return;
 
-            services.AddSingleton<ClassType>();
             foreach (Type i in interfaces)
                 interfaceConsumer(i);
         }

@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PlatypusAPI\PlatypusAPI.csproj" />
+    <ProjectReference Include="..\PlatypusContainer\PlatypusContainer.csproj" />
     <ProjectReference Include="..\PlatypusFramework\PlatypusFramework.csproj" />
     <ProjectReference Include="..\PlatypusLogging\PlatypusLogging.csproj" />
     <ProjectReference Include="..\PlatypusNetwork\PlatypusNetwork.csproj" />

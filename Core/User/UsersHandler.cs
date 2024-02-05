@@ -8,8 +8,7 @@ namespace Core.User
     public class UsersHandler : 
         IRepositoryAddOperator<UserCreationParameter>,
         IRepositoryUpdateOperator<UserUpdateParameter>,
-        IRepositoryRemoveOperator<RemoveUserParameter, string>,
-        IRepositoryConsumeOperator<UserEntity>
+        IRepositoryRemoveOperator<RemoveUserParameter, string>
     {
         private readonly IRepository<UserEntity, string> _userRepository;
         private readonly IUserValidator _userValidator;
@@ -55,11 +54,6 @@ namespace Core.User
         public void Remove(string id)
         {
             _userRepository.Remove(id);
-        }
-
-        public void Consume(Action<UserEntity> consumer, Predicate<UserEntity> condition = null)
-        {
-            _userRepository.Consume(consumer, condition);
         }
     }
 }
