@@ -4,7 +4,7 @@ using PlatypusRepository.FolderPath.Folder.Configuration;
 
 namespace PlatypusRepository.FolderPath.Folder.Operator
 {
-    public class FolderRepositoryAddOperator<EntityType> : FolderPathAddRepositoryOperator<EntityType>, IRepositoryAddOperator<EntityType>
+    public class FolderRepositoryAddOperator<EntityType> : FolderPathRepositoryAddOperator<EntityType>, IRepositoryAddOperator<EntityType>
         where EntityType : class
     {
         public FolderRepositoryAddOperator(string repositoryDirectoryPath)

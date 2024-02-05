@@ -1,15 +1,15 @@
 ﻿namespace PlatypusRepository.FolderPath.Abstract
 {
-    public class FolderPathAddRepositoryOperator<EntityType> : FolderPathRepositoryOperator<EntityType>
+    public class FolderPathRepositoryAddOperator<EntityType> : FolderPathRepositoryOperator<EntityType>
         where EntityType : class
     {
-        public FolderPathAddRepositoryOperator(string repositoryDirectoryPath)
+        public FolderPathRepositoryAddOperator(string repositoryDirectoryPath)
             : base(typeof(EntityType), repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, string>()) { }
 
-        public FolderPathAddRepositoryOperator(Type entityType, string repositoryDirectoryPath)
+        public FolderPathRepositoryAddOperator(Type entityType, string repositoryDirectoryPath)
             : base(entityType, repositoryDirectoryPath, new RepositoryEntityHandler<EntityType, string>()) { }
 
-        public FolderPathAddRepositoryOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, string> folderEntityHandler)
+        public FolderPathRepositoryAddOperator(Type entityType, string repositoryDirectoryPath, RepositoryEntityHandler<EntityType, string> folderEntityHandler)
             : base(entityType, repositoryDirectoryPath, folderEntityHandler) { }
 
         protected string GenerateGuid()

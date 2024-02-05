@@ -7,7 +7,6 @@ namespace PlatypusRepository.FolderPath.Json
         where EntityType : class
     {
         public JsonRepository(string directoryPath)
-            : base(directoryPath)
         {
             _addOperator = new JsonRepositoryAddOperator<EntityType>(_entityType, directoryPath, _folderEntityHandler);
             _updateOperator = new JsonRepositoryUpdateOperator<EntityType>(_entityType, directoryPath, _folderEntityHandler);

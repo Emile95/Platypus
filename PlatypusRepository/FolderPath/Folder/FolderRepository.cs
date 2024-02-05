@@ -7,7 +7,6 @@ namespace PlatypusRepository.FolderPath.Folder
         where EntityType : class
     {
         public FolderRepository(string directoryPath)
-            : base(directoryPath)
         {
             _addOperator = new FolderRepositoryAddOperator<EntityType>(_entityType, directoryPath, _folderEntityHandler);
             _updateOperator = new FolderRepositoryUpdateOperator<EntityType>(_entityType, directoryPath, _folderEntityHandler);

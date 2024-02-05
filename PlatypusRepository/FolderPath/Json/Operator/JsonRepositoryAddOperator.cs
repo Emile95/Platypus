@@ -3,7 +3,7 @@ using PlatypusRepository.FolderPath.Abstract;
 
 namespace PlatypusRepository.FolderPath.Json.Operator
 {
-    public class JsonRepositoryAddOperator<EntityType> : FolderPathAddRepositoryOperator<EntityType>, IRepositoryAddOperator<EntityType>
+    public class JsonRepositoryAddOperator<EntityType> : FolderPathRepositoryAddOperator<EntityType>, IRepositoryAddOperator<EntityType>
         where EntityType : class
     {
         public JsonRepositoryAddOperator(string repositoryDirectoryPath)
