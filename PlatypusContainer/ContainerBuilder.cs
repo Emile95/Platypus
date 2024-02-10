@@ -1,4 +1,5 @@
 ﻿using PlatypusContainer.Service;
+using PlatypusContainer.Service.Resolver;
 using System.Reflection;
 
 namespace PlatypusContainer
@@ -6,22 +7,15 @@ namespace PlatypusContainer
     public class ContainerBuilder : IContainerBuilder
     {
         internal Type HostedService { get; set; }
-        internal List<Type> NotAbstractSingletonServiceTypes { get; set; }
-        internal Dictionary<Type, object> NotAbstractSingletonServiceTypeInstances { get; set; }
-        internal Dictionary<Type, Type> SingletonServiceTypes { get; set; }
-        internal Dictionary<Type, object> SingletonServiceInstances { get; set; }
-        internal Dictionary<Type, (Type,Func<Service.IServiceProvider, object>)> SingletonServicesGetFromProvider { get; set; }
-
-        public IServiceCollection _services;
+        internal List<IServiceResolver> ServiceResolvers { get; set; }
+        internal Service.ServiceProvider ServiceProvider { get; }
+        private readonly IServiceCollection _services;
+        
 
         public ContainerBuilder()
         {
-            NotAbstractSingletonServiceTypes = new List<Type>();
-            NotAbstractSingletonServiceTypeInstances = new Dictionary<Type, object>();
-            SingletonServiceTypes = new Dictionary<Type, Type>();
-            SingletonServiceInstances = new Dictionary<Type, object>();
-            SingletonServicesGetFromProvider = new Dictionary<Type, (Type,Func<Service.IServiceProvider, object>)>();
-
+            ServiceResolvers = new List<IServiceResolver>();
+            ServiceProvider = new ServiceProvider();
             _services = new ServiceCollection(this);
         }
 
@@ -38,7 +32,7 @@ namespace PlatypusContainer
 
         private IHostedService InstanciateHostedService()
         {
-            Service.IServiceProvider serviceProvider = new ServiceProvider(this);
+            ServiceProvider.Initialize(this);
 
             ConstructorInfo[] constructorInfos = HostedService.GetConstructors();
 
@@ -51,7 +45,7 @@ namespace PlatypusContainer
 
                 foreach (ParameterInfo parametersInfo in parametersInfos)
                 {
-                    serviceParameters.Add(serviceProvider.GetService(parametersInfo.ParameterType));
+                    serviceParameters.Add(ServiceProvider.GetService(parametersInfo.ParameterType));
                     nbParameterCorrespondingToRegisteredServices++;
                 }
                 if (nbParameterCorrespondingToRegisteredServices == parametersInfos.Length)

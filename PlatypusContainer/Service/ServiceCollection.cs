@@ -1,4 +1,6 @@
-﻿namespace PlatypusContainer.Service
+﻿using PlatypusContainer.Service.Resolver;
+
+namespace PlatypusContainer.Service
 {
     internal class ServiceCollection : IServiceCollection
     {
@@ -25,8 +27,9 @@
 
         public void AddSingleton(Type serviceType)
         {
-            _containerBuilder.NotAbstractSingletonServiceTypes.Add(
-                AssertServiceType(serviceType)
+            Type type = AssertServiceType(serviceType);
+            _containerBuilder.ServiceResolvers.Add(
+                new SingletonFromConstructServiceResolver(type,type)
             );
         }
 
@@ -37,9 +40,11 @@
 
         public void AddSingleton(Type serviceType, object instance)
         {
-            _containerBuilder.NotAbstractSingletonServiceTypeInstances.Add(
-                 AssertServiceType(serviceType), 
-                instance
+            _containerBuilder.ServiceResolvers.Add(
+                new SingletonServiceResolver(
+                    AssertServiceType(serviceType),
+                    instance
+                )
             );
         }
 
@@ -52,9 +57,11 @@
         public void AddSingleton<ServiceImplementation>(Type serviceType) 
             where ServiceImplementation : class
         {
-            _containerBuilder.SingletonServiceTypes.Add(
-                AssertServiceType(serviceType),
-                typeof(ServiceImplementation)
+            _containerBuilder.ServiceResolvers.Add(
+                new SingletonFromConstructServiceResolver(
+                    AssertServiceType(serviceType),
+                    typeof(ServiceImplementation)
+                )
             );
         }
 
@@ -67,9 +74,8 @@
         public void AddSingleton<ServiceImplementation>(Type serviceType, ServiceImplementation instance) 
             where ServiceImplementation : class
         {
-            _containerBuilder.SingletonServiceInstances.Add(
-                AssertServiceType(serviceType),
-                instance
+            _containerBuilder.ServiceResolvers.Add(
+                new SingletonServiceResolver(AssertServiceType(serviceType), instance)
             );
         }
 
@@ -82,9 +88,12 @@
         public void AddSingleton<ServiceImplementation>(Type serviceType, Func<IServiceProvider, ServiceImplementation> getter) 
             where ServiceImplementation : class
         {
-            _containerBuilder.SingletonServicesGetFromProvider.Add(
-                AssertServiceType(serviceType),
-                (typeof(ServiceImplementation),(provider) => getter(provider))
+            _containerBuilder.ServiceResolvers.Add(
+                new SingletonFromProviderServiceResolver(
+                    AssertServiceType(serviceType),
+                    typeof(ServiceImplementation),
+                    _containerBuilder.ServiceProvider
+                )
             );
         }
 
