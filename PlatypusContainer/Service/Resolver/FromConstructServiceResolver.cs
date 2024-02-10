@@ -11,7 +11,7 @@ namespace PlatypusContainer.Service.Resolver
             _implmentationType = implmentationType;
         }
 
-        protected object Construct(Dictionary<Type, Func<object>> serviceGetters)
+        protected Func<object> FindConstructor(Dictionary<Type, Func<object>> serviceGetters)
         {
             ConstructorInfo[] constructorInfos = _implmentationType.GetConstructors();
 
@@ -29,7 +29,7 @@ namespace PlatypusContainer.Service.Resolver
                     nbParameterCorrespondingToRegisteredServices++;
                 }
                 if (nbParameterCorrespondingToRegisteredServices == parametersInfos.Length)
-                    return constructorInfo.Invoke(serviceParameters.ToArray());
+                    return () => constructorInfo.Invoke(serviceParameters.ToArray());
             }
 
             return null;

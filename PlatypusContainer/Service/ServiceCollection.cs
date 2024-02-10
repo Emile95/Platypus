@@ -13,6 +13,25 @@ namespace PlatypusContainer.Service
             _serviceRegistereds = new HashSet<Type>();
         }
 
+        public void Add<ServiceType>() 
+            where ServiceType : class
+        {
+            Type type = AssertServiceType(typeof(ServiceType));
+            _containerBuilder.ServiceResolvers.Add(new BasicFromConstructServiceResolver(type, type));
+        }
+
+        public void Add<ServiceType, ServiceImplementation>()
+            where ServiceType : class
+            where ServiceImplementation : class, ServiceType
+        {
+            _containerBuilder.ServiceResolvers.Add(
+                new BasicFromConstructServiceResolver(
+                    AssertServiceType(typeof(ServiceType)),
+                    typeof(ServiceImplementation)
+                )
+            );
+        }
+
         public void AddHostedService<HostedServiceType>() 
             where HostedServiceType : IHostedService
         {

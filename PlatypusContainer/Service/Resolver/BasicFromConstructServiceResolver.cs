@@ -15,7 +15,9 @@
         public bool Resolve(Dictionary<Type, Func<object>> serviceGetters)
         {
             if (serviceGetters.ContainsKey(_serviceType)) return false;
-            serviceGetters.Add(_serviceType, () => Construct(serviceGetters));
+            Func<object> constructor = FindConstructor(serviceGetters);
+            if(constructor == null) return false;
+            serviceGetters.Add(_serviceType, constructor);
             return true;
         }
     }
