@@ -12,3 +12,4 @@ Utility Packages
 - PlatyusNetwork : Server and client application communication with socket
 - PlatypusLogging : logging package helper
 - PlatypusRepository : Repository pattern, folder repository for the moment
+- PlatypusContainer : Application container package, to learn how to implement dependency injection
