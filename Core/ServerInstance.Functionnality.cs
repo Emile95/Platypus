@@ -2,6 +2,7 @@
 using PlatypusAPI.ApplicationAction;
 using PlatypusAPI.User;
 using PlatypusAPI.ServerFunctionParameter;
+using PlatypusAPI.Application;
 
 namespace Core
 {
@@ -68,6 +69,14 @@ namespace Core
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.CancelRunningAction);
             _applicationActionRunRemoveOperator.Remove(parameter.Guid);
+        }
+
+        public IEnumerable<ApplicationInfo> GetApplicationInfos(UserAccount userAccount)
+        {
+            ValidateUserForPermission(userAccount, UserPermissionFlag.GetApplicationInfos);
+            List<ApplicationInfo> infos = new List<ApplicationInfo>();
+            _applicationInfoConsumer.Consume((applicationInfo) => infos.Add(applicationInfo));
+            return infos;
         }
 
         public IEnumerable<ApplicationActionRunInfo> GetRunningApplicationActions(UserAccount userAccount)

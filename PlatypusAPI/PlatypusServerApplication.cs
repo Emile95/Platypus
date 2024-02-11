@@ -8,8 +8,7 @@ using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.User;
 using PlatypusNetwork.SocketHandler;
 using System.Collections.Concurrent;
-using PlatypusUtils;
-using PlatypusNetwork.Request.Data;
+using PlatypusAPI.Application;
 
 namespace PlatypusAPI
 {
@@ -109,6 +108,15 @@ namespace PlatypusAPI
                 (clientRequest) => clientRequest.UserAccount = ConnectedUser
             );
             return response.ApplicationActionInfos;
+        }
+
+        public List<ApplicationInfo> GetApplicationInfos()
+        {
+            GetApplicationInfosServerResponse response = _socketHandler.HandleClientRequest<PlatypusClientRequest, GetApplicationInfosServerResponse>(
+                RequestType.GetApplicationInfos,
+                (clientRequest) => clientRequest.UserAccount = ConnectedUser
+            );
+            return response.ApplicationInfos;
         }
 
         public void CancelRunningApplicationAction(string applicationRunGuid)

@@ -4,13 +4,14 @@ using PlatypusRepository;
 using Core.Persistance.Entity;
 using Core.Abstract;
 using Core.Application.Abstract;
-using static System.Net.Mime.MediaTypeNames;
+using PlatypusAPI.Application;
 
 namespace Core.Application
 {
     public class ApplicationsHandler : 
         IRepositoryRemoveOperator<PlatypusApplicationBase, string>,
         IRepositoryAddOperator<PlatypusApplicationBase>,
+        IRepositoryConsumeOperator<ApplicationInfo>,
         IGuidValidator<PlatypusApplicationBase>,
         IGetterByGuid<PlatypusApplicationBase>,
         IServerStarter<ApplicationsHandler>
@@ -60,6 +61,21 @@ namespace Core.Application
                 _applications.Add(applicationBase.ApplicationGuid, applicationBase);
                 _applicationResolver.Resolve(applicationBase);
             });
+        }
+
+        public void Consume(Action<ApplicationInfo> consumer, Predicate<ApplicationInfo> condition = null)
+        {
+            foreach(PlatypusApplicationBase application in _applications.Values)
+            {
+                ApplicationInfo info = new ApplicationInfo()
+                {
+                    Guid = application.ApplicationGuid,
+                    Name = application.GetApplicationName()
+                };
+
+                if (condition != null && condition(info) == false) continue;
+                consumer(info);
+            }
         }
     }
 }

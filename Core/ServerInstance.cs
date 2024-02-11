@@ -18,6 +18,7 @@ using System.Net.Sockets;
 using Core.Persistance.Entity;
 using Core.Network.Abstract;
 using PlatypusContainer.Service;
+using PlatypusAPI.Application;
 
 namespace Core
 {
@@ -35,6 +36,7 @@ namespace Core
         private readonly IRepositoryRemoveOperator<ApplicationActionRun, string> _applicationActionRunRemoveOperator;
         private readonly IRepositoryConsumeOperator<ApplicationActionRunInfo> _actionRunInfoConsumer;
         private readonly IRepositoryConsumeOperator<ApplicationActionInfo> _actionInfoConsumer;
+        private readonly IRepositoryConsumeOperator<ApplicationInfo> _applicationInfoConsumer;
         private readonly IApplicationInstaller _applicationPackageInstaller;
         private readonly IApplicationUninstaller _applicationPackageUninstaller;
         private readonly IApplicationActionRunner _applicationActionRunner;
@@ -49,6 +51,7 @@ namespace Core
             IRepositoryRemoveOperator<ApplicationActionRun, string> applicationActionRunRemoveOperator,
             IRepositoryConsumeOperator<ApplicationActionRunInfo> actionRunInfoConsumer,
             IRepositoryConsumeOperator<ApplicationActionInfo> actionInfoConsumer,
+            IRepositoryConsumeOperator<ApplicationInfo> applicationInfoConsumer,
             IApplicationInstaller applicationPackageInstaller,
             IApplicationUninstaller applicationPackageUninstaller,
             IApplicationActionRunner applicationActionRunner
@@ -68,6 +71,7 @@ namespace Core
             _applicationActionRunRemoveOperator = applicationActionRunRemoveOperator;
             _actionRunInfoConsumer = actionRunInfoConsumer;
             _actionInfoConsumer = actionInfoConsumer;
+            _applicationInfoConsumer = applicationInfoConsumer;
             _applicationPackageInstaller = applicationPackageInstaller;
             _applicationPackageUninstaller = applicationPackageUninstaller;
             _applicationActionRunner = applicationActionRunner;

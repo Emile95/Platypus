@@ -10,5 +10,6 @@
         GetActionsInfo = 8,
         GetRunningActions = 16,
         RunAction = 32,
+        GetApplicationInfos = 64
     }
 }

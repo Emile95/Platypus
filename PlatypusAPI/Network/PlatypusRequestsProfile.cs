@@ -14,6 +14,7 @@ namespace PlatypusAPI.Network
             MapRequest<CancelRunningApplicationRunClientRequest, PlatypusServerResponse>(RequestType.CancelRunningAction);
             MapRequest<PlatypusClientRequest, GetRunningApplicationActionsServerResponse>(RequestType.GetRunningActions);
             MapRequest<PlatypusClientRequest, GetApplicationActionInfosServerResponse>(RequestType.GetActionInfos);
+            MapRequest<PlatypusClientRequest, GetApplicationInfosServerResponse>(RequestType.GetApplicationInfos);
             MapRequest<UserConnectionClientRequest, UserConnectionServerResponse>(RequestType.UserConnection);
             MapRequest<UpdateUserClientRequest, UpdateUserServerResponse>(RequestType.UpdateUser);
             MapRequest<AddUserClientRequest, AddUserServerResponse>(RequestType.AddUser);

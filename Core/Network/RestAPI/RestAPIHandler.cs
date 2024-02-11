@@ -115,6 +115,11 @@ namespace Core.Network.RestAPI
                 return "user removed";
             }));
 
+            app.MapGet(@"/application", CreateRequestDelegate<object>(true, (headers, userAccount, body) =>
+            {
+                return _serverInstance.GetApplicationInfos(userAccount);
+            }));
+
             app.MapGet(@"/action/runnings", CreateRequestDelegate<object>(true, (headers, userAccount, body) =>
             {
                 return _serverInstance.GetRunningApplicationActions(userAccount);

@@ -9,6 +9,7 @@
         RemoveUser,
         CancelRunningAction,
         GetRunningActions,
-        GetActionInfos
+        GetActionInfos,
+        GetApplicationInfos
     }
 }

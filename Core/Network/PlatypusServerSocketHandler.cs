@@ -11,6 +11,7 @@ using PlatypusAPI.Network.ServerResponse;
 using PlatypusAPI.Network.ClientRequest;
 using System.Net.Sockets;
 using Core.Network.Abstract;
+using PlatypusAPI.Application;
 
 namespace Core.Network
 {
@@ -118,6 +119,15 @@ namespace Core.Network
                     serverResponse.ApplicationActionInfos = result.ToList();
                 else
                     serverResponse.ApplicationActionInfos = new List<ApplicationActionInfo>();
+            });
+
+            _requestsProfile.MapServerAction<PlatypusClientRequest, GetApplicationInfosServerResponse>(RequestType.GetApplicationInfos, (clientKey, clientRequest, serverResponse) =>
+            {
+                IEnumerable<ApplicationInfo> result = serverInstance.GetApplicationInfos(clientRequest.UserAccount);
+                if (result.Count() != 0)
+                    serverResponse.ApplicationInfos = result.ToList();
+                else
+                    serverResponse.ApplicationInfos = new List<ApplicationInfo>();
             });
 
             _requestsProfile.MapServerAction<CancelRunningApplicationRunClientRequest, PlatypusServerResponse>(RequestType.CancelRunningAction, (clientKey, clientRequest, serverResponse) =>
