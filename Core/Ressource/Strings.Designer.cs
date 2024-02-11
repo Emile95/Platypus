@@ -214,6 +214,15 @@ namespace Core.Ressource {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User authentification failed for client &apos;{0}&apos;, close the socket.
+        /// </summary>
+        public static string UserAuthentificationFailedRemoveSocket {
+            get {
+                return ResourceManager.GetString("UserAuthentificationFailedRemoveSocket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User &apos;{0}&apos; authentified for client &apos;{1}&apos;.
         /// </summary>
         public static string UserAuthentifiedForClient {

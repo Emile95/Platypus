@@ -168,6 +168,9 @@
   <data name="PlatypusUserConnectionMethodName1" xml:space="preserve">
     <value>Platypus User</value>
   </data>
+  <data name="UserAuthentificationFailedRemoveSocket" xml:space="preserve">
+    <value>Authentification de l'utilisateur a échoué pour le client '{0}', fermeture du socket</value>
+  </data>
   <data name="UserAuthentifiedForClient" xml:space="preserve">
     <value>Utilisateur '{0}' authentifié pour le client '{1}'</value>
   </data>

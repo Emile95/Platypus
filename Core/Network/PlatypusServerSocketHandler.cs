@@ -49,11 +49,20 @@ namespace Core.Network
         {
             _requestsProfile.MapServerAction<UserConnectionClientRequest, UserConnectionServerResponse>(RequestType.UserConnection, (clientKey, clientRequest, serverResponse) =>
             {
-                serverResponse.UserAccount = serverInstance.UserConnect(new UserConnectionParameter()
+                try
                 {
-                    ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
-                    Credential = clientRequest.Credential,
-                });
+                    serverResponse.UserAccount = serverInstance.UserConnect(new UserConnectionParameter()
+                    {
+                        ConnectionMethodGuid = clientRequest.ConnectionMethodGuid,
+                        Credential = clientRequest.Credential,
+                    }); 
+                } catch (Exception ex)
+                {
+                    _connectedUserOnSockets.Remove(clientKey);
+                    Console.WriteLine(Utils.GetString(Strings.ResourceManager, "UserAuthentificationFailedRemoveSocket", clientKey));
+                    throw ex;
+                }
+                
                 _connectedUserOnSockets[clientKey] = serverResponse.UserAccount;
                 Console.WriteLine(Utils.GetString(Strings.ResourceManager, "UserAuthentifiedForClient", serverResponse.UserAccount.Guid, clientKey));
             });
