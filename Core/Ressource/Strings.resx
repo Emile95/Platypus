@@ -141,6 +141,9 @@
   <data name="NewApplicationActionStarted" xml:space="preserve">
     <value>new action has been started</value>
   </data>
+  <data name="NewClientConnectToServer" xml:space="preserve">
+    <value>new client connected, key='{0}'</value>
+  </data>
   <data name="NoApplicationActionWithGuid" xml:space="preserve">
     <value>there is no action with guid '{0}'</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="PlatypusUserConnectionMethodName" xml:space="preserve">
     <value>Platypus User</value>
+  </data>
+  <data name="UserAuthentifiedForClient" xml:space="preserve">
+    <value>User '{0}' authentified for client '{1}'</value>
   </data>
   <data name="UserNotPermitted" xml:space="preserve">
     <value>Operation denied to user</value>

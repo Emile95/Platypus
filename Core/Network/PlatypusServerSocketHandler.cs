@@ -12,6 +12,7 @@ using PlatypusAPI.Network.ClientRequest;
 using System.Net.Sockets;
 using Core.Network.Abstract;
 using PlatypusAPI.Application;
+using Core.Ressource;
 
 namespace Core.Network
 {
@@ -35,7 +36,7 @@ namespace Core.Network
 
         public override void OnAccept(ClientReceivedState receivedState)
         {
-            Console.WriteLine($"new client connected, key='{receivedState.ClientKey}'");
+            Console.WriteLine(Utils.GetString(Strings.ResourceManager, "NewClientConnectToServer", receivedState.ClientKey));
             _connectedUserOnSockets.Add(receivedState.ClientKey, null);
         }
 
@@ -54,6 +55,7 @@ namespace Core.Network
                     Credential = clientRequest.Credential,
                 });
                 _connectedUserOnSockets[clientKey] = serverResponse.UserAccount;
+                Console.WriteLine(Utils.GetString(Strings.ResourceManager, "UserAuthentifiedForClient", serverResponse.UserAccount.Guid, clientKey));
             });
 
             _requestsProfile.MapServerAction<StartActionClientRequest, StartActionServerResponse>(RequestType.RunApplicationAction, (clientKey, clientRequest, serverResponse) =>

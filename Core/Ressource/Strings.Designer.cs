@@ -133,6 +133,15 @@ namespace Core.Ressource {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to new client connected, key=&apos;{0}&apos;.
+        /// </summary>
+        public static string NewClientConnectToServer {
+            get {
+                return ResourceManager.GetString("NewClientConnectToServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to there is no action with guid &apos;{0}&apos;.
         /// </summary>
         public static string NoApplicationActionWithGuid {
@@ -201,6 +210,15 @@ namespace Core.Ressource {
         public static string PlatypusUserConnectionMethodName {
             get {
                 return ResourceManager.GetString("PlatypusUserConnectionMethodName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User &apos;{0}&apos; authentified for client &apos;{1}&apos;.
+        /// </summary>
+        public static string UserAuthentifiedForClient {
+            get {
+                return ResourceManager.GetString("UserAuthentifiedForClient", resourceCulture);
             }
         }
         
