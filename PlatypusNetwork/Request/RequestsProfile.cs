@@ -42,13 +42,14 @@ namespace PlatypusNetwork.Request
 
         }
 
-        public void MapServerAction<ClientRequestType, ServerResponseType>(RequestTypeEnumType requestType, Action<string, ClientRequestType, ServerResponseType> serverAction)
+        public void MapServerAction<ClientRequestType, ServerResponseType>(RequestTypeEnumType requestType, Action<string, ClientRequestType, ServerResponseType> serverAction, Action<string, FactorisableException<ExceptionEnumType>> onExceptionThrowedCallBack = null)
             where ClientRequestType : ClientRequestBase
             where ServerResponseType : ServerResponseBase<ExceptionEnumType>, new()
         {
             if (RequestDefinitions.ContainsKey(requestType) == false) return;
             var clientReceiverDefinition = RequestDefinitions[requestType] as ClientRequestReceiverDefinition<ExceptionEnumType, RequestTypeEnumType, ClientRequestType, ServerResponseType>;
             clientReceiverDefinition.ServerAction = serverAction;
+            clientReceiverDefinition.OnExceptionThrowedCallBack = onExceptionThrowedCallBack;
         }
     }
 }

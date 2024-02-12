@@ -11,6 +11,7 @@ namespace PlatypusNetwork.Request.Definition
         where ServerResponseType : ServerResponseBase<ExceptionEnumType>, new()
     {
         public Action<string, ClientRequestType, ServerResponseType> ServerAction { get; set; }
+        public Action<string, FactorisableException<ExceptionEnumType>> OnExceptionThrowedCallBack { get; set; }
 
         public ClientRequestReceiverDefinition(RequestTypeEnum requestType)
             : base(requestType) { }
@@ -25,6 +26,7 @@ namespace PlatypusNetwork.Request.Definition
             ServerResponseType serverResponse = new ServerResponseType();
             ClientRequestType clientRequest = Utils.GetObjectFromBytes<ClientRequestType>(clientRequestData.Data);
             serverResponse.RequestKey = clientRequest.RequestKey;
+            FactorisableException<ExceptionEnumType> exception = null;
             try
             {
                 ServerAction(clientKey, clientRequest, serverResponse);
@@ -35,9 +37,11 @@ namespace PlatypusNetwork.Request.Definition
                 serverResponse.FactorisableExceptionType = e.FactorisableExceptionType;
                 serverResponse.FactorisableExceptionParameters = e.GetParameters();
                 exceptionThrowed = true;
+                exception = e;
             }
             serverResponseData.Data = Utils.GetBytesFromObject(serverResponse);
             serverResponseConsumer(serverResponseData);
+            if (exceptionThrowed) OnExceptionThrowedCallBack(clientKey, exception);
             return exceptionThrowed;
         }
     }
