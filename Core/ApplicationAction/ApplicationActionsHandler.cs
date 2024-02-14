@@ -76,9 +76,8 @@ namespace Core.ApplicationAction
                 };
             }
 
-            ApplicationActionEnvironmentBase env = _applicationActions[runActionParameter.Guid].CreateStartActionEnvironment();
-
             ApplicationAction applicationAction = _applicationActions[runActionParameter.Guid];
+            ApplicationActionEnvironmentBase env = applicationAction.CreateStartActionEnvironment();
 
             try
             {
