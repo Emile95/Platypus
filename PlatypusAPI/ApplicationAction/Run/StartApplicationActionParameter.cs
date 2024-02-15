@@ -1,6 +1,6 @@
 ﻿namespace PlatypusAPI.ApplicationAction.Run
 {
-    public class ApplicationActionRunParameter
+    public class StartApplicationActionParameter
     {
         public string Guid { get; set; }
         public Dictionary<string, object> ActionParameters { get; set; }

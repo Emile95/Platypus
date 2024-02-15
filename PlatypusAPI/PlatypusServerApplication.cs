@@ -34,7 +34,7 @@ namespace PlatypusAPI
 
         }
 
-        public ApplicationActionRunResult RunApplicationAction(ApplicationActionRunParameter applicationActionRunparameter)
+        public ApplicationActionRunResult RunApplicationAction(StartApplicationActionParameter applicationActionRunparameter)
         {
 
 

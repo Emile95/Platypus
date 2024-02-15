@@ -26,10 +26,10 @@ namespace Core
             _applicationPackageUninstaller.Uninstall(parameter.ApplicationGuid);
         }
 
-        public ApplicationActionRunResult RunAction(UserAccount userAccount, ApplicationActionRunParameter runActionParameter)
+        public ApplicationActionRunResult RunAction(UserAccount userAccount, StartApplicationActionParameter runActionParameter)
         {
             ValidateUserForPermission(userAccount, UserPermissionFlag.RunAction);
-            return _applicationActionRunner.Run(runActionParameter);
+            return _applicationActionRunner.Start(runActionParameter);
         }
 
         public UserAccount AddUser(UserAccount userAccount, UserCreationParameter parameter)

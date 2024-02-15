@@ -72,7 +72,7 @@ namespace Core.Network.RestAPI
                 return "connection successfull";
             }));
 
-            app.MapPost(@"/action", CreateRequestDelegate<ApplicationActionRunParameter>(true, (headers, userAccount, body) =>
+            app.MapPost(@"/action", CreateRequestDelegate<StartApplicationActionParameter>(true, (headers, userAccount, body) =>
             {
                 return _serverInstance.RunAction(userAccount, body);
             }));

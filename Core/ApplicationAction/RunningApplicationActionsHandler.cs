@@ -32,15 +32,13 @@ namespace Core.ApplicationAction
         public ApplicationActionRun Add(ApplicationActionRun actionRun)
         {
             string runningActionGuid = actionRun.GetRunningActionGuid();
-            RunningApplicationActionEntity entity = _runningApplicationActionEntityAddOperator.Add(new RunningApplicationActionEntity()
-            {
-                Guid = runningActionGuid,
-                ActionGuid = actionRun.ActionGuid,
-                ActionRunGuid = actionRun.Guid,
-                Parameters = actionRun.Parameters
-            });
             _applicationActionRuns.Add(runningActionGuid, actionRun);
             return actionRun;
+        }
+
+        public RunningApplicationActionEntity Add(RunningApplicationActionEntity entity)
+        {
+            return _runningApplicationActionEntityAddOperator.Add(entity);
         }
 
         public void Consume(Action<ApplicationActionRunInfo> consumer, Predicate<ApplicationActionRunInfo> condition = null)

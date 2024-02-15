@@ -130,25 +130,23 @@ namespace Core.ApplicationAction
             return (ApplicationActionEnvironmentBase)Activator.CreateInstance(EnvironmentParameterType);
         }
 
-        public ApplicationActionRun CreateApplicationActionRun(ApplicationActionRunParameter runActionParameter, ApplicationActionEnvironmentBase env)
+        public ApplicationActionRun BuildApplicationActionRun(string actionGuid, ApplicationActionEnvironmentBase env, bool exist = false)
         {
             ApplicationActionRun applicationActionRun = new ApplicationActionRun()
             {
-                ActionGuid = runActionParameter.Guid,
+                ActionGuid = actionGuid,
+                Action = Exec,
                 Env = env
             };
 
-            ApplicationActionRunEntity entity = new ApplicationActionRunEntity();
-            _applicationActionRunRepositoryAddOperator.Add(entity);
-
-            applicationActionRun.Guid = entity.Guid;
+            if(exist == false)
+            {
+                ApplicationActionRunEntity entity = new ApplicationActionRunEntity();
+                _applicationActionRunRepositoryAddOperator.Add(entity);
+                applicationActionRun.Guid = entity.Guid;
+            }
 
             return applicationActionRun;
-        }
-
-        private string GetParentApplicationGuid()
-        {
-            return Guid.Replace(Name, "");
         }
     }
 }

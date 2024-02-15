@@ -19,31 +19,34 @@ namespace Core.ApplicationAction
         IApplicationAttributeMethodResolver<ActionDefinitionAttribute>,
         IRepositoryConsumeOperator<ApplicationActionInfo>,
         IRepositoryRemoveOperator<ApplicationAction, string>,
-        IServerStarter<RunningApplicationActionEntity>,
-        IApplicationActionRunner
+        IServerStarter<ApplicationActionsHandler>,
+        IApplicationActionStarter
     {
         private readonly Dictionary<string, ApplicationAction> _applicationActions;
         private readonly IRepositoryConsumeOperator<ApplicationActionEntity> _applicationActionRepositoryConsumeOperator;
-        private readonly IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionEntityConsumeOperator;
+        private readonly IRepositoryConsumeOperator<RunningApplicationActionEntity> _runningApplicationActionOperatorOperator;
         private readonly IRepositoryRemoveOperator<ApplicationActionEntity, string> _applicationActionRepositoryRemoveOperator;
         private readonly IRepositoryAddOperator<ApplicationActionRun> _applicationActionRunAddOperator;
+        private readonly IRepositoryAddOperator<RunningApplicationActionEntity> _runningApplicationActionAddOperator;
         private readonly IRepositoryRemoveOperator<ApplicationActionRun,string> _applicationActionRunRemoveOperator;
         private readonly IEventHandlerRunner _eventhHandlerRunner;
 
         public ApplicationActionsHandler(
             IRepositoryConsumeOperator<ApplicationActionEntity> applicationActionRepositoryConsumeOperator,
-            IRepositoryConsumeOperator<RunningApplicationActionEntity> runningApplicationActionEntityConsumeOperator,
+            IRepositoryConsumeOperator<RunningApplicationActionEntity> runningApplicationActionOperatorOperator,
             IRepositoryRemoveOperator<ApplicationActionEntity, string> applicationActionRepositoryRemoveOperator,
             IRepositoryAddOperator<ApplicationActionRun> applicationActionRunAddOperator,
+            IRepositoryAddOperator<RunningApplicationActionEntity> runningApplicationActionAddOperator,
             IRepositoryRemoveOperator<ApplicationActionRun, string> applicationActionRunRemoveOperator,
             IEventHandlerRunner eventhHandlerRunner
         )
         {
             _applicationActions = new Dictionary<string, ApplicationAction>();
             _applicationActionRepositoryConsumeOperator = applicationActionRepositoryConsumeOperator;
-            _runningApplicationActionEntityConsumeOperator = runningApplicationActionEntityConsumeOperator;
+            _runningApplicationActionOperatorOperator = runningApplicationActionOperatorOperator;
             _applicationActionRepositoryRemoveOperator = applicationActionRepositoryRemoveOperator;
             _applicationActionRunAddOperator = applicationActionRunAddOperator;
+            _runningApplicationActionAddOperator = runningApplicationActionAddOperator;
             _applicationActionRunRemoveOperator = applicationActionRunRemoveOperator;
             _eventhHandlerRunner = eventhHandlerRunner;
         }
@@ -59,64 +62,67 @@ namespace Core.ApplicationAction
 
         public void Start()
         {
-            _runningApplicationActionEntityConsumeOperator.Consume((entity) => {
+            _runningApplicationActionOperatorOperator.Consume((entity) => {
+                ApplicationActionRun applicationActionRun = BuildApplicationActionRun(entity.ActionGuid, entity.Parameters, true);
+                applicationActionRun.Guid = entity.ActionRunGuid;
 
+                _applicationActionRunAddOperator.Add(applicationActionRun);
+
+                ActionRunEventHandlerEnvironment actionRunEventHandlerEnvironment = new ActionRunEventHandlerEnvironment();
+
+                ApplicationActionRunResult result = BeforeApplicationActionRun(actionRunEventHandlerEnvironment);
+
+                applicationActionRun.StartRun(() => {
+                    ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);
+                });
             });
         }
 
-        public ApplicationActionRunResult Run(ApplicationActionRunParameter runActionParameter)
+        public ApplicationActionRunResult Start(StartApplicationActionParameter parameter)
         {
-            if (_applicationActions.ContainsKey(runActionParameter.Guid) == false)
-            {
-                string message = Utils.GetString(Strings.ResourceManager, "ApplicationActionNotFound", runActionParameter.Guid);
-                return new ApplicationActionRunResult()
-                {
-                    Message = message,
-                    Status = ApplicationActionRunResultStatus.Failed,
-                };
-            }
-
-            ApplicationAction applicationAction = _applicationActions[runActionParameter.Guid];
-            ApplicationActionEnvironmentBase env = applicationAction.CreateStartActionEnvironment();
-
             try
             {
-                applicationAction.ResolveActionParameter(env, runActionParameter.ActionParameters);
-            } catch (Exception ex)
+                ApplicationActionRun applicationActionRun = BuildApplicationActionRun(parameter.Guid, parameter.ActionParameters, false);
+
+                _applicationActionRunAddOperator.Add(applicationActionRun);
+                _runningApplicationActionAddOperator.Add(new RunningApplicationActionEntity()
+                {
+                    Guid = applicationActionRun.GetRunningActionGuid(),
+                    ActionGuid = applicationActionRun.ActionGuid,
+                    ActionRunGuid = applicationActionRun.Guid,
+                    Parameters = parameter.ActionParameters
+                });
+
+                ActionRunEventHandlerEnvironment actionRunEventHandlerEnvironment = new ActionRunEventHandlerEnvironment();
+
+                ApplicationActionRunResult result = BeforeApplicationActionRun(actionRunEventHandlerEnvironment);
+
+                applicationActionRun.StartRun(() => {
+                    ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);
+                });
+
+                if (parameter.Async)
+                {
+                    string message = Utils.GetString(Strings.ResourceManager, "NewApplicationActionStarted");
+                    return new ApplicationActionRunResult()
+                    {
+                        Message = message,
+                        Status = ApplicationActionRunResultStatus.Started
+                    };
+                }
+
+                applicationActionRun.Task.Wait();
+
+                return applicationActionRun.Result;
+            }
+            catch (Exception e)
             {
                 return new ApplicationActionRunResult
                 {
                     Status = ApplicationActionRunResultStatus.Failed,
-                    Message = ex.Message,
+                    Message = e.Message,
                 };
             }
-
-            ActionRunEventHandlerEnvironment actionRunEventHandlerEnvironment = new ActionRunEventHandlerEnvironment();
-
-            ApplicationActionRunResult result = BeforeApplicationActionRun(applicationAction, actionRunEventHandlerEnvironment);
-            if (result is not null) return result;
-
-            ApplicationActionRun applicationActionRun = applicationAction.CreateApplicationActionRun(runActionParameter, env);
-
-            applicationActionRun.StartRun(applicationAction, runActionParameter, () => {
-                ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);
-            });
-
-            _applicationActionRunAddOperator.Add(applicationActionRun);
-
-            if (runActionParameter.Async)
-            {
-                string message = Utils.GetString(Strings.ResourceManager,"NewApplicationActionStarted");
-                return new ApplicationActionRunResult()
-                {
-                    Message = message,
-                    Status = ApplicationActionRunResultStatus.Started
-                };
-            }
-                
-            applicationActionRun.Task.Wait();
-
-            return applicationActionRun.Result;
         }
 
         public void Remove(string id)
@@ -139,6 +145,25 @@ namespace Core.ApplicationAction
             });
         }
 
+        private ApplicationActionRun BuildApplicationActionRun(string actionGuid, Dictionary<string, object> actionParameters, bool runExist)
+        {
+            if (_applicationActions.ContainsKey(actionGuid) == false)
+            {
+                string message = Utils.GetString(Strings.ResourceManager, "ApplicationActionNotFound", actionGuid);
+                throw new Exception(message);
+            }
+
+            ApplicationAction applicationAction = _applicationActions[actionGuid];
+            ApplicationActionEnvironmentBase env = applicationAction.CreateStartActionEnvironment();
+
+            applicationAction.ResolveActionParameter(env, actionParameters);
+
+            ApplicationActionRun applicationActionRun = applicationAction.BuildApplicationActionRun(actionGuid, env, runExist);
+
+            return applicationActionRun;
+        }
+
+
         private void ApplicationActionRunCallBack(ApplicationActionRun run, ActionRunEventHandlerEnvironment eventEnv)
         {
             if (run.Env.ActionCancelled)
@@ -158,7 +183,7 @@ namespace Core.ApplicationAction
             _applicationActionRunRemoveOperator.Remove(run.GetRunningActionGuid());
         }
 
-        private ApplicationActionRunResult BeforeApplicationActionRun(ApplicationAction applicationAction, ActionRunEventHandlerEnvironment eventEnv)
+        private ApplicationActionRunResult BeforeApplicationActionRun(ActionRunEventHandlerEnvironment eventEnv)
         {
             _eventhHandlerRunner.Run(EventHandlerType.BeforeApplicationActionRun, eventEnv, (exception) => {
                 return new ApplicationActionRunResult()

@@ -15,7 +15,6 @@ using Core.ApplicationAction;
 using Core.Persistance;
 using Newtonsoft.Json;
 using System.Net.Sockets;
-using Core.Persistance.Entity;
 using Core.Network.Abstract;
 using PlatypusContainer.Service;
 using PlatypusAPI.Application;
@@ -28,7 +27,7 @@ namespace Core
         private readonly ISeverPortListener<RestAPIHandler> _restAPIHandler;
         private readonly ISeverPortListener<PlatypusServerSocketHandler> _tcpServerSocketHandler;
         private readonly IServerStarter<ApplicationsHandler> _applicationsServerStarter;
-        private readonly IServerStarter<RunningApplicationActionEntity> _runningApplicationActionsServerStarter;
+        private readonly IServerStarter<ApplicationActionsHandler> _runningApplicationActionsServerStarter;
         private readonly IUserAuthentificator _userAuthentificator;
         private readonly IRepositoryAddOperator<UserCreationParameter> _userAddOperator;
         private readonly IRepositoryUpdateOperator<UserUpdateParameter> _userUpdateOperator;
@@ -39,11 +38,11 @@ namespace Core
         private readonly IRepositoryConsumeOperator<ApplicationInfo> _applicationInfoConsumer;
         private readonly IApplicationInstaller _applicationPackageInstaller;
         private readonly IApplicationUninstaller _applicationPackageUninstaller;
-        private readonly IApplicationActionRunner _applicationActionRunner;
+        private readonly IApplicationActionStarter _applicationActionRunner;
 
         public ServerInstance(
             IServerStarter<ApplicationsHandler> applicationsServerStarter,
-            IServerStarter<RunningApplicationActionEntity> runningApplicationActionsServerStarter,
+            IServerStarter<ApplicationActionsHandler> runningApplicationActionsServerStarter,
             IUserAuthentificator userAuthentificator,
             IRepositoryAddOperator<UserCreationParameter> userAddOperator,
             IRepositoryUpdateOperator<UserUpdateParameter> userUpdateOperator,
@@ -54,7 +53,7 @@ namespace Core
             IRepositoryConsumeOperator<ApplicationInfo> applicationInfoConsumer,
             IApplicationInstaller applicationPackageInstaller,
             IApplicationUninstaller applicationPackageUninstaller,
-            IApplicationActionRunner applicationActionRunner
+            IApplicationActionStarter applicationActionRunner
         )
         {
             string json = File.ReadAllText(ApplicationPaths.CONFIGFILEPATH);

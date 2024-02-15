@@ -4,6 +4,6 @@ namespace PlatypusAPI.Network.ClientRequest
 {
     public class StartActionClientRequest : PlatypusClientRequest
     {
-        public ApplicationActionRunParameter Parameters { get; set; }
+        public StartApplicationActionParameter Parameters { get; set; }
     }
 }

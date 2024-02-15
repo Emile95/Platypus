@@ -10,22 +10,21 @@ namespace Core.ApplicationAction
         public ApplicationActionEnvironmentBase Env { get; set; }
         public ApplicationActionRunInfoStatus Status { get; private set; }
         public ApplicationActionRunResult Result { get; private set; }
-        public Dictionary<string, object> Parameters;
+        public Dictionary<string, object> Parameters { get; set; }
         public Task Task { get; private set; }
+        public Func<ApplicationActionEnvironmentBase, ApplicationActionRunResult> Action { get; set; }
 
         public string GetRunningActionGuid()
         {
             return ActionGuid + "-" + Guid;
         }
 
-        public void StartRun(ApplicationAction action, ApplicationActionRunParameter parameter, Action runCallBack)
+        public void StartRun(Action runCallBack)
         {
             Status = ApplicationActionRunInfoStatus.Running;
-            Task = new Task(() => RunAction(() => action.Exec(Env), runCallBack));
+            Task = new Task(() => RunAction(() => Action.Invoke(Env), runCallBack));
             Task.Start();
-
             Result = new ApplicationActionRunResult();
-            Parameters = parameter.ActionParameters;
         }
 
         public void Cancel()
