@@ -72,9 +72,7 @@ namespace Core.ApplicationAction
 
                 ApplicationActionRunResult result = BeforeApplicationActionRun(actionRunEventHandlerEnvironment);
 
-                applicationActionRun.StartRun(() => {
-                    ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);
-                });
+                applicationActionRun.StartRun(() => ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment));
             });
         }
 
@@ -85,6 +83,7 @@ namespace Core.ApplicationAction
                 ApplicationActionRun applicationActionRun = BuildApplicationActionRun(parameter.Guid, parameter.ActionParameters, false);
 
                 _applicationActionRunAddOperator.Add(applicationActionRun);
+
                 _runningApplicationActionAddOperator.Add(new RunningApplicationActionEntity()
                 {
                     Guid = applicationActionRun.GetRunningActionGuid(),
@@ -97,9 +96,7 @@ namespace Core.ApplicationAction
 
                 ApplicationActionRunResult result = BeforeApplicationActionRun(actionRunEventHandlerEnvironment);
 
-                applicationActionRun.StartRun(() => {
-                    ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment);
-                });
+                applicationActionRun.StartRun(() => ApplicationActionRunCallBack(applicationActionRun, actionRunEventHandlerEnvironment));
 
                 if (parameter.Async)
                 {

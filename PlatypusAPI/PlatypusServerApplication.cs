@@ -17,8 +17,6 @@ namespace PlatypusAPI
         private readonly ClientSocketHandler<FactorisableExceptionType, RequestType> _socketHandler;
         public UserAccount ConnectedUser { get; private set; }
 
-        private ConcurrentQueue<string> _requestTickets;
-
         public PlatypusServerApplication(
             ClientSocketHandler<FactorisableExceptionType, RequestType> socketHandler,
             UserAccount connectedUser
@@ -36,8 +34,6 @@ namespace PlatypusAPI
 
         public ApplicationActionRunResult RunApplicationAction(StartApplicationActionParameter applicationActionRunparameter)
         {
-
-
             StartActionServerResponse response = _socketHandler.HandleClientRequest<StartActionClientRequest, StartActionServerResponse>(
                 RequestType.RunApplicationAction,
                 (clientRequest) => {
