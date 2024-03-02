@@ -7,7 +7,6 @@ using PlatypusAPI.Network.ServerResponse;
 using PlatypusAPI.ServerFunctionParameter;
 using PlatypusAPI.User;
 using PlatypusNetwork.SocketHandler;
-using System.Collections.Concurrent;
 using PlatypusAPI.Application;
 
 namespace PlatypusAPI
@@ -24,7 +23,6 @@ namespace PlatypusAPI
         {
             _socketHandler = socketHandler;
             ConnectedUser = connectedUser;
-            _requestTickets = new ConcurrentQueue<string>();
         }
 
         public void Disconnect()

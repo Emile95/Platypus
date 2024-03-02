@@ -47,7 +47,7 @@ namespace Core.ApplicationAction
             {
                 ApplicationActionRunInfo applicationActionRunInfo = new ApplicationActionRunInfo()
                 {
-                    Guid = run.Guid,
+                    Guid = run.GetRunningActionGuid()
                 };
                 if (condition == null) consumer(applicationActionRunInfo);
                 else
